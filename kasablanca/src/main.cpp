@@ -22,6 +22,8 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char **argv)
 {
+	 KLocale::setMainCatalogue("kasablanca");	
+
     KAboutData about("kasablanca", I18N_NOOP("kasablanca"), version, description,
                      KAboutData::License_GPL, "(C) 2004 Magnus Kulke", 0, 0,
 							"sikor_sxe@radicalapproach.de");
