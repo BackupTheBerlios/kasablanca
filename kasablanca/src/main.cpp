@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 							"sikor_sxe@radicalapproach.de");
     about.addAuthor( "Magnus Kulke", 0, "sikor_sxe@radicalapproach.de" );
     about.addAuthor( "Big Biff", 0, "bigbiff@chunkyfilms.org" );
+	 about.addCredit( "Stefan Bogner", 0, "bochi@online.ms" );
     KCmdLineArgs::init(argc, argv, &about);
     KCmdLineArgs::addCmdLineOptions(options);
     KApplication app;
