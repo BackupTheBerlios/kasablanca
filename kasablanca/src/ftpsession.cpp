@@ -42,6 +42,7 @@
 #include "kbdirinfo.h"
 #include "kbfile.h"
 #include "kbfileinfo.h"
+#include "kbconfig.h"
 #include "ftplib.h"
 
 FtpSession::FtpSession(QObject *parent, const char *name)
@@ -564,10 +565,11 @@ void FtpSession::SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInf
 		dirup->setSelectable(false);	
 		list<KbFileInfo>::iterator end_dir = dirlist.end();
 		list<KbFileInfo>::iterator end_file = filelist.end();
-		for (list<KbFileInfo>::iterator i = dirlist.begin(); i != end_dir; i++) 
+		for (list<KbFileInfo>::iterator i = dirlist.begin(); i != end_dir; i++)
 			new KbDir(*i, mp_browser, mp_browser->lastItem());	
-		for (list<KbFileInfo>::iterator i = filelist.begin(); i != end_file; i++) 
+		for (list<KbFileInfo>::iterator i = filelist.begin(); i != end_file; i++)
 			new KbFile(*i, mp_browser, mp_browser->lastItem());	
+		if (KbConfig::hideHiddenFilesIsEnabled()) FilterHiddenFiles(true);
 		emit gui_update();
 	}
 }
@@ -720,6 +722,8 @@ void FtpSession::UpdateLocal(QString cwd)
 	}
 	
 	mp_cwdline->setText(m_localworkingdir.absPath());
+	
+	if (KbConfig::hideHiddenFilesIsEnabled()) FilterHiddenFiles(true);
 }
 
 void FtpSession::RmdirLocal(QString dir)
@@ -1100,6 +1104,20 @@ void FtpSession::EnableCmdLine(bool b)
 { 
 	if (b) mp_cmdline->show();
 	else mp_cmdline->hide();
+}
+
+void FtpSession::FilterHiddenFiles(bool b)
+{
+	QListViewItemIterator it(mp_browser);
+	while (it.current()) 
+	{		
+		if (it.current()->text(0).startsWith(".") && (it.current() != mp_browser->firstChild()))
+		{
+			if (b) it.current()->setVisible(false);
+			else it.current()->setVisible(true);
+		}
+		++it;
+	}
 }
 
 #include "ftpsession.moc"

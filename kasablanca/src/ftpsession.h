@@ -87,6 +87,7 @@ public:
 	void SetFont(QFont font);
 	void SetOnFileExistsDefault(filecheck onfileexistsdefault) {m_onfileexistsdefault = onfileexistsdefault; };
 	void EnableCmdLine(bool b);
+	void FilterHiddenFiles(bool b);
 private:
 	FtpThread *mp_ftpthread;
 	EventHandler *mp_eventhandler;

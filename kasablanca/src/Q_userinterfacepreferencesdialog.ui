@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>353</width>
-            <height>135</height>
+            <width>448</width>
+            <height>165</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,15 +19,85 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="0" column="0">
+        <spacer row="4" column="3">
+            <property name="name">
+                <cstring>spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>textLabel1_2_2_2_2</cstring>
             </property>
             <property name="text">
-                <string>Show System Tray Icon:</string>
+                <string>Show system tray icon:</string>
             </property>
         </widget>
-        <spacer row="0" column="1" rowspan="2" colspan="1">
+        <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>textLabel1_2_2_2_2_2</cstring>
+            </property>
+            <property name="text">
+                <string>Show command lines:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>textLabel1_2_2_2_2_2_3</cstring>
+            </property>
+            <property name="text">
+                <string>Hide hidden files from view:</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="0" column="4">
+            <property name="name">
+                <cstring>kcfg_SystrayIsEnabled</cstring>
+            </property>
+            <property name="text">
+                <string>Enabled</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="1" column="4">
+            <property name="name">
+                <cstring>kcfg_CommandLineIsEnabled</cstring>
+            </property>
+            <property name="text">
+                <string>Enabled</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="2" column="4">
+            <property name="name">
+                <cstring>kcfg_HideHiddenFilesIsEnabled</cstring>
+            </property>
+            <property name="text">
+                <string>Enabled</string>
+            </property>
+        </widget>
+        <widget class="KFontRequester" row="3" column="2" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>kcfg_LogwindowFont</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="0">
+            <property name="name">
+                <cstring>textLabel1_2_2_2_2_2_2</cstring>
+            </property>
+            <property name="text">
+                <string>Logwindow Font:</string>
+            </property>
+        </widget>
+        <spacer row="0" column="2" rowspan="2" colspan="2">
             <property name="name">
                 <cstring>spacer3</cstring>
             </property>
@@ -39,54 +109,17 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>50</width>
-                    <height>59</height>
+                    <width>140</width>
+                    <height>58</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QCheckBox" row="0" column="2">
-            <property name="name">
-                <cstring>kcfg_SystrayIsEnabled</cstring>
-            </property>
-            <property name="text">
-                <string>Enabled</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="1" column="2">
-            <property name="name">
-                <cstring>kcfg_CommandLineIsEnabled</cstring>
-            </property>
-            <property name="text">
-                <string>Enabled</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>textLabel1_2_2_2_2_2</cstring>
-            </property>
-            <property name="text">
-                <string>Show Command Lines:</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="2" column="0">
-            <property name="name">
-                <cstring>textLabel1_2_2_2_2_2_2</cstring>
-            </property>
-            <property name="text">
-                <string>Logwindow Font:</string>
-            </property>
-        </widget>
-        <widget class="KFontRequester" row="2" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>kcfg_LogwindowFont</cstring>
-            </property>
-        </widget>
         <spacer row="3" column="1">
             <property name="name">
-                <cstring>spacer4</cstring>
+                <cstring>spacer3_2</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Horizontal</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>

@@ -30,13 +30,22 @@
 		<entry name="OnFileExistsIsEnabled" type="Bool">
 			<default>false</default>
 		</entry>
+	</group>  
+	<group name="ui">
 		<entry name="SystrayIsEnabled" type="Bool">
 			<default>false</default>
 		</entry>
 		<entry name="CommandLineIsEnabled" type="Bool">
       	<default>true</default>
       </entry>
-	</group>  
+		<entry name="HideHiddenFilesIsEnabled" type="Bool">
+      	<default>false</default>
+      </entry>
+		<entry name="LogwindowFont" type="Font">
+			<label>The font for the logwindow.</label>
+			<default>QFont( "DEC Terminal" )</default>
+		</entry>
+	</group>
 	<group name="colors">
 		<entry name="LocalColor" type="Color">
 			<label>The color value for local messages on the logging window.</label>
@@ -53,10 +62,6 @@
 		<entry name="FailureColor" type="Color">
 			<label>The color value for failed remote messages on the logging window.</label>
 			<default>222,9,48</default>
-		</entry>
-		<entry name="LogwindowFont" type="Font">
-			<label>The font for the logwindow.</label>
-		<default>QFont( "DEC Terminal" )</default>
 		</entry>
 	</group>
 </kcfg>

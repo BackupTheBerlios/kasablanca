@@ -2,6 +2,7 @@
 
 -extend bookmarks
 -add waiting window
+-bookmark hotkeys
 
 [v 0.4]
 

@@ -184,11 +184,12 @@ void Kasablanca::applyConfig()
 		(*i)->SetColors(KbConfig::localColor(), KbConfig::successColor(), KbConfig::failureColor(), KbConfig::backgroundColor());
 		(*i)->SetOnFileExistsDefault(def);
 		(*i)->EnableCmdLine(KbConfig::commandLineIsEnabled());
-		(*i)->SetFont( KbConfig::logwindowFont() );
+		(*i)->SetFont(KbConfig::logwindowFont());
+		(*i)->FilterHiddenFiles(KbConfig::hideHiddenFilesIsEnabled());
 	}
-	
+		
 	// make the system tray switch on/off when settings are changed
-	if ( KbConfig::systrayIsEnabled() ) mp_systemtray->show();
+	if (KbConfig::systrayIsEnabled()) mp_systemtray->show();
 	else mp_systemtray->hide();
 } 
 

@@ -57,9 +57,9 @@ BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
 	 connect(mp_dialog->InfoEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
 	 connect(mp_dialog->UserEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
 	 connect(mp_dialog->PassEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
-	 connect(mp_dialog->DefaultDirectoryEdit, SIGNAL(activated(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(mp_dialog->DefaultDirectoryEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
 	 connect(mp_dialog->EncryptionComboBox, SIGNAL(activated(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
-	 connect(mp_dialog->ModeComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&))); 
+	 connect(mp_dialog->ModeComboBox, SIGNAL(activated(const QString&)), SLOT(SLOT_TextChanged(const QString&))); 
 	 connect(mp_dialog->AlternativeFxpCheckBox, SIGNAL(clicked()), SLOT(SLOT_StateChanged()));
 	 connect(mp_dialog->CorrectPasvCheckBox, SIGNAL(clicked()), SLOT(SLOT_StateChanged()));
 	 
