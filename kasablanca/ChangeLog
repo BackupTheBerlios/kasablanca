@@ -1,8 +1,13 @@
 [v 0.4.0.2]
 
+-fixed: finally files bigger than 2gb should be supported on
+ machines which support LFS
+-fixed: crash when transfering files on a timed-out server
 -changed: view of the transfered files
+-added: a little fancyness and improvements
 -fixed: percentage counting bug
 -added: delete key shortcut bookmarks [r. stellingwerff]
+-fixed: several bugs in ftplibpp
 
 [v 0.4.0.1]
 

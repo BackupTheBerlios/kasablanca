@@ -42,6 +42,7 @@
 #include <qpushbutton.h>
 #include <qheader.h>
 #include <qtoolbutton.h>
+#include <qaction.h>
 
 #include "Q_colorspreferencesdialog.h"
 #include "Q_generalpreferencesdialog.h"
@@ -148,7 +149,12 @@ Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new Kasablanc
 	connect(mp_session_b, SIGNAL(gui_succeedtransfer(QListViewItem*)), SLOT(SLOT_NextTransfer(QListViewItem*)));
 	connect(mp_session_a, SIGNAL(gui_clearqueue(FtpSession*)), SLOT(SLOT_ClearQueue(FtpSession*)));
 	connect(mp_session_b, SIGNAL(gui_clearqueue(FtpSession*)), SLOT(SLOT_ClearQueue(FtpSession*)));
-
+	
+	QAction *deleteShortcut = new QAction( QPixmap(), "&Delete",
+                                      Key_Delete, this, "delete" );
+									  
+	connect(deleteShortcut, SIGNAL(activated()), this, SLOT(SLOT_SkipTasks()));
+	
 	mp_session_a->Disconnect();
 	mp_session_b->Disconnect();
 
@@ -423,7 +429,7 @@ void Kasablanca::SLOT_QueueItems(KbDirInfo *dir, FtpSession* src, FtpSession* ds
 
 void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* dst, QListViewItem* parent)
 {
-	list<KbFileInfo>* filelist;
+	list<KbFileInfo*>* filelist;
 	list<KbDirInfo*>* dirlist;
 	QListViewItem *after, *lastchild;
 
@@ -439,13 +445,13 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 	lastchild = mp_view->TaskView->LastChild();
 
 	after = NULL;
-	list<KbFileInfo>::iterator end_file = filelist->end();
-	for(list<KbFileInfo>::iterator fileIterator = filelist->begin(); fileIterator != end_file; fileIterator++)
+	list<KbFileInfo*>::iterator end_file = filelist->end();
+	for(list<KbFileInfo*>::iterator fileIterator = filelist->begin(); fileIterator != end_file; fileIterator++)
 	{
-		if ((m_skiplist.search((*fileIterator).fileName()) < 0) || (!m_skiplistenabled))
+		if ((m_skiplist.search((*fileIterator)->fileName()) < 0) || (!m_skiplistenabled))
 		{
-			KbFileInfo *srcfi = new KbFileInfo(*fileIterator);
-			KbFileInfo *dstfi = new KbFileInfo(*fileIterator);
+			KbFileInfo *srcfi = new KbFileInfo(**fileIterator);
+			KbFileInfo *dstfi = new KbFileInfo(**fileIterator);
 			srcfi->SetDirPath(src->WorkingDir() + srcfi->dirPath());
 			dstfi->SetDirPath(dst->WorkingDir() + dstfi->dirPath());
 			if (parent) after = new KbTransferFile(parent, after, src, dst, srcfi, dstfi);
@@ -566,7 +572,7 @@ void Kasablanca::SLOT_SelectionChanged()
 }
 
 void Kasablanca::SLOT_NextTransfer(QListViewItem* item)
-{
+{	
 	QListViewItem *next;
 	next = NextTransfer(item);
 	if (next) ProcessQueue(static_cast<KbTransferItem*>(next));
@@ -598,6 +604,7 @@ QListViewItem* Kasablanca::NextTransfer(QListViewItem* item)
 	if (item->childCount() == 0) // if the item contains no subelements - delete it, if it doesn't - start with the next
 	{
 		static_cast<KbTransferItem*>(item)->Finish();
+		if (mp_view->TaskView->childCount() > 0) delete item;
 		if (next) retval = next;
 		else if (parent) retval = NextTransfer(parent);
 		else

@@ -1,15 +1,51 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="0" />
+ <DocsAndViews NumberOfDocuments="11" >
+  <Doc0 NumberOfViews="1" URL="file:/usr/lib/qt3/doc/html/qstring.html#number-5" >
+   <View0 Type="Documentation" />
+  </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferfile.cpp" >
+   <View0 Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferfile.h" >
+   <View0 Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/ChangeLog" >
+   <View0 Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtaskview.cpp" >
+   <View0 Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:/usr/lib/qt3/doc/html/qlistviewitem.html#setPixmap" >
+   <View0 Type="Documentation" />
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferitem.h" >
+   <View0 Type="Source" />
+  </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/ftpthread.cpp" >
+   <View0 line="1401" Type="Source" />
+  </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kasablanca.cpp" >
+   <View0 Type="Source" />
+  </Doc8>
+  <Doc9 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/ftpsession.h" >
+   <View0 Type="Source" />
+  </Doc9>
+  <Doc10 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/ftpsession.cpp" >
+   <View0 line="677" Type="Source" />
+  </Doc10>
+ </DocsAndViews>
  <pluginList>
-  <kdevvalgrind>
-   <executable path="" params="" />
-   <valgrind path="" params="" />
-  </kdevvalgrind>
   <kdevsubversion>
    <subversion recurseresolve="1" recurserelocate="1" recursemerge="1" recursecommit="1" base="" recursepropget="1" recurseswitch="1" recurseupdate="1" recursepropset="1" recursediff="1" recurserevert="1" forcemove="1" recursecheckout="1" forceremove="1" recurseadd="1" recurseproplist="1" forcemerge="1" />
   </kdevsubversion>
+  <kdevvalgrind>
+   <executable path="" params="" />
+   <valgrind path="" params="" />
+   <calltree path="" params="" />
+   <kcachegrind path="" />
+  </kdevvalgrind>
   <kdevdebugger>
    <breakpointList/>
   </kdevdebugger>

@@ -27,12 +27,13 @@ KbTaskView::KbTaskView(QWidget *parent, const char *name)
 	addColumn(i18n("Progress"));
 	addColumn(i18n("Speed"));
 	addColumn(i18n("Percentage"));
+	addColumn(i18n("Remaining"));
 	
 	setRootIsDecorated(true);
 	setSelectionMode(QListView::Extended);
 	setDragEnabled(true);
 	setAcceptDrops(true);
-	
+		
 	//connect(this, SIGNAL(doubleClicked(QListViewItem*, const QPoint&, int)),
 	//	this, SLOT(SLOT_DoubleClicked(QListViewItem*, const QPoint&, int)));
 }

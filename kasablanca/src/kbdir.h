@@ -28,7 +28,7 @@
 class KbDir : public KbItem  {
 public:
 	KbDir(KbFileInfo kfi, QListView * parent, QListViewItem * after);
-	KbDir(QListView * parent, QListViewItem * after, QString file, QString path, QString date, off_t size, uint date_int);
+	KbDir(QListView * parent, QListViewItem * after, QString file, QString path, QString date, off64_t size, unsigned int date_int);
 	~KbDir();
 	int rtti() const;
 };

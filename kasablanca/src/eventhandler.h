@@ -34,7 +34,7 @@ class FtpThread;
 @author Magnus Kulke
 */
 
-typedef list<KbFileInfo> filist;
+typedef list<KbFileInfo*> filist;
 typedef pair<filist, filist> contentpair;
 
 class EventHandler : public QObject
@@ -99,7 +99,7 @@ private:
 signals:
 	void ftp_error(QString error);
 	void ftp_log(QString log, bool out);
-	void ftp_xfered(off_t xfered, bool encrypted);
+	void ftp_xfered(off64_t xfered, bool encrypted);
 	void ftp_misc(bool success);
 	void ftp_finished();
 	void ftp_connect(bool success);
@@ -107,7 +107,7 @@ signals:
 	void ftp_quit(bool success);
 	void ftp_pwd(bool success, QString path);
 	void ftp_chdir(bool success);
-	void ftp_dir(bool success, list<KbFileInfo> dirlist, list<KbFileInfo> filelist);
+	void ftp_dir(bool success, list<KbFileInfo*> dirlist, list<KbFileInfo*> filelist);
 	void ftp_scandir(bool success, KbDirInfo* dir);
 	void ftp_rm(bool success);
 	void ftp_rmdir(bool success);

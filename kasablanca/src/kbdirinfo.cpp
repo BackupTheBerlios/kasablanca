@@ -47,7 +47,7 @@ KbDirInfo* KbDirInfo::AddDirectory(KbFileInfo info)
 	return dir;
 }
 
-void KbDirInfo::AddFile(KbFileInfo file)
+void KbDirInfo::AddFile(KbFileInfo* file)
 {
 	m_filelist.push_back(file);
 }

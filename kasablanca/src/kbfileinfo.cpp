@@ -10,6 +10,11 @@
 //
 //
 
+// enable > 2gb support (LFS)
+
+#define _LARGEFILE_SOURCE
+#define _LARGEFILE64_SOURCE 
+
 #include <qregexp.h>
 #include <qdir.h>
 
@@ -28,11 +33,12 @@ KbFileInfo::KbFileInfo(QString workingdir) : QFileInfo(QDir(workingdir), ".")
 
 }
 
-bool KbFileInfo::PrioritySort(const KbFileInfo &f1, const KbFileInfo &f2)
+bool KbFileInfo::PrioritySort(KbFileInfo *f1, KbFileInfo *f2)
+//bool KbFileInfo::PrioritySort(const KbFileInfo &f1, const KbFileInfo &f2)
 {
 	QRegExp m_prioritylist(KbConfig::prioritylist());
 
-	if ((m_prioritylist.search(f1.fileName()) >= 0) > (m_prioritylist.search(f2.fileName()) >= 0)) return true;
+	if ((m_prioritylist.search(f1->fileName()) >= 0) > (m_prioritylist.search(f2->fileName()) >= 0)) return true;
 	else return false;
 };
 
@@ -46,7 +52,7 @@ KbFileInfo::KbFileInfo(QFileInfo qfi) : QFileInfo(qfi)
 	m_size = qfi.size();
 }
 
-KbFileInfo::KbFileInfo(const KbFileInfo & kfi) : QFileInfo(kfi)
+KbFileInfo::KbFileInfo(const KbFileInfo& kfi) : QFileInfo(kfi)
 {
 	m_date_int = kfi.m_date_int;
 	m_date = kfi.m_date;
@@ -60,7 +66,7 @@ KbFileInfo::KbFileInfo(KbItem* item, QString workingdir) : QFileInfo(QDir(workin
 	m_size = item->Size();
 }
 
-KbFileInfo::KbFileInfo(const QString & d, const QString & fileName, off_t size, QString date, uint date_int)
+KbFileInfo::KbFileInfo(const QString & d, const QString & fileName, off64_t size, QString date, unsigned int date_int)
  : QFileInfo(QDir(d), fileName)
 {
 	m_date_int = date_int;

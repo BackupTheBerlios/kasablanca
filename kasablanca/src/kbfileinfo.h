@@ -25,20 +25,21 @@ public:
 
 	//KbFileInfo();
 	KbFileInfo(QFileInfo qfi);
-	KbFileInfo(const KbFileInfo & kfi);
+	KbFileInfo(const KbFileInfo& kfi);
 	KbFileInfo(QString workingdir);
 	KbFileInfo(KbItem* item, QString workingdir);
-	KbFileInfo(const QString & d, const QString & fileName, off_t size, QString date, uint date_int);
+	KbFileInfo(const QString & d, const QString & fileName, off64_t size, QString date, unsigned int date_int);
 	~KbFileInfo();
-	off_t Size() { return m_size; };
+	off64_t Size() { return m_size; };
 	QString Date() { return m_date; };
-	uint DateInt() { return m_date_int; };
+	unsigned int DateInt() { return m_date_int; };
 	void SetDirPath(QString path); 
-	void SetSize(off_t size) { m_size = size; };
-	static bool PrioritySort(const KbFileInfo &f1, const KbFileInfo &f2);
+	void SetSize(off64_t size) { m_size = size; };
+	static bool PrioritySort(KbFileInfo *f1, KbFileInfo *f2);
+	//static bool PrioritySort(const KbFileInfo &f1, const KbFileInfo &f2);
 private:
-   off_t m_size;
-	uint m_date_int;
+   off64_t m_size;
+	unsigned int m_date_int;
 	QString m_date;
 };
 

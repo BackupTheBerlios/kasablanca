@@ -15,6 +15,11 @@
  *                                                                         *
  ***************************************************************************/
  
+// enable > 2gb support (LFS)
+
+#define _LARGEFILE_SOURCE
+#define _LARGEFILE64_SOURCE 
+ 
 #include <kglobal.h>
 #include <kiconloader.h>
 #include "kbfileinfo.h"
@@ -28,7 +33,7 @@ KbDir::KbDir(KbFileInfo kfi, QListView * parent, QListViewItem * after) : KbItem
 	if ((kfi.fileName() == ".") || (kfi.fileName() == "..")) delete this;
 }
 
-KbDir::KbDir(QListView * parent, QListViewItem * after, QString file, QString path, QString date, off_t size, uint date_int) : KbItem(parent, after)
+KbDir::KbDir(QListView * parent, QListViewItem * after, QString file, QString path, QString date, off64_t size, unsigned int date_int) : KbItem(parent, after)
 {
 	setText(0,file);
 

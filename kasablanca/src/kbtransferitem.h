@@ -51,7 +51,7 @@ public:
 	void Finish();
 	void IncrementStatus() { m_status = m_status + 1; };
 	void Init();
-	void Xfered(off_t xfered) { m_xfered = xfered; };
+	void Xfered(off64_t xfered) { m_xfered = xfered; };
 	void StartTimer() { m_time.start(); };
 	FtpSession* SrcSession() { return mp_srcsession; };
 	KbFileInfo* SrcFileInfo() { return mp_src; };
@@ -72,7 +72,7 @@ protected:
 	KbFileInfo *mp_src, *mp_dst;
 	int m_status;
 	bool m_transfererror;
-	off_t m_xfered;
+	off64_t m_xfered;
 	QTime m_time;
 };
 

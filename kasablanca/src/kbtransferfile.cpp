@@ -18,6 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
   
+// enable > 2gb support (LFS)
+
+#define _LARGEFILE_SOURCE
+#define _LARGEFILE64_SOURCE 
+ 
 #include <qpainter.h>
 #include <qcolor.h>
   
@@ -64,21 +69,33 @@ void KbTransferFile::ShowProgress(KbStatusTip *statustip)
 	int time = m_time.elapsed();
 	int time_dif = time - m_time_old;
 	if (time_dif == 0) time_dif = 1;
-	off_t xfer_dif = m_xfered - m_xfered_old;
+	off64_t xfer_dif = m_xfered - m_xfered_old;
 
-	off_t currentsize = (m_xfered + mp_dst->Size()) >> 10;
-	off_t wholesize = mp_src->Size() >> 10;
+	off64_t currentsize = (m_xfered + mp_dst->Size()) >> 10;
+	off64_t wholesize = mp_src->Size() >> 10;
+	off64_t rest = wholesize - currentsize;
 	m_percentage = ((currentsize * 100 ) / (wholesize + 1));
 	int speed = xfer_dif / time_dif;
+	off64_t remaining = rest / (speed + 1);
 	
-	setText(1, QString::number(currentsize) + "kb of " + QString::number(wholesize) + "kb");
-	setText(2, QString::number(speed) + "kb/s");
-	
+	if ((mp_srcsession->Connected()) && (mp_dstsession->Connected()))
+	{
+		setText(1, "unknown kb of " + QString::number(wholesize) + "kb");	
+		setText(2, "unknown kb/s");	
+		setText(4, "unknown");
+	}
+	else
+	{
+		setText(1, QString::number(currentsize) + "kb of " + QString::number(wholesize) + "kb");
+		setText(2, QString::number(speed) + "kb/s");
+		setText(4, QString::number(remaining / 3600) + "h" + QString::number(remaining / 60) + "m" + QString::number(remaining % 60) + "s");
+	}
+		
 	m_time_old = time;
 	m_xfered_old = m_xfered;
 	
 	statustip->ShowStatus(mp_src->fileName()
-		+ "," + QString::number(m_percentage) + "%d," + QString::number(speed) + "kb/s");
+		+ "," + QString::number(m_percentage) + "%," + QString::number(speed) + "kb/s");
 	
 	//QToolTip::add(systemtray, mp_src->fileName() 
 	//+ "," + QString::number(percentage) + "%," + QString::number(speed) + "kb/s");
@@ -87,7 +104,10 @@ void KbTransferFile::ShowProgress(KbStatusTip *statustip)
 void KbTransferFile::paintCell( QPainter *painter, const QColorGroup &colorGroup, int column,
 		int width, int alignment )
 {
-	if ((column == 3) && (m_xfered_old != 0)) PaintPercentageBar (painter, width);
+	if ((column == 3) 
+		&& (m_xfered_old != 0) 
+		&& ((!mp_srcsession->Connected()) || (!mp_dstsession->Connected())))
+		PaintPercentageBar (painter, width);
 	else QListViewItem::paintCell(painter, colorGroup, column, width, alignment);
 }
 

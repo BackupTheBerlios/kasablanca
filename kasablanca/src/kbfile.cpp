@@ -15,6 +15,11 @@
  *                                                                         *
  ***************************************************************************/
  
+// enable > 2gb support (LFS)
+
+#define _LARGEFILE_SOURCE
+#define _LARGEFILE64_SOURCE 
+ 
 #include <kglobal.h>
 #include <kiconloader.h>
 #include "kbfileinfo.h" 
@@ -26,7 +31,7 @@ KbFile::KbFile(KbFileInfo kfi, QListView * parent, QListViewItem * after) : KbIt
 	setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
 }
 
-KbFile::KbFile(QListView * parent, QListViewItem * after, QString file, QString path, QString date, off_t size, uint date_int) : KbItem(parent, after)
+KbFile::KbFile(QListView * parent, QListViewItem * after, QString file, QString path, QString date, off64_t size, unsigned int date_int) : KbItem(parent, after)
 {
     setText(0,file);
 

@@ -18,6 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+// enable > 2gb support (LFS)
+
+#define _LARGEFILE_SOURCE
+#define _LARGEFILE64_SOURCE 
+ 
 #include <kstandarddirs.h>
 
 #include <qapplication.h>
@@ -78,7 +83,7 @@ void FtpThread::InitInternals()
 
 /* callback function for the transfer */
 
-int FtpThread::CallbackXfer(off_t xfered, void *arg)
+int FtpThread::CallbackXfer(off64_t xfered, void *arg)
 {
 	FtpThread* ftp = static_cast<FtpThread*>(arg);
 		
@@ -162,7 +167,7 @@ bool FtpThread::Quit()
 
 /* get file */
 
-bool FtpThread::Transfer_Get(QString src, QString dst, int tls, off_t resume)
+bool FtpThread::Transfer_Get(QString src, QString dst, int tls, off64_t resume)
 {
 	if (running()) return false;
 	else
@@ -178,7 +183,7 @@ bool FtpThread::Transfer_Get(QString src, QString dst, int tls, off_t resume)
 
 /* fxp file */
 
-bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int srctls, int dsttls, off_t resume, int alt)
+bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int srctls, int dsttls, off64_t resume, int alt)
 {
 	if (running()) return false;
 	else
@@ -197,7 +202,7 @@ bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int sr
 
 /* put file */
 
-bool FtpThread::Transfer_Put(QString src, QString dst, int tls, off_t resume)
+bool FtpThread::Transfer_Put(QString src, QString dst, int tls, off64_t resume)
 {
 	if (running()) return false;
 	else
@@ -608,7 +613,7 @@ void FtpThread::Transfer_Get_thread()
 	m_stringlist.pop_front();
 	int tls = m_intlist.front();
 	m_intlist.pop_front();
-	off_t resume = m_ulonglist.front();
+	off64_t resume = m_ulonglist.front();
 	m_ulonglist.pop_front();
 		
 	if (tls > 1)
@@ -654,7 +659,7 @@ void FtpThread::Transfer_Put_thread()
 	m_stringlist.pop_front();
 	int tls = m_intlist.front();
 	m_intlist.pop_front();
-	off_t resume = m_ulonglist.front();
+	off64_t resume = m_ulonglist.front();
 	m_ulonglist.pop_front();
 	
 	if (tls > 1)
@@ -667,7 +672,7 @@ void FtpThread::Transfer_Put_thread()
 			m_dataencrypted = (tls > 2);
 		}
 		else 
-		{
+		{		
 			if (ConnectionLost()) Event(EventHandler::connectionlost);
 			else Event(EventHandler::encryptdata_failure);
 			Event(EventHandler::transfer_failure);
@@ -719,7 +724,7 @@ void FtpThread::Transfer_Fxp_thread()
 	m_intlist.pop_front();
 	int dsttls = m_intlist.front();
 	m_intlist.pop_front();
-	off_t resume = m_ulonglist.front();
+	off64_t resume = m_ulonglist.front();
 	m_ulonglist.pop_front();
 	int alt = m_intlist.front();
 	m_intlist.pop_front();
@@ -1087,9 +1092,163 @@ void FtpThread::Event(EventHandler::EventType type, void *data)
 
 /* parses the dir file */
 
-bool FtpThread::FormatFilelist(const char *filename, QString current, list<KbFileInfo> *dirtable, list<KbFileInfo> *filetable
-)
+bool FtpThread::FormatFilelist(const char *filename, QString current, filist *dirtable, filist *filetable)
 {
+	/*
+	int i, blocks, space, month_int = 1, loc;
+	unsigned int fileloc, datebegin, sizebegin = 0;
+	QString buffer, filestring;
+	
+	FILE* dirfile;
+
+	char file[1024];
+
+	char month[][5] = {
+		"... ", "Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ",
+		"Sep ", "Oct ", "Nov ", "Dec "
+	};
+
+	dirfile = fopen(filename, "r");
+	if (dirfile == NULL)
+	{
+		qWarning("ERROR: failed open dirfile");
+		return false;
+	}
+
+	while (fgets(file, 1024, dirfile) != NULL)
+	{
+		*(strchr(file,'\n')) = '\0';
+		buffer = file;
+
+		for (i = 1; i < 13; i++)
+		{
+			loc = buffer.find(month[i], 0);
+			if (loc != -1)
+			{
+				month_int = i;
+				break;
+			}
+		}
+		if( loc == -1 )
+		{
+			qWarning("INFO: no month entry found");
+			loc = buffer.length();
+		}
+
+		datebegin = loc;
+
+		space = 1;
+		blocks = 0;
+		fileloc = 0;
+		while (loc < (int) buffer.length())
+		{
+				if (space)
+				{
+					// look for a space
+					if (buffer[loc] == ' ')
+					{
+						blocks++;
+						space = !space;
+					}
+				}
+				else
+				{
+					// look for a non-space
+					if (buffer[loc] != ' ')
+					{
+						if (blocks > 2)
+						{
+							fileloc = loc;
+							break;
+						}
+						space = !space;
+					}
+				}
+				loc += 1;
+		}
+		if (blocks != 3)
+		{
+			qWarning("INFO: ignoring invalid line in dirlist");
+		}
+		else
+		{
+			QString date(buffer.section(datebegin, loc - datebegin - 1).latin1());
+
+			int day_int = date.section( ' ', 1, 1 ).toInt();
+			int year_int = date.section( ' ', -1, -1 ).toInt();
+
+			if (day_int == 0) day_int = date.section( ' ', 1, 2 ).toInt();
+
+			if (year_int == 0)
+			{
+				year_int = QDate::currentDate().year();
+				if (month_int > QDate::currentDate().month()) year_int--;
+			}
+
+			unsigned int date_int = year_int * 10000 + month_int * 100 + day_int;
+
+			space = 0;
+			blocks = 0;
+			loc = datebegin;
+			while (loc > 0)
+			{
+				if (space)
+				{
+					if (buffer[loc] == ' ')
+					{
+						blocks++;
+						space = !space;
+					}
+				}
+				else
+				{
+					if (buffer[loc] != ' ')
+					{
+						if (blocks > 1)
+						{
+							sizebegin = loc + 1;
+							break;
+						}
+						space = !space;
+					}
+				}
+				loc--;
+			}
+
+			//off_t size = atol(buffer.section( sizebegin, datebegin - sizebegin).latin1());
+			off_t size = buffer.section(sizebegin, datebegin - sizebegin).toLongLong();
+			
+			filestring = "";
+			qWarning("buffer: %s", buffer.latin1());
+			buffer = buffer.simplifyWhiteSpace();
+			qWarning("simplified: %s", buffer.latin1());
+			qWarning("section: %s", buffer.section(" ", 2, 2).latin1());
+			filestring.append(buffer.section(fileloc, buffer.length() - fileloc));
+			if ((filestring != ".") && (filestring != ".."))
+			{
+				if ((*file == 'd') || (*file == 'D'))
+				{
+					KbFileInfo* di = new KbFileInfo(current, filestring, size, date, date_int);
+					//KbFileInfo di(current, filestring.latin1(), size, date.latin1(), date_int);
+					qWarning("%s dir found", filestring.latin1());
+					dirtable->push_back(di);
+				}
+				else if ((*file == 'l') || (*file == 'L'))
+				{
+					qWarning("INFO: links to files not supported yet");
+				}
+				else
+				{
+					KbFileInfo* fi = new KbFileInfo(current, filestring, size, date, date_int); 
+					qWarning("%s file found", filestring.latin1());
+					filetable->push_back(fi);
+				}
+			}
+		}
+	}
+	fclose(dirfile);
+	qWarning("%d files and %d dirs found", filetable->size(), dirtable->size());
+	return true;*/
 	int i, blocks, space, month_int = 1;
 	unsigned int loc, fileloc, datebegin, sizebegin = 0;
 	string buffer, filestring;
@@ -1180,7 +1339,7 @@ bool FtpThread::FormatFilelist(const char *filename, QString current, list<KbFil
 				if (month_int > QDate::currentDate().month()) year_int--;
 			}
 
-			uint date_int = year_int * 10000 + month_int * 100 + day_int;
+			unsigned int date_int = year_int * 10000 + month_int * 100 + day_int;
 
 			space = 0;
 			blocks = 0;
@@ -1210,7 +1369,7 @@ bool FtpThread::FormatFilelist(const char *filename, QString current, list<KbFil
 				loc--;
 			}
 
-			off_t size = atol(buffer.substr( sizebegin, datebegin - sizebegin).c_str());
+			off64_t size = atoll(buffer.substr( sizebegin, datebegin - sizebegin).c_str());
 			
 			filestring.erase();
 			filestring.append(buffer, fileloc, buffer.length() - fileloc);
@@ -1218,7 +1377,7 @@ bool FtpThread::FormatFilelist(const char *filename, QString current, list<KbFil
 			{
 				if ((*file == 'd') || (*file == 'D'))
 				{
-					KbFileInfo di(current, filestring.c_str(), size, date.latin1(), date_int);
+					KbFileInfo* di = new KbFileInfo(current, filestring.c_str(), size, date, date_int);
 					dirtable->push_back(di);
 				}
 				else if ((*file == 'l') || (*file == 'L'))
@@ -1227,7 +1386,7 @@ bool FtpThread::FormatFilelist(const char *filename, QString current, list<KbFil
 				}
 				else
 				{
-					KbFileInfo fi(current, filestring.c_str(), size, date.latin1(), date_int);
+					KbFileInfo* fi = new KbFileInfo(current, filestring.c_str(), size, date, date_int);
 					filetable->push_back(fi);
 				}
 			}
@@ -1243,8 +1402,8 @@ bool FtpThread::Scandir_recurse(KbDirInfo *dir, QString path)
 {	
 	char currentpath[1024];
 	int result;
-	list<KbFileInfo> dirlist;
-	list<KbFileInfo> filelist;
+	filist dirlist;
+	filist filelist;
 	QString dirname;
 		
 	result = mp_ftp->Pwd(currentpath, 1024);
@@ -1280,16 +1439,16 @@ bool FtpThread::Scandir_recurse(KbDirInfo *dir, QString path)
 	
 	QFile::remove(dirname);
 	
-	list<KbFileInfo>::iterator end_file = filelist.end();	
-	for(list<KbFileInfo>::iterator fiIterator = filelist.begin(); fiIterator != end_file; fiIterator++)
+	filist::iterator end_file = filelist.end();	
+	for(filist::iterator fiIterator = filelist.begin(); fiIterator != end_file; fiIterator++)
 	{
 		dir->AddFile(*fiIterator);
 	}
 	
-	list<KbFileInfo>::iterator end_dir = dirlist.end();
-	for(list<KbFileInfo>::iterator fiIterator = dirlist.begin(); fiIterator != end_dir; fiIterator++)
+	filist::iterator end_dir = dirlist.end();
+	for(filist::iterator fiIterator = dirlist.begin(); fiIterator != end_dir; fiIterator++)
 	{
-		KbDirInfo* newdir = dir->AddDirectory(*fiIterator);
+		KbDirInfo* newdir = dir->AddDirectory(**fiIterator);
 		if (!Scandir_recurse(newdir, path + '/' + newdir->fileName())) return false;
 	}
 		
@@ -1311,8 +1470,8 @@ bool FtpThread::Delete_recurse(QString name)
 {
 	char currentdir[1024];
 	int result;
-	list<KbFileInfo> dirlist;
-	list<KbFileInfo> filelist;
+	filist dirlist;
+	filist filelist;
 	QString dirname;
 	
 	result = mp_ftp->Pwd(currentdir, 1024);
@@ -1352,10 +1511,10 @@ bool FtpThread::Delete_recurse(QString name)
 	
 	QFile::remove(dirname);
 	
-	list<KbFileInfo>::iterator end_file = filelist.end();
-	for(list<KbFileInfo>::iterator fiIterator = filelist.begin(); fiIterator != end_file; fiIterator++)
+	filist::iterator end_file = filelist.end();
+	for(filist::iterator fiIterator = filelist.begin(); fiIterator != end_file; fiIterator++)
 	{
-		result = mp_ftp->Delete((*fiIterator).fileName().latin1());
+		result = mp_ftp->Delete((*fiIterator)->fileName().latin1());
 		if (!result) 
 		{
 			Event(EventHandler::misc_failure);
@@ -1364,10 +1523,10 @@ bool FtpThread::Delete_recurse(QString name)
 		else Event(EventHandler::misc_success);
 	}
 	
-	list<KbFileInfo>::iterator end_dir = dirlist.end();
-	for(list<KbFileInfo>::iterator fiIterator = dirlist.begin(); fiIterator != end_dir; fiIterator++)
+	filist::iterator end_dir = dirlist.end();
+	for(filist::iterator fiIterator = dirlist.begin(); fiIterator != end_dir; fiIterator++)
 	{
-		if (!Delete_recurse((*fiIterator).fileName())) return false;
+		if (!Delete_recurse((*fiIterator)->fileName())) return false;
 	}
 		
 	result = mp_ftp->Chdir(currentdir);
@@ -1398,8 +1557,8 @@ bool FtpThread::ConnectionLost()
 	QString response;
 	
 	response = mp_ftp->LastResponse();
-	
-	if (response.startsWith("421")) 
+
+	if (response.startsWith("421"))
 	{
 		ClearQueue();
 		return true;
@@ -1419,5 +1578,3 @@ void FtpThread::ClearQueue()
 	m_cache_vector.clear();
 	m_cache_list.clear();
 }
-	
-	

@@ -1,10 +1,9 @@
 [v 0.4.0.2]
 
--implement anti idle patches
--hammering
-
 [v 0.4.1]
 
+-implement anti idle patches
+-hammering
 -configurable timer
 -extend bookmarks
 -add waiting window

@@ -114,7 +114,7 @@ private:
 	
 public slots:
 	void SLOT_Log(QString log, bool out);
-	void SLOT_Xfered(off_t xfered, bool encrypted);
+	void SLOT_Xfered(off64_t xfered, bool encrypted);
 	void SLOT_ActionMenu(int i);
 	void SLOT_ConnectMenu(int i);
 	void SLOT_HeaderClicked(int section);
@@ -127,7 +127,7 @@ public slots:
 	void SLOT_Misc(bool success);
 	void SLOT_AuthTls(bool success);
 	void SLOT_EncryptData(bool success);
-	void SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInfo> filelist);
+	void SLOT_Dir(bool success, list<KbFileInfo*> dirlist, list<KbFileInfo*> filelist);
 	void SLOT_ConnectButton();
 	void SLOT_RefreshButton();
 	void SLOT_TransferButton();

@@ -35,14 +35,14 @@ public:
 	QString File() { return m_file; };
 	QString Path() { return m_path; };
 	QString Date() { return m_date; };
-	uint DateInt() { return m_date_int; };
-	off_t Size() { return m_size; };
+	unsigned int DateInt() { return m_date_int; };
+	off64_t Size() { return m_size; };
 		
 protected:
 	QString m_path;
 	QString m_date;
-	off_t m_size;
-	uint m_date_int;
+	off64_t m_size;
+	unsigned int m_date_int;
 	QString m_file;
 
 };

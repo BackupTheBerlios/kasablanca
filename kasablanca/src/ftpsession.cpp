@@ -10,6 +10,11 @@
 //
 //
 
+// enable > 2gb support (LFS)
+
+#define _LARGEFILE_SOURCE
+#define _LARGEFILE64_SOURCE 
+
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
@@ -76,7 +81,7 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_log(QString, bool)), SLOT(SLOT_Log(QString, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_connect(bool)), SLOT(SLOT_Connect(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
-	connect(mp_eventhandler, SIGNAL(ftp_xfered(off_t, bool)), SLOT(SLOT_Xfered(off_t, bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_xfered(off64_t, bool)), SLOT(SLOT_Xfered(off64_t, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_quit(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_chdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_raw(bool)), SLOT(SLOT_Misc(bool)));
@@ -89,8 +94,8 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_mkdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_rename(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_pwd(bool, QString)), SLOT(SLOT_Pwd(bool, QString)));
-	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<KbFileInfo>, list<KbFileInfo>)), 
-		SLOT(SLOT_Dir(bool, list<KbFileInfo>, list<KbFileInfo>)));
+	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<KbFileInfo*>, list<KbFileInfo*>)), 
+		SLOT(SLOT_Dir(bool, list<KbFileInfo*>, list<KbFileInfo*>)));
 	connect(mp_eventhandler, SIGNAL(ftp_encryptdata(bool)), SLOT(SLOT_EncryptData(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_finished()), SLOT(SLOT_Finish()));
 	connect(mp_eventhandler, SIGNAL(ftp_connectionlost()), SLOT(SLOT_ConnectionLost()));
@@ -124,7 +129,7 @@ void FtpSession::SLOT_Log(QString log, bool out)
 	else m_loglist.push_back(make_pair(log, false));
 }
 
-void FtpSession::SLOT_Xfered(off_t xfered, bool encrypted)
+void FtpSession::SLOT_Xfered(off64_t xfered, bool encrypted)
 {
 	//if (encrypted) mp_encryptionicon->setPixmap(m_iconencrypted);
 	//else mp_encryptionicon->setPixmap(m_iconunencrypted);	
@@ -395,6 +400,7 @@ void FtpSession::SLOT_ConnectButton()
 				FtpSession *dstsession = mp_currenttransfer->DstSession();
 			
 				mp_currenttransfer->Finish();
+				delete mp_currenttransfer;
 				if (srcsession->Connected()) srcsession->Abort();
 				if (dstsession->Connected()) dstsession->Abort();
 			}
@@ -485,8 +491,8 @@ void FtpSession::QueueItems()
 		QListViewItem *item = iit.current();
 		if (item->isSelected())
 		{
-			if (item->rtti() == KbItem::dir) dir->AddDirectory(KbFileInfo(static_cast<KbFile*>(item), "/"));
-			else if (item->rtti() == KbItem::file) dir->AddFile(KbFileInfo(static_cast<KbFile*>(item), "/"));
+			if (item->rtti() == KbItem::dir) dir->AddDirectory( KbFileInfo(static_cast<KbFile*>(item), "/"));
+			else if (item->rtti() == KbItem::file) dir->AddFile(new  KbFileInfo(static_cast<KbFile*>(item), "/"));
 			mp_browser->setSelected(item, false);
 		}
 		iit--;
@@ -587,7 +593,7 @@ void FtpSession::SLOT_ConnectionLost()
 	Disconnect();
 }
 
-void FtpSession::SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInfo> filelist)
+void FtpSession::SLOT_Dir(bool success, list<KbFileInfo*> dirlist, list<KbFileInfo*> filelist)
 {
 	PrintLog(success);
 	if (success)
@@ -597,13 +603,18 @@ void FtpSession::SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInf
 		dirup->setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));
 		dirup->setSelectable(false);	
 		
-		list<KbFileInfo>::iterator end_dir = dirlist.end();		
-		for (list<KbFileInfo>::iterator i = dirlist.begin(); i != end_dir; i++)
-			new KbDir(*i, mp_browser, mp_browser->lastItem());			
-		list<KbFileInfo>::iterator end_file = filelist.end();	
-		for (list<KbFileInfo>::iterator i = filelist.begin(); i != end_file; i++)
-			new KbFile(*i, mp_browser, mp_browser->lastItem());	
-			
+		list<KbFileInfo*>::iterator end_dir = dirlist.end();		
+		for (list<KbFileInfo*>::iterator i = dirlist.begin(); i != end_dir; i++)
+		{
+			new KbDir(**i, mp_browser, mp_browser->lastItem());			
+			//if (!KbConfig::dirCachingIsEnabled()) delete *i;
+		}	
+		list<KbFileInfo*>::iterator end_file = filelist.end();	
+		for (list<KbFileInfo*>::iterator i = filelist.begin(); i != end_file; i++)
+		{
+			new KbFile(**i, mp_browser, mp_browser->lastItem());	
+			//if (!KbConfig::dirCachingIsEnabled()) delete *i;
+		}	
 		SortItems();
 		if (KbConfig::hideHiddenFilesIsEnabled()) FilterHiddenFiles(true);
 		emit gui_update();
@@ -814,10 +825,10 @@ bool FtpSession::ScandirLocal(KbDirInfo *dir, QString path)
 	fit.atFirst();
 	while (fit.current())
 	{
-		KbFileInfo kfi(*fit.current());
-		kfi.SetDirPath(path);
+		KbFileInfo *kfi = new KbFileInfo(*fit.current());
+		kfi->SetDirPath(path);
 		dir->AddFile(kfi);
-		qWarning("file: path: %s file: %s", kfi.dirPath(true).latin1(), kfi.fileName().latin1());
+		qWarning("file: path: %s file: %s", kfi->dirPath(true).latin1(), kfi->fileName().latin1());
 		++fit;
 	}
 	
@@ -1093,7 +1104,7 @@ void FtpSession::FxpFile(KbTransferItem *item, filecheck fc)
 	bool result;
 	int srctls, dsttls, alternativefxp;
 	QString localfile, remotefile;
-	off_t offset;
+	off64_t offset;
 
 	remotefile = item->SrcFileInfo()->fileName();
 	localfile = mp_currenttransfer->DstSession()->WorkingDir() + '/' + item->DstFileInfo()->fileName();

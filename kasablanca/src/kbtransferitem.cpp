@@ -80,5 +80,4 @@ void KbTransferItem::Finish()
 	mp_dstsession->SetCurrentTransfer(NULL);
 	mp_srcsession->Free();
 	mp_dstsession->Free();
-	delete this;
 }
