@@ -31,7 +31,7 @@ KbTransferItem::KbTransferItem(QListView *taskview, QListViewItem *after, FtpSes
 	m_status = clear;
 	m_transfererror = false;
 	m_xfered = 0;
-	
+
 	setText(0, src->fileName());
 }
 
@@ -44,7 +44,7 @@ KbTransferItem::KbTransferItem(QListViewItem *root, QListViewItem *after, FtpSes
 	m_status = clear;
 	m_transfererror = false;
 	m_xfered = 0;
-	
+
 	setText(0, src->fileName());
 }
 

@@ -106,7 +106,7 @@ void BookmarkDialog::SLOT_ApplyEntry()
         return;
     }
 
-    if (!ApplyEntry(&m_bookmarks.at(n))) KMessageBox::error(0,"entry form not complete!");
+    if (!ApplyEntry(&m_bookmarks.at(n))) KMessageBox::error(0,i18n("entry form not complete!"));
     else
     {
         ui_->BookmarkListBox->clear();

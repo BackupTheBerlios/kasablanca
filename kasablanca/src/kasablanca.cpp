@@ -52,6 +52,7 @@
 #include "kbdirinfo.h"
 #include "ftpsession.h"
 #include "kbconfig.h"
+#include "kbtaskview.h"
 #include "kasablanca.h"
 
 using namespace std;

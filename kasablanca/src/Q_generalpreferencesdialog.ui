@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>656</width>
+            <width>680</width>
             <height>234</height>
         </rect>
     </property>
@@ -33,28 +33,7 @@
         <property name="resizeMode">
             <enum>Minimum</enum>
         </property>
-        <widget class="QTextEdit" row="0" column="0">
-            <property name="name">
-                <cstring>textEdit2</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;h3&gt;Help&lt;/h3&gt;
-&lt;b&gt;Skiplist&lt;/b&gt;: Here you can enter a Regular Expression. Transfer items which match this Regular Expression are skipped. For example a value of "^\." excludes every entry beginning with "." from transfer.&lt;br&gt;
-&lt;br&gt;
-&lt;b&gt;On queue finished&lt;/b&gt;: This field can hold an executable and its arguments which will be run, when last item of in queue has finished transferring. For Example, on KDE desktops the entry "dcop ksmserver ksmserver logout 0 0 0" would shutdown the computer automatically.&lt;br&gt;
-&lt;br&gt;
-&lt;b&gt;On file exists&lt;/b&gt;: These Radio Buttons indicate how the application should proceed if a file to be transfered already exists on the destination. Usually the user is asked by the application how to proceed if this occurs, in case you aren't present during the transfer you can enable this feature.&lt;br&gt;
-&lt;br&gt;
-&lt;b&gt;Correct pasv responses&lt;/b&gt;: When ftp servers are behind a router (NAT) they sometimes send wrong pasv responses containing their local IP. This option changes the IP value in pasv responses to the IP you connected to (most likely the servers router).</string>
-            </property>
-            <property name="wordWrap">
-                <enum>WidgetWidth</enum>
-            </property>
-            <property name="readOnly">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget" row="0" column="1">
+        <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
                 <cstring>layout4</cstring>
             </property>
@@ -231,6 +210,27 @@
                     </property>
                 </widget>
             </grid>
+        </widget>
+        <widget class="QTextEdit" row="0" column="1">
+            <property name="name">
+                <cstring>textEdit2</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;h3&gt;Help&lt;/h3&gt;
+&lt;b&gt;Skiplist&lt;/b&gt;: Here you can enter a Regular Expression. Transfer items which match this Regular Expression are skipped. For example a value of "^\." excludes every entry beginning with "." from transfer.&lt;br&gt;
+&lt;br&gt;
+&lt;b&gt;On queue finished&lt;/b&gt;: This field can hold an executable and its arguments which will be run, when last item of in queue has finished transferring. For Example, on KDE desktops the entry "dcop ksmserver ksmserver logout 0 0 0" would shutdown the computer automatically.&lt;br&gt;
+&lt;br&gt;
+&lt;b&gt;On file exists&lt;/b&gt;: These Radio Buttons indicate how the application should proceed if a file to be transfered already exists on the destination. Usually the user is asked by the application how to proceed if this occurs, in case you aren't present during the transfer you can enable this feature.&lt;br&gt;
+&lt;br&gt;
+&lt;b&gt;Correct pasv responses&lt;/b&gt;: When ftp servers are behind a router (NAT) they sometimes send wrong pasv responses containing their local IP. This option changes the IP value in pasv responses to the IP you connected to (most likely the servers router).</string>
+            </property>
+            <property name="wordWrap">
+                <enum>WidgetWidth</enum>
+            </property>
+            <property name="readOnly">
+                <bool>true</bool>
+            </property>
         </widget>
     </grid>
 </widget>

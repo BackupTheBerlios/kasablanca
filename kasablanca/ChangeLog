@@ -2,6 +2,8 @@
 
 -fixed bug when cancelling rename
 -added an option to correct wrong pasv replies
+-password is masked in log window
+-added drag and drop movement in queue
 
 [v 0.4 pre2]
 
