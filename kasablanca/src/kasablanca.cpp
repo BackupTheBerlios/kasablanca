@@ -2339,7 +2339,7 @@ void Kasablanca::SLOT_About()
 	d.setLogo(p);
 	d.setVersion(m_version);
 	d.setAuthor("Magnus Kulke", "sikor_sxe@radicalapproach.de", "http://kasablanca.berlios.de", ""); 
-	d.addContributor("mr x", "mrx@hotmail.com", "http://mrx.space.org", ""); 		
+	d.addContributor("Big Biff", "bigbiff@chunkyfilms.org", "http://kasablanca.berlios.de", ""); 		
 	d.exec();	
 }
 
