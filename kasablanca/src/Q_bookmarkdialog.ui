@@ -1,6 +1,6 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KasablancaBookmarkDialog</class>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>KasablancaBookmarkDialog</cstring>
     </property>
@@ -8,54 +8,26 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>522</width>
-            <height>312</height>
+            <width>510</width>
+            <height>247</height>
         </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
     </property>
     <property name="caption">
         <string>Bookmarks</string>
-    </property>
-    <property name="sizeGripEnabled">
-        <bool>false</bool>
-    </property>
-    <property name="modal">
-        <bool>true</bool>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>2</number>
-        </property>
-        <widget class="QLabel" row="4" column="3">
-            <property name="name">
-                <cstring>textLabel1_2_2_2</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;p align="right"&gt;Encryption&lt;/p&gt;</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="3">
-            <property name="name">
-                <cstring>textLabel1</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;p align="right"&gt;Name&lt;/p&gt;</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="5" column="3">
-            <property name="name">
-                <cstring>textLabel1_2_2_3</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;p align="right"&gt;Mode&lt;/p&gt;</string>
-            </property>
-        </widget>
-        <widget class="QComboBox" row="4" column="4" rowspan="1" colspan="2">
+        <widget class="QComboBox" row="4" column="4">
             <item>
                 <property name="text">
                     <string>Unencrypted</string>
@@ -83,7 +55,7 @@
                 <string>There are 4 encryption levels available. Unencrypted leaves all traffic clear and without encryption. Most ftp servers allow only this mode. Level 1 encryption means that the traffic on the control connection is encrypted while data transfer remains clear. Level 2 is basically the same with the exception of directory information which is transfered on the data channel, but is encrypted too. Eventually Level 3 encrypts everything all communication and all data traffic.</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="2" column="4" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="2" column="4">
             <property name="name">
                 <cstring>UserEdit</cstring>
             </property>
@@ -91,7 +63,127 @@
                 <string>The ftp Login Username. On open ftp servers you usually login using "anonymous".</string>
             </property>
         </widget>
-        <widget class="QComboBox" row="5" column="4" rowspan="1" colspan="2">
+        <widget class="QLabel" row="5" column="3">
+            <property name="name">
+                <cstring>textLabel1_2_2_3</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;p align="right"&gt;Mode&lt;/p&gt;</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="3" column="4">
+            <property name="name">
+                <cstring>PassEdit</cstring>
+            </property>
+            <property name="echoMode">
+                <enum>Password</enum>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>The user's password. Anonymous ftp servers ussually don't use passwords or accept passwords in the form of "user@emailaddress.com".</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="6" column="0">
+            <property name="name">
+                <cstring>NewButton</cstring>
+            </property>
+            <property name="text">
+                <string>New</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Add a new bookmark entry.</string>
+            </property>
+        </widget>
+        <spacer row="6" column="3" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>264</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel" row="2" column="3">
+            <property name="name">
+                <cstring>textLabel1_3</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;p align="right"&gt;Username&lt;/p&gt;</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="4">
+            <property name="name">
+                <cstring>InfoEdit</cstring>
+            </property>
+            <property name="inputMask">
+                <string></string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This information points to the the ftp server. HOST can either be a standard ip adress like 192.168.2.1 or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="6" column="2">
+            <property name="name">
+                <cstring>ApplyButton</cstring>
+            </property>
+            <property name="text">
+                <string>Apply</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Apply the changes to the bookmark entry.</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="3">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;p align="right"&gt;Host:Port&lt;/p&gt;</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="3">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;p align="right"&gt;Name&lt;/p&gt;</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="4">
+            <property name="name">
+                <cstring>NameEdit</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>The ftp's name is entered here.</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="4" column="3">
+            <property name="name">
+                <cstring>textLabel1_2_2_2</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;p align="right"&gt;Encryption&lt;/p&gt;</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="5" column="4">
             <item>
                 <property name="text">
                     <string>Active Mode</string>
@@ -117,49 +209,6 @@
                 <string>&lt;p align="right"&gt;Password&lt;/p&gt;</string>
             </property>
         </widget>
-        <widget class="QLabel" row="2" column="3">
-            <property name="name">
-                <cstring>textLabel1_3</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;p align="right"&gt;Username&lt;/p&gt;</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="1" column="4" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>InfoEdit</cstring>
-            </property>
-            <property name="inputMask">
-                <string></string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>This information points to the the ftp server. HOST can either be a standard ip adress like 192.168.2.1 or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="3">
-            <property name="name">
-                <cstring>textLabel1_2</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;p align="right"&gt;Host:Port&lt;/p&gt;</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="4" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>NameEdit</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>The ftp's name is entered here.</string>
-            </property>
-        </widget>
         <widget class="QListBox" row="0" column="0" rowspan="6" colspan="3">
             <property name="name">
                 <cstring>BookmarkListBox</cstring>
@@ -174,40 +223,7 @@
                 <string>Select the bookmark you want to edit.</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="3" column="4" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>PassEdit</cstring>
-            </property>
-            <property name="echoMode">
-                <enum>Password</enum>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>The user's password. Anonymous ftp servers ussually don't use passwords or accept passwords in the form of "user@emailaddress.com".</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="7" column="0">
-            <property name="name">
-                <cstring>NewButton</cstring>
-            </property>
-            <property name="text">
-                <string>New</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Add a new bookmark entry.</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="7" column="5">
-            <property name="name">
-                <cstring>DoneButton</cstring>
-            </property>
-            <property name="text">
-                <string>Done</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Accept changes and close the bookmark dialog.</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="7" column="1">
+        <widget class="QPushButton" row="6" column="1">
             <property name="name">
                 <cstring>RemoveButton</cstring>
             </property>
@@ -218,82 +234,8 @@
                 <string>Remove a bookmark entry.</string>
             </property>
         </widget>
-        <spacer row="7" column="3" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>160</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QPushButton" row="7" column="2">
-            <property name="name">
-                <cstring>ApplyButton</cstring>
-            </property>
-            <property name="text">
-                <string>Apply</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Apply the changes to the bookmark entry.</string>
-            </property>
-        </widget>
-        <widget class="Line" row="6" column="0" rowspan="1" colspan="6">
-            <property name="name">
-                <cstring>line1</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-        </widget>
     </grid>
 </widget>
-<connections>
-    <connection>
-        <sender>BookmarkListBox</sender>
-        <signal>highlighted(int)</signal>
-        <receiver>KasablancaBookmarkDialog</receiver>
-        <slot>SLOT_EntrySelected(int)</slot>
-    </connection>
-    <connection>
-        <sender>ApplyButton</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaBookmarkDialog</receiver>
-        <slot>SLOT_ApplyEntry()</slot>
-    </connection>
-    <connection>
-        <sender>NewButton</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaBookmarkDialog</receiver>
-        <slot>SLOT_NewEntry()</slot>
-    </connection>
-    <connection>
-        <sender>RemoveButton</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaBookmarkDialog</receiver>
-        <slot>SLOT_RemoveEntry()</slot>
-    </connection>
-    <connection>
-        <sender>DoneButton</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaBookmarkDialog</receiver>
-        <slot>SLOT_Done()</slot>
-    </connection>
-</connections>
 <tabstops>
     <tabstop>BookmarkListBox</tabstop>
     <tabstop>NameEdit</tabstop>
@@ -305,14 +247,6 @@
     <tabstop>NewButton</tabstop>
     <tabstop>RemoveButton</tabstop>
     <tabstop>ApplyButton</tabstop>
-    <tabstop>DoneButton</tabstop>
 </tabstops>
-<slots>
-    <slot>SLOT_EntrySelected(int i)</slot>
-    <slot>SLOT_ApplyEntry()</slot>
-    <slot>SLOT_NewEntry()</slot>
-    <slot>SLOT_RemoveEntry()</slot>
-    <slot>SLOT_Done()</slot>
-</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

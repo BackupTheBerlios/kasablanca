@@ -21,6 +21,8 @@
 #define BOOKMARKDIALOG_H
 
 #include <Q_bookmarkdialog.h>
+#include <kdialogbase.h>
+
 #include "siteinfo.h"
 #include "bookmarks.h"
 #include <vector>
@@ -28,26 +30,25 @@
 /**
 @author Magnus Kulke
 */
-class BookmarkDialog : public KasablancaBookmarkDialog
+class BookmarkDialog : public KDialogBase
 {
 Q_OBJECT
 public:
     BookmarkDialog(QWidget *parent = 0, const char *name = 0);
     ~BookmarkDialog();
 public slots:
-
-	void SLOT_Done();
-	void SLOT_EntrySelected(int n);
-	void SLOT_ApplyEntry();
-	void SLOT_NewEntry();
-	void SLOT_RemoveEntry();
+    void SLOT_EntrySelected(int n);
+    void SLOT_ApplyEntry();
+    void SLOT_NewEntry();
+    void SLOT_RemoveEntry();
 
 private:
-	int ApplyEntry(siteinfo * site);
-	void RefreshEntry(siteinfo site);
-	void EnableInput(bool b);
-	vector<siteinfo> m_bookmarks;
-        Bookmarks bookmarks;
+    int ApplyEntry(siteinfo * site);
+    void RefreshEntry(siteinfo site);
+    void EnableInput(bool b);
+    KasablancaBookmarkDialog* ui_;
+    vector<siteinfo> m_bookmarks;
+    Bookmarks bookmarks;
 };
 
 #endif
