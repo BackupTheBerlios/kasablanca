@@ -1,5 +1,6 @@
 [v 0.4.0.2]
 
+-changed: view of the transfered files
 -fixed: percentage counting bug
 -added: delete key shortcut bookmarks [r. stellingwerff]
 

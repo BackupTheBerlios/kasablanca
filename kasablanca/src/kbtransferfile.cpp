@@ -18,6 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
   
+#include <qpainter.h>
+#include <qcolor.h>
+  
 #include "kbstatustip.h"
 #include "kbsiteinfo.h"
 
@@ -28,6 +31,7 @@ KbTransferFile::KbTransferFile(QListView *taskview, QListViewItem *after, FtpSes
 	setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
 	m_time_old = -1;
 	m_xfered_old = 0;
+	m_percentage = 0;
 }
 
 KbTransferFile::KbTransferFile(QListViewItem *root, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst) : KbTransferItem(root, after, srcsession, dstsession, src, dst)
@@ -64,22 +68,33 @@ void KbTransferFile::ShowProgress(KbStatusTip *statustip)
 
 	off_t currentsize = (m_xfered + mp_dst->Size()) >> 10;
 	off_t wholesize = mp_src->Size() >> 10;
-	off_t percentage = ((currentsize * 100 ) / (wholesize + 1));
+	m_percentage = ((currentsize * 100 ) / (wholesize + 1));
 	int speed = xfer_dif / time_dif;
 	
-	setText(1, "[" + QString::number(currentsize) + "kb of " 
-		+ QString::number(wholesize) + "kb] [" + QString::number(percentage) 
-		+ "%] [" + QString::number(speed) + " kb/s]"
-	);
+	setText(1, QString::number(currentsize) + "kb of " + QString::number(wholesize) + "kb");
+	setText(2, QString::number(speed) + "kb/s");
 	
 	m_time_old = time;
 	m_xfered_old = m_xfered;
 	
 	statustip->ShowStatus(mp_src->fileName()
-		+ "," + QString::number(percentage) + "%d," + QString::number(speed) + "kb/s");
+		+ "," + QString::number(m_percentage) + "%d," + QString::number(speed) + "kb/s");
 	
 	//QToolTip::add(systemtray, mp_src->fileName() 
 	//+ "," + QString::number(percentage) + "%," + QString::number(speed) + "kb/s");
 }
 
+void KbTransferFile::paintCell( QPainter *painter, const QColorGroup &colorGroup, int column,
+		int width, int alignment )
+{
+	if ((column == 3) && (m_xfered_old != 0)) PaintPercentageBar (painter, width);
+	else QListViewItem::paintCell(painter, colorGroup, column, width, alignment);
+}
 
+void KbTransferFile::PaintPercentageBar(QPainter * painter, int width)
+{
+	int len = width * m_percentage / 100;
+	painter->fillRect(0, 0, width, height(), Qt::lightGray);
+	painter->fillRect(0, 0, len, height(), Qt::gray);
+	painter->drawText((width / 2) - 10, height() - 5, QString::number(m_percentage) + "%"); 
+}

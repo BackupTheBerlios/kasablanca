@@ -39,6 +39,10 @@ public:
 private:
 	int m_time_old;
 	off_t m_xfered_old;
+	int m_percentage;
+	virtual void paintCell( QPainter *painter, const QColorGroup &colorGroup, int column,
+		int width, int alignment );
+	void PaintPercentageBar(QPainter *painter, int width);
 };
 
 #endif
