@@ -83,7 +83,8 @@ public slots:
 	void SLOT_EnterCommandB();
 	void SLOT_EnterCwdA();
 	void SLOT_EnterCwdB();
-	void SLOT_DisconnectA();
+	void SLOT_ConnectA();
+	void SLOT_ConnectB();
 	void SLOT_EditBookmarks();
 	void SLOT_ConnectBookmark(int n);
 	void SLOT_ItemClickedA(QListViewItem * item);
@@ -101,6 +102,7 @@ public slots:
 	void SLOT_StartQueue();
 	void SkipTasks();
 	void SLOT_UpdateA();
+	void SLOT_UpdateB();
 	void SLOT_KbftpReadReady();
 	void SLOT_About();
 	void SLOT_RenameA();
@@ -108,6 +110,7 @@ public slots:
 	void SLOT_Quit();
 	void SLOT_DeleteA();
 	void SLOT_DeleteB();
+	void SLOT_ProcessExited(KProcess *proc);
 
 private:
 

@@ -59,9 +59,8 @@
 
 Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow(parent, name)
 {
-	KIconLoader * il;
-
-	il = KGlobal::iconLoader();
+	/* when the qmainwindow is closed the object gets deleted,
+	so the destructers of kbprocesses are called. */
 
 	setWFlags(WDestructiveClose);
 
@@ -83,20 +82,20 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 
 	mp_header_a = BrowserA->header();
 	mp_header_b = BrowserB->header();
-
-   ActionUpdateA->setIconSet(il->loadIconSet("reload_page",KIcon::Toolbar));
-   ActionDisconnectA->setIconSet(il->loadIconSet("exit",KIcon::Toolbar));
-   ActionTransferA->setIconSet(il->loadIconSet("forward",KIcon::Toolbar));
-   ActionTransferB->setIconSet(il->loadIconSet("back",KIcon::Toolbar));
-
-	TransferButtonA->setIconSet(il->loadIconSet("forward",KIcon::Toolbar));
-   TransferButtonB->setIconSet(il->loadIconSet("back",KIcon::Toolbar));
-	RefreshButtonA->setIconSet(il->loadIconSet("reload",KIcon::Toolbar));
-   RefreshButtonB->setIconSet(il->loadIconSet("reload",KIcon::Toolbar));
-	ConnectButtonA->setIconSet(il->loadIconSet("connect_no",KIcon::Toolbar));
-   ConnectButtonB->setIconSet(il->loadIconSet("connect_no",KIcon::Toolbar));
 	
-			
+	/* for now the right refresh button is always on
+	and the right connect button is always off. */
+	
+	RefreshButtonB->setEnabled(true);
+	ConnectButtonB->setEnabled(false);
+	
+	TransferButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("forward",KIcon::Toolbar));
+   TransferButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("back",KIcon::Toolbar));
+	RefreshButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
+   RefreshButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
+	ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
+   ConnectButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
+	
    m_rclickmenu_a.insertItem("Transfer", 1001);
    m_rclickmenu_a.insertItem("Queue", 1002);
    m_rclickmenu_a.insertSeparator();
@@ -129,10 +128,6 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 		SLOT (SLOT_ItemRightClickedA(QListViewItem *, const QPoint &, int )));
    connect( TaskView, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
 		SLOT (SLOT_ItemRightClickedT(QListViewItem *, const QPoint &, int )));
-   connect( ActionTransferA, SIGNAL (activated ()),this , SLOT(SLOT_TransferA()));
-   connect( ActionTransferB, SIGNAL (activated ()),this , SLOT(SLOT_TransferB()));
-	connect( TransferButtonA, SIGNAL (clicked ()),this , SLOT(SLOT_TransferA()));
-   connect( TransferButtonB, SIGNAL (clicked ()),this , SLOT(SLOT_TransferB()));
 	connect( mp_header_b, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderBClicked(int)));
 	connect( mp_header_a, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderAClicked(int)));
 
@@ -178,6 +173,20 @@ Kasablanca::~Kasablanca()
 {
 }
 
+void Kasablanca::SLOT_UpdateB()
+{
+	UpdateLocalDisplay();
+}
+
+void Kasablanca::SLOT_ProcessExited(KProcess *proc)
+{
+	qWarning("local process exited");	
+
+	delete proc;
+
+	UpdateLocalDisplay();
+}
+
 void Kasablanca::SLOT_ConnectCustom()
 {
    CustomConnectDialog dlg;
@@ -213,12 +222,11 @@ void Kasablanca::SetGuiStatus(State s)
 
 			BrowserA->setEnabled(true);
 			LogWindow->setColor(white);
-			ActionTransferA->setEnabled(false);
-			ActionTransferB->setEnabled(false);
 			TransferButtonA->setEnabled(false);
 			TransferButtonB->setEnabled(false);	
-			ActionDisconnectA->setEnabled(true);
-			ActionUpdateA->setEnabled(true);
+			ConnectButtonA->setEnabled(true);
+			ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
+			RefreshButtonA->setEnabled(true);
 			CommandLineA->setEnabled(true);
 			CwdLineA->setEnabled(true);
 			m_bookmarksmenu.setEnabled(false);
@@ -235,12 +243,11 @@ void Kasablanca::SetGuiStatus(State s)
 			while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
 			BrowserA->setEnabled(false);
 			LogWindow->setColor(white);
-			ActionTransferA->setEnabled(false);
-			ActionTransferB->setEnabled(false);
 			TransferButtonA->setEnabled(false);
 			TransferButtonB->setEnabled(false);
-			ActionDisconnectA->setEnabled(false);
-			ActionUpdateA->setEnabled(false);
+			ConnectButtonA->setEnabled(false);
+			ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
+			RefreshButtonA->setEnabled(false);
 			CommandLineA->setEnabled(false);
 			CwdLineA->setEnabled(false);
 			m_bookmarksmenu.setEnabled(true);
@@ -256,12 +263,11 @@ void Kasablanca::SetGuiStatus(State s)
 
 			BrowserA->setEnabled(false);
 			LogWindow->setColor(white);
-			ActionTransferA->setEnabled(false);
-			ActionTransferB->setEnabled(false);
 			TransferButtonA->setEnabled(false);
 			TransferButtonB->setEnabled(false);
-			ActionDisconnectA->setEnabled(true);
-			ActionUpdateA->setEnabled(false);
+			ConnectButtonA->setEnabled(true);
+			ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
+			RefreshButtonA->setEnabled(false);
 			CommandLineA->setEnabled(false);
 			CwdLineA->setEnabled(false);
 			m_bookmarksmenu.setEnabled(false);
@@ -322,7 +328,7 @@ void Kasablanca::SLOT_EnterCwdA()
 	UpdateRemote();
 }
 
-void Kasablanca::SLOT_DisconnectA()
+void Kasablanca::SLOT_ConnectA()
 {
 	if (m_status == occupied)
 	{
@@ -333,6 +339,11 @@ void Kasablanca::SLOT_DisconnectA()
 		LogWindow->append("killed ftp connection");
 	}
 	else m_proc.writeStdin("quit");
+}
+
+void Kasablanca::SLOT_ConnectB()
+{
+	return;
 }
 
 int Kasablanca::ParseBookmarks()
@@ -499,7 +510,7 @@ void Kasablanca::UpdateLocalDisplay()
 
 	CwdLineB->setText(m_currentlocaldir.absPath());
 
-	ActionTransferB->setEnabled(false);
+	TransferButtonB->setEnabled(false);
 }
 
 void Kasablanca::SLOT_ItemRightClickedB(QListViewItem * item, const QPoint & point, int col )
@@ -529,8 +540,11 @@ void Kasablanca::SkipTasks()
 
 void Kasablanca::SLOT_Quit()
 {
-	m_proc.tryTerminate();
-	m_proc.kill();
+	if (m_status != disconnected)
+	{
+		m_proc.writeStdin("quit");
+	}
+	else qApp->quit();
 }
 
 void Kasablanca::SLOT_DeleteB()
@@ -662,8 +676,12 @@ void Kasablanca::Xfer()
 		UpdateLocalDisplay();
 		return;
 	}
-	else TaskView->firstChild()->setSelectable(false);
-
+	else 
+	{
+		TaskView->firstChild()->setSelected(false);
+		TaskView->firstChild()->setSelectable(false);
+	}
+		
 	qWarning("item: %s", TaskView->firstChild()->text(0).latin1());
 
 	/* process first queue item */
@@ -933,7 +951,6 @@ void Kasablanca::SLOT_SelectionChanged()
 	m_rclickmenu_a.setItemEnabled(1001, flag);
 	m_rclickmenu_a.setItemEnabled(1002, flag);
 	m_rclickmenu_a.setItemEnabled(1004, (counter_a == 1));
-	ActionTransferA->setEnabled(flag);
 	TransferButtonA->setEnabled(flag);
 	
 	flag = ((counter_b != 0) && (m_status == connected));
@@ -941,7 +958,6 @@ void Kasablanca::SLOT_SelectionChanged()
 	m_rclickmenu_b.setItemEnabled(1001, flag);
 	m_rclickmenu_b.setItemEnabled(1002, flag);
 	m_rclickmenu_b.setItemEnabled(1004, (counter_b == 1));
-	ActionTransferB->setEnabled(flag);
 	TransferButtonB->setEnabled(flag);
 }
 
