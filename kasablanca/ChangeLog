@@ -1,6 +1,10 @@
 [v 0.4 pre2]
 
--added default color values
+-added default settings
+-added .moc files for translation
+-new settings on-queue-finished
+-settings can be enable or disabled now
+-on-file-exist setting added
 
 [v 0.4 pre1b]
 

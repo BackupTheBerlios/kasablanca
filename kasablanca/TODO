@@ -1,17 +1,18 @@
 [v 0.4 pre2]
 
+-add translations
 -make log colouring dependent on the answer code
--skip all files functionality
 -add alternative fxp
 -change speed count
 -check ftpthread code
 
 [v 0.4]
 
+-fix iterator.end() code
 -make queues saveable
 -alternative fxp
 -add resume to fxp
--get rid of this eventhandler stuff
+-get rid of eventhandler stuff
 -add waiting window
 -define standard directory in bookmarks
 -update FormatFileList(), make it use qt stuff instead of c
