@@ -555,14 +555,16 @@ void FtpSession::SLOT_Pwd(bool success, QString pwd)
 	}
 }
 
-void FtpSession::PrintLog(bool success)
+void FtpSession::PrintLog(bool)
 {
 	list<logentries>::iterator i;
 	for (i = m_loglist.begin(); i != m_loglist.end(); i++)
 	{
+		QString line = (*i).first;
+			
 		if ((*i).second == true)
 		{
-			if (success) mp_logwindow->setColor(m_colorsuccess);
+			if ((line.startsWith("1")) || (line.startsWith("2")) || (line.startsWith("3"))) mp_logwindow->setColor(m_colorsuccess);
 			else mp_logwindow->setColor(m_colorfailure);
 			mp_logwindow->append((*i).first);
 		}

@@ -1,5 +1,7 @@
 [v 0.4 pre2]
 
+-kb/s display now reflects the current speed rather than the speed over all the file
+-changed log colouring according to response codes
 -added default settings
 -added .pot file for translations
 -new settings on-queue-finished

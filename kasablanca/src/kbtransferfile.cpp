@@ -23,11 +23,15 @@
 KbTransferFile::KbTransferFile(QListView *taskview, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst) : KbTransferItem(taskview, after, srcsession, dstsession, src, dst)
 {
 	setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
+	m_time_old = -1;
+	m_xfered_old = 0;
 }
 
 KbTransferFile::KbTransferFile(QListViewItem *root, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst) : KbTransferItem(root, after, srcsession, dstsession, src, dst)
 {
 	setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
+	m_time_old = -1;
+	m_xfered_old = 0;
 }
 
 KbTransferFile::~KbTransferFile()
@@ -50,6 +54,8 @@ void KbTransferFile::Info()
 
 void KbTransferFile::ShowProgress()
 {
+	int time = m_time.elapsed();
+
 	setText(1, 
 		"[" +
 		QString::number((m_xfered + mp_dst->Size()) >> 10) +
@@ -58,9 +64,12 @@ void KbTransferFile::ShowProgress()
 		"kb] [" +
 		QString::number(((m_xfered + mp_dst->Size())* 100 ) / (mp_src->Size() + 1)) + 
 		"%] [" +
-		QString::number(m_xfered / (m_time.elapsed() + 1)) +
+		QString::number((m_xfered - m_xfered_old) / (time - m_time_old)) +
 		" kb/s]"
 	);
+	
+	m_time_old = time;
+	m_xfered_old = m_xfered;
 }
 
 
