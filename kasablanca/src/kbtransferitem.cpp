@@ -30,6 +30,7 @@ KbTransferItem::KbTransferItem(QListView *taskview, QListViewItem *after, FtpSes
 	mp_dst = dst;
 	m_status = clear;
 	m_transfererror = false;
+	m_xfered = 0;
 	
 	setText(0, src->fileName());
 }
@@ -42,6 +43,7 @@ KbTransferItem::KbTransferItem(QListViewItem *root, QListViewItem *after, FtpSes
 	mp_dst = dst;
 	m_status = clear;
 	m_transfererror = false;
+	m_xfered = 0;
 	
 	setText(0, src->fileName());
 }
@@ -56,10 +58,8 @@ void KbTransferItem::Info()
 {
 }
 
-void KbTransferItem::Xfered(unsigned long xfered)
+void KbTransferItem::ShowProgress()
 {
-	QString progress = QString::number(xfered) + "/" + QString::number(mp_src->Size());
-	setText(1, progress);
 }
 
 void KbTransferItem::Init()
@@ -72,15 +72,6 @@ void KbTransferItem::Init()
 	mp_dstsession->Occupy();
 	mp_srcsession->SetCurrentTransfer(this);
 	mp_dstsession->SetCurrentTransfer(this);	
-}
-
-void KbTransferItem::Abort()
-{
-	if (mp_srcsession->Connected()) mp_srcsession->SLOT_ConnectButton();
-	else mp_srcsession->Free();	
-	if (mp_dstsession->Connected()) mp_dstsession->SLOT_ConnectButton();
-	else mp_dstsession->Free();	
-	delete this;
 }
 
 void KbTransferItem::Finish()

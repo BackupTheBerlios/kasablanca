@@ -30,6 +30,13 @@ class FileExistsDialog : public KasablancaFileExistsDialog  {
 public: 
 	FileExistsDialog(QWidget *parent=0, const char *name=0);
 	~FileExistsDialog();
+	enum retval
+	{
+		skip = 0,
+		resume,
+		rename,
+		overwrite
+	};
 public slots:
     void Resume();
     void Overwrite();

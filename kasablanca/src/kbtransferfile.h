@@ -33,6 +33,7 @@ public:
     ~KbTransferFile();
 	int rtti() const;
 	void Info();
+	void ShowProgress();
 };
 
 #endif

@@ -34,6 +34,7 @@ public:
 	QString Date() { return m_date; };
 	uint DateInt() { return m_date_int; };
 	void SetDirPath(QString path); 
+	void SetSize(uint size) { m_size = size; };
 private:
    uint m_size;
 	uint m_date_int;

@@ -29,7 +29,9 @@
 #include <qevent.h>
 #include <qfile.h>
 #include <qtextstream.h>
+#include <qpushbutton.h>
 
+#include "fileexistsdialog.h"
 #include "customconnectdialog.h"
 #include "ftpthread.h"
 #include "eventhandler.h"
@@ -326,17 +328,17 @@ void FtpSession::SLOT_ConnectButton()
 
 	if (Occupied()) 
 	{
-		if (Connected())
+		if (mp_currenttransfer) qWarning("WARNING: aborting transfers not yet implemented");	
+		else if (Connected())
 		{
 			mp_logwindow->setColor(yellow);
 			mp_logwindow->append(i18n("Aborted ftp operation"));
-			SLOT_Finish();
-			Disconnect();
 			mp_ftpthread->terminate();
 			mp_ftpthread->wait(KB_THREAD_TIMEOUT);
 			mp_ftpthread->ClearQueue();
+			Disconnect();
+			Free();
 		}
-		else qWarning("WARNING: aborting transfers not yet implemented");
 	}
 	
 	/* when connected issue disconnect */
@@ -795,13 +797,69 @@ void FtpSession::ChangeDirectory(QString path)
 
 void FtpSession::SLOT_Transfer(bool success)
 {
-	qWarning("INFO: Transfer signal arrived: %d", success);
 	if (success) mp_currenttransfer->IncrementStatus();
-	else emit gui_succeedtransfer(mp_currenttransfer);
+	else mp_currenttransfer->Abort();
+}
+
+int FtpSession::CheckFile(KbTransferItem *item)
+{	
+	item->DstFileInfo()->SetSize(0);
+	QListViewItemIterator it(mp_browser);
+	
+	while (it.current())
+	{
+		if (it.current()->text(0) == item->DstFileInfo()->fileName()) 
+		{
+			FileExistsDialog dlg;
+			KbItem* kbi;
+			QString newname;
+			bool b;
+			
+			kbi = static_cast<KbItem*>(it.current());
+			item->DstFileInfo()->SetSize(kbi->Size());
+			if (kbi->rtti() == KbItem::dir)
+			{
+				dlg.ResumeButton->setEnabled(false);
+				dlg.OverwriteButton->setEnabled(false);
+			}
+			else if (kbi->rtti() == KbItem::file)
+			{
+				//qWarning("kbi: dst: %d, src: %d", item->DstFileInfo()->Size(), item->SrcFileInfo()->Size());
+				if (item->DstFileInfo()->Size() >= item->SrcFileInfo()->Size()) dlg.ResumeButton->setEnabled(false);
+			}
+			switch (dlg.exec())
+			{
+				case FileExistsDialog::overwrite:
+					return clear;
+					break;
+				case FileExistsDialog::resume:
+					return resume;
+					break;
+				case FileExistsDialog::rename:
+					#if KDE_IS_VERSION(3,2,0)
+					newname = KInputDialog::getText("Enter New Name", "Enter New Name:", kbi->File() + "_alt", &b);
+					#else
+					newname = KLineEditDlg::getText("Enter New Name:", kbi->File() + "_alt", &b);
+					#endif
+					if (!b) return skip;
+					else
+					{
+						item->DstFileInfo()->setFile(newname);
+						return CheckFile(item);
+					}
+					break;
+				case FileExistsDialog::skip:
+					return skip;
+					break;
+			}
+		}
+		it++;
+	}	
+	return clear;
 }
 
 void FtpSession::Transfer(KbTransferItem *item)
-{
+{	
 	if (item->Status() == KbTransferItem::clear)
 	{
 		item->Info();
@@ -849,17 +907,27 @@ void FtpSession::Transfer(KbTransferItem *item)
 		}
 		else if (item->rtti() == KbTransferItem::file)
 		{
-			if (item->SrcSession()->Connected()) 
+			filecheck result = static_cast<filecheck>(item->DstSession()->CheckFile(item));
+		
+			startTimer(200);
+			item->StartTimer();
+			
+			if (result == skip)
+			{
+				qWarning("INFO: skipped transfer");
+				item->IncrementStatus();
+			}
+			else if (item->SrcSession()->Connected()) 
 			{
 				if (item->DstSession()->Connected())
 				{
 					// FXP Copy
 				}
-				else item->SrcSession()->GetFile(item->SrcFileInfo()->fileName());
+				else item->SrcSession()->GetFile(item, result);
 			}
 			else
 			{
-				if (item->DstSession()->Connected()) item->DstSession()->PutFile(item->DstFileInfo()->fileName());	
+				if (item->DstSession()->Connected()) item->DstSession()->PutFile(item, result);	
 				else
 				{
 					if (CopyLocalFile(item) == false)
@@ -873,33 +941,48 @@ void FtpSession::Transfer(KbTransferItem *item)
 		}		
 	}
 	
-	if (item->Status() == KbTransferItem::done) emit gui_succeedtransfer(mp_currenttransfer);
+	if (item->Status() == KbTransferItem::done) 
+	{
+		killTimers();
+		emit gui_succeedtransfer(mp_currenttransfer);
+	}
 }
 
-void FtpSession::GetFile(QString file)
+void FtpSession::GetFile(KbTransferItem *item, filecheck fc)
 {
-	bool tls;
-	QString localfile;
+	bool tls, result;
+	QString localfile, remotefile;
 
-	localfile = mp_currenttransfer->DstSession()->WorkingDir() + '/' + file;
+	remotefile = item->SrcFileInfo()->fileName();
+	localfile = mp_currenttransfer->DstSession()->WorkingDir() + '/' + item->DstFileInfo()->fileName();
 	tls = (mp_siteinfo->GetTls() > 1);
 	
-	bool result = mp_ftpthread->Transfer_Get(file, localfile, tls);
+	if (fc == resume) result = mp_ftpthread->Transfer_Get(remotefile, localfile, tls, item->DstFileInfo()->Size());
+	else result = mp_ftpthread->Transfer_Get(remotefile, localfile, tls);
+	
 	if (result) mp_ftpthread->start();
 	else qWarning("ERROR: thread error, thread was still busy.");
 }
 
-void FtpSession::PutFile(QString file)
+void FtpSession::PutFile(KbTransferItem *item, filecheck fc)
 {
-	bool tls;
-	QString localfile;
+	bool tls, result;
+	QString localfile, remotefile;
 
-	localfile = mp_currenttransfer->SrcSession()->WorkingDir() + '/' + file;
+	remotefile = item->SrcFileInfo()->fileName();
+	localfile = mp_currenttransfer->SrcSession()->WorkingDir() + '/' + item->DstFileInfo()->fileName();
 	tls = (mp_siteinfo->GetTls() > 1);
 	
-	bool result = mp_ftpthread->Transfer_Put(localfile, file, tls);
+	if (fc == resume) result = mp_ftpthread->Transfer_Put(localfile, remotefile, tls, item->DstFileInfo()->Size());
+	else result = mp_ftpthread->Transfer_Put(localfile, remotefile, tls);
+	
 	if (result) mp_ftpthread->start();
 	else qWarning("ERROR: thread error, thread was still busy.");
+}
+
+void FtpSession::timerEvent(QTimerEvent*)
+{
+	if (mp_currenttransfer) mp_currenttransfer->ShowProgress();
 }
 
 #include "ftpsession.moc"

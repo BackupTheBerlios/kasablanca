@@ -25,20 +25,20 @@ FileExistsDialog::~FileExistsDialog(){
 
 void FileExistsDialog::Overwrite()
 {
-    done(0);
+    done(overwrite);
 }
 
 void FileExistsDialog::Resume()
 {
-    done(1);
+    done(resume);
 }
 
 void FileExistsDialog::Skip()
 {
-    done(3);
+    done(skip);
 }
 
 void FileExistsDialog::Rename()
 {
-    done(4);
+    done(rename);
 }

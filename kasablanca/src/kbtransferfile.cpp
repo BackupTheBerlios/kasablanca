@@ -48,4 +48,19 @@ void KbTransferFile::Info()
 	qWarning("INFO: mp_dst->dirPath() = %s", mp_dst->dirPath(true).latin1());
 }
 
+void KbTransferFile::ShowProgress()
+{
+	setText(1, 
+		"[" +
+		QString::number((m_xfered + mp_dst->Size()) >> 10) +
+		"kb of " +
+		QString::number(mp_src->Size() >> 10) +
+		"kb] [" +
+		QString::number(((m_xfered + mp_dst->Size())* 100 ) / (mp_src->Size() + 1)) + 
+		"%] [" +
+		QString::number(m_xfered / (m_time.elapsed() + 1)) +
+		" kb/s]"
+	);
+}
+
 

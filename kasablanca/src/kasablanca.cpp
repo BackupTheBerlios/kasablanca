@@ -407,7 +407,11 @@ int Kasablanca::initBookmarks()
 void Kasablanca::SLOT_QueueItems(KbDirInfo *dir, FtpSession* src, FtpSession* dst, bool startqueue)
 {
 	QueueItemsRecurse(dir, src, dst);
-	if ((mp_view->TaskView->firstChild()) && (startqueue)) static_cast<KbTransferItem*>(mp_view->TaskView->firstChild())->Init();
+	if ((mp_view->TaskView->firstChild()) && (startqueue)) 
+	{
+		if (!src->Connected()) ProcessQueue(static_cast<KbTransferItem*>(mp_view->TaskView->firstChild()));
+		else static_cast<KbTransferItem*>(mp_view->TaskView->firstChild())->Init();
+	}
 }
 
 void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* dst, QListViewItem* parent)
@@ -515,25 +519,7 @@ void Kasablanca::SLOT_SelectionChanged()
 	m_rclickmenu_b.setItemEnabled(Delete, (counter_b >= 1));
 }
 
-void Kasablanca::timerEvent(QTimerEvent*)
-{
-	/*
-	if (!mp_view->TaskView->firstChild()) return;
-	else mp_view->TaskView->firstChild()->setText(1, 
-		"[" +
-		QString::number((m_xfered + m_xferresumesize) >> 10) +
-		"kb of " +
-		QString::number(m_xferallsize >> 10) +
-		"kb] [" +
-		QString::number(((m_xfered + m_xferresumesize)* 100 ) / (m_xferallsize + 1)) + 
-		"%] [" +
-		QString::number(m_xfered / (m_time.elapsed() + 1)) +
-		" kb/s]"
-	);
-	*/
-}
-
-void Kasablanca::SLOT_NextTransfer(QListViewItem* item)
+/*void Kasablanca::SLOT_NextTransfer(QListViewItem* item)
 {
 	FtpSession *src, *dst;
 	QListViewItem *parent, *next;
@@ -553,6 +539,38 @@ void Kasablanca::SLOT_NextTransfer(QListViewItem* item)
 		}			
 	}
 	else ProcessQueue(static_cast<KbTransferItem*>(item->firstChild()));	
+}*/
+
+void Kasablanca::SLOT_NextTransfer(QListViewItem* item)
+{
+	QListViewItem *next;
+	next = NextTransfer(item);
+	if (next) ProcessQueue(static_cast<KbTransferItem*>(next));	
+}
+
+QListViewItem* Kasablanca::NextTransfer(QListViewItem* item)
+{
+	FtpSession *src, *dst;
+	QListViewItem *parent, *next, *retval;
+	src = static_cast<KbTransferItem*>(item)->SrcSession();
+	dst = static_cast<KbTransferItem*>(item)->DstSession();
+	next = item->nextSibling();
+	parent = item->parent();
+	retval = NULL;
+	if (item->childCount() == 0) // if the item contains no subelements - delete it, if it doesn't - start with the next
+	{
+		static_cast<KbTransferItem*>(item)->Finish();
+		if (next) retval = next; //ProcessQueue(static_cast<KbTransferItem*>(next));
+		else if (parent) retval = NextTransfer(parent);
+		else 
+		{
+			src->SLOT_RefreshButton();
+			dst->SLOT_RefreshButton();
+		}			
+	}
+	else retval = item->firstChild(); //ProcessQueue(static_cast<KbTransferItem*>(item->firstChild()));		
+	
+	return retval;	
 }
 
 // called from menu

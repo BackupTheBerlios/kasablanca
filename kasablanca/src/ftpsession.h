@@ -48,6 +48,13 @@ class FtpSession : public QObject
 {
 Q_OBJECT
 public:
+	enum filecheck
+	{
+		skip = 0,
+		clear,
+		resume
+	};
+public:
 	FtpSession(QObject *parent = 0, const char *name = 0);
 	~FtpSession();
 	void SetLogWindow(QTextEdit* logwindow) { mp_logwindow = logwindow; };
@@ -71,7 +78,7 @@ public:
 	void Free();
 	QString WorkingDir();
  	void Transfer(KbTransferItem *item);
-	
+	int CheckFile(KbTransferItem *item);
 private:
 	FtpThread *mp_ftpthread;
 	EventHandler *mp_eventhandler;
@@ -123,14 +130,15 @@ private:
 	void RefreshBrowser();
 	void UpdateLocal(QString cwd = "");
 	void RmdirLocal(QString dir);
-	void GetFile(QString file);
-	void PutFile(QString file);
+	void GetFile(KbTransferItem *item, filecheck fc);
+	void PutFile(KbTransferItem *item, filecheck fc);
 	void ChangeDirectory(QString path);
 	bool CheckLocalDirectory(QString path);
 	bool MakeLocalDirectory(QString path);
 	bool CopyLocalFile(KbTransferItem* item);
 	bool ScandirLocal(KbDirInfo *dir, QString path);
 	void MakeDirectory(QString dir);
+	void timerEvent(QTimerEvent*);
 signals:
 	void gui_update();
 	void gui_queueitems(KbDirInfo* dir, FtpSession* src, FtpSession* dst, bool startqueue);

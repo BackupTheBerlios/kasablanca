@@ -46,16 +46,18 @@ public:
    ~KbTransferItem();
 
 	virtual void Info();
-	void Abort();
+	virtual void ShowProgress();
 	void Finish();
 	void IncrementStatus() { m_status = m_status + 1; };
 	void Init();
-	void Xfered(unsigned long xfered);
+	void Xfered(unsigned long xfered) { m_xfered = xfered; };
+	void StartTimer() { m_time.start(); };
 	FtpSession* SrcSession() { return mp_srcsession; };
 	KbFileInfo* SrcFileInfo() { return mp_src; };
 	FtpSession* DstSession() { return mp_dstsession; };
 	KbFileInfo* DstFileInfo() { return mp_dst; };
 	int Status() { return m_status; };
+	void Abort() { m_status = done; };
 	enum status
 	{
 		clear = 0,
@@ -68,6 +70,8 @@ protected:
 	KbFileInfo *mp_src, *mp_dst;
 	int m_status;
 	bool m_transfererror;
+	unsigned long m_xfered;
+	QTime m_time;
 };
 
 #endif
