@@ -5,6 +5,7 @@
 -fixed problem with no remote directory appearing
 -fixed flickering when queuing items
 -speed improvements for handling large directories 
+-fixed bookmark handling
 -kb/s display now reflects the current speed rather than the speed over all the file
 -changed log colouring according to response codes
 -added reasonable default settings

@@ -569,8 +569,8 @@ void FtpSession::PrintLog(bool)
 			
 		if ((*i).second == true)
 		{
-			if ((line.startsWith("1")) || (line.startsWith("2")) || (line.startsWith("3"))) mp_logwindow->setColor(m_colorsuccess);
-			else mp_logwindow->setColor(m_colorfailure);
+			if ((line.startsWith("4")) || (line.startsWith("5"))) mp_logwindow->setColor(m_colorfailure);
+			else mp_logwindow->setColor(m_colorsuccess);
 			mp_logwindow->append((*i).first);
 		}
 		else

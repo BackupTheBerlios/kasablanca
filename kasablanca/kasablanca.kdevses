@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="13" >
+ <DocsAndViews NumberOfDocuments="15" >
   <Doc0 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kasablanca.cpp" >
    <View0 line="545" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
@@ -9,7 +9,7 @@
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferitem.h" >
    <View0 line="59" Type="???" >
-    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+    <AdditionalSettings Top="2" Width="1199" Attach="1" Height="763" Left="2" MinMaxMode="0" />
    </View0>
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferitem.cpp" >
@@ -28,22 +28,22 @@
    </View0>
   </Doc4>
   <Doc5 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferfile.cpp" >
-   <View0 line="48" Type="???" >
-    <AdditionalSettings Top="2" Width="1199" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+   <View0 line="70" Type="???" >
+    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc5>
   <Doc6 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/ftpsession.cpp" >
-   <View0 line="401" Type="???" >
+   <View0 line="247" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc6>
   <Doc7 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/ChangeLog" >
-   <View0 line="9" Type="???" >
+   <View0 line="32" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc7>
   <Doc8 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/ftpthread.cpp" >
-   <View0 line="715" Type="???" >
+   <View0 line="774" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc8>
@@ -59,14 +59,24 @@
   </Doc10>
   <Doc11 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/bookmarks.h" >
    <View0 line="29" Type="???" >
-    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+    <AdditionalSettings Top="2" Width="1199" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc11>
   <Doc12 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/bookmarkdialog.h" >
    <View0 line="37" Type="???" >
-    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+    <AdditionalSettings Top="2" Width="1199" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc12>
+  <Doc13 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/ftplib.cpp" >
+   <View0 line="1386" Type="???" >
+    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+   </View0>
+  </Doc13>
+  <Doc14 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/ftplib.h" >
+   <View0 line="117" Type="???" >
+    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+   </View0>
+  </Doc14>
  </DocsAndViews>
  <pluginList>
   <kdevvalgrind>
