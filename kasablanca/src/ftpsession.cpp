@@ -260,6 +260,7 @@ void FtpSession::SLOT_ConnectMenu(int i)
 			KMessageBox::error(0,i18n("That site information is not legit."));
 			return;
 		}
+		mp_siteinfo->SetName("");
 	}
 	else 
 	{
@@ -623,7 +624,11 @@ void FtpSession::Occupy()
 	mp_cmdline->setEnabled(false);
 	mp_cwdline->setEnabled(false);
 	mp_refreshbutton->setEnabled(false);
-	if (m_connected) mp_statusline->setText(mp_siteinfo->GetName() + i18n(" is occupied"));
+	if (m_connected) 
+	{
+		if (QString(mp_siteinfo->GetName()) == "") mp_statusline->setText(mp_siteinfo->GetInfo() + i18n(" is occupied"));
+		else mp_statusline->setText(mp_siteinfo->GetName() + i18n(" is occupied"));
+	}
 	else mp_statusline->setText("Local " + i18n(" is occupied"));
 	m_occupied = true;
 	emit gui_update();
@@ -638,7 +643,11 @@ void FtpSession::Free()
 	mp_cmdline->setEnabled(true);
 	mp_cwdline->setEnabled(true);
 	mp_refreshbutton->setEnabled(true);
-	if (m_connected) mp_statusline->setText(i18n("Connected to ") + mp_siteinfo->GetName());
+	if (m_connected) 
+	{
+		if (QString(mp_siteinfo->GetName()) == "") mp_statusline->setText(i18n("Connected to ") + mp_siteinfo->GetInfo());
+		else mp_statusline->setText(i18n("Connected to ") + mp_siteinfo->GetName());
+	}
 	else mp_statusline->setText(i18n("Disconnected"));	
 	if ((mp_siteinfo->GetTls() > 0) && (m_connected)) mp_encryptionicon->setPixmap(m_iconencrypted);
 	else mp_encryptionicon->setPixmap(m_iconunencrypted);	
