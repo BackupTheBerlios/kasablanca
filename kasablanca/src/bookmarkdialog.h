@@ -41,11 +41,13 @@ public slots:
     void SLOT_ApplyEntry();
     void SLOT_NewEntry();
     void SLOT_RemoveEntry();
+    void slotOk();
 
 private:
     int ApplyEntry(siteinfo * site);
     void RefreshEntry(siteinfo site);
     void EnableInput(bool b);
+    void clearInput();
     KasablancaBookmarkDialog* ui_;
     vector<siteinfo> m_bookmarks;
     Bookmarks bookmarks;

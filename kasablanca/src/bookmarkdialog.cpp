@@ -56,6 +56,8 @@ BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
         RefreshEntry(m_bookmarks.at(0));
     }
 
+    ui_->ApplyButton->setEnabled(false);
+
     // Connect all the slots
     connect(ui_->BookmarkListBox, SIGNAL(highlighted(int)), SLOT(SLOT_EntrySelected(int)));
     connect(ui_->ApplyButton, SIGNAL(clicked()), SLOT(SLOT_ApplyEntry()));
@@ -74,11 +76,25 @@ void BookmarkDialog::SLOT_EntrySelected(int n)
     RefreshEntry(m_bookmarks.at(n));
 }
 
+void BookmarkDialog::slotOk()
+{
+    bookmarks.setBookmarks(m_bookmarks);
+    accept();
+}
+
 void BookmarkDialog::SLOT_ApplyEntry()
 {
     // should not be available on empty list
 
     int n = ui_->BookmarkListBox->currentItem();
+    
+    if(n < 0)
+    {
+        bookmarks.setBookmarks(m_bookmarks);
+        ui_->ApplyButton->setEnabled(false);
+        
+        return;
+    }
 
     if (!ApplyEntry(&m_bookmarks.at(n))) KMessageBox::error(0,"entry form not complete!");
     else
@@ -91,6 +107,9 @@ void BookmarkDialog::SLOT_ApplyEntry()
         
         ui_->BookmarkListBox->setSelected(n, true);
     }
+
+    bookmarks.setBookmarks(m_bookmarks);
+    ui_->ApplyButton->setEnabled(false);
 }
 
 void BookmarkDialog::SLOT_NewEntry()
@@ -98,6 +117,7 @@ void BookmarkDialog::SLOT_NewEntry()
     int n = m_bookmarks.size();
 
     EnableInput(true);
+    ui_->ApplyButton->setEnabled(true);
 
     siteinfo newsite;
     newsite.SetName("New Site");
@@ -116,31 +136,34 @@ void BookmarkDialog::SLOT_NewEntry()
 void BookmarkDialog::SLOT_RemoveEntry()
 {
     int n = ui_->BookmarkListBox->currentItem();
-
+    
     vector<siteinfo>::iterator deleteIterator;
     deleteIterator = m_bookmarks.begin();
     for (int i = 0; i < n; i++) deleteIterator++;
     m_bookmarks.erase(deleteIterator);
 
     ui_->BookmarkListBox->clear();
+    
     for (int i = 0; i < static_cast<int>(m_bookmarks.size()); i++)
     {
         ui_->BookmarkListBox->insertItem(m_bookmarks.at(i).GetName(),i);
     }
-
-    if (m_bookmarks.empty()) EnableInput(false);
+    
+    if (m_bookmarks.empty())
+    {
+        clearInput();
+        EnableInput(false);
+    }
     else
     {
         EnableInput(true);
         ui_->BookmarkListBox->setSelected(0, true);
         RefreshEntry(m_bookmarks.at(0));
     }
+
+    ui_->ApplyButton->setEnabled(true);
 }
 
-
-/*!
-    \fn BookmarkDialog::RefreshEntry()
- */
 void BookmarkDialog::RefreshEntry(siteinfo site)
 {
     ui_->NameEdit->setText(site.GetName());
@@ -160,7 +183,16 @@ void BookmarkDialog::EnableInput(bool b)
     ui_->EncryptionComboBox->setEnabled(b);
     ui_->ModeComboBox->setEnabled(b);
     ui_->RemoveButton->setEnabled(b);
-    ui_->ApplyButton->setEnabled(b);
+}
+
+void BookmarkDialog::clearInput()
+{
+    ui_->NameEdit->clear();
+    ui_->UserEdit->clear();
+    ui_->PassEdit->clear();
+    ui_->InfoEdit->clear();
+    ui_->EncryptionComboBox->clear();
+    ui_->ModeComboBox->clear();
 }
 
 int BookmarkDialog::ApplyEntry(siteinfo * site)
