@@ -173,7 +173,7 @@ bool FtpThread::Transfer_Get(QString src, QString dst, int tls, unsigned long re
 
 /* fxp file */
 
-bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int srctls, int dsttls, unsigned long resume)
+bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int srctls, int dsttls, unsigned long resume, int alt)
 {
 	if (running()) return false;
 	else
@@ -183,7 +183,8 @@ bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int sr
 		m_ftplist.append(dstftp);
 		m_intlist.append(srctls);
 		m_intlist.append(dsttls);
-		m_ulonglist.append(resume);	
+		m_ulonglist.append(resume);
+		m_intlist.append(alt);	
 		m_tasklist.append(FtpThread::transfer_fxp);
 		return true;
 	}
@@ -702,6 +703,7 @@ void FtpThread::Quit_thread()
 void FtpThread::Transfer_Fxp_thread()
 {
 	int result = 0;
+	ftplib::ftp method;
 	
 	QString src = m_stringlist.front();
 	m_stringlist.pop_front();
@@ -715,6 +717,8 @@ void FtpThread::Transfer_Fxp_thread()
 	m_intlist.pop_front();
 	unsigned long resume = m_ulonglist.front();
 	m_ulonglist.pop_front();
+	int alt = m_intlist.front();
+	m_intlist.pop_front();
 	
 	if (srctls > 1)
 	{
@@ -734,10 +738,13 @@ void FtpThread::Transfer_Fxp_thread()
 		}
 	}
 	
-	if (resume) qWarning("WARNING: fxp resume isn't supported. overwriting file instead");
-	result == ftplib::Fxp(mp_ftp, dstftp->Ftp(), src, dst, ftplib::image, ftplib::defaultfxp);
+	if (alt) method = ftplib::alternativefxp;
+	else method = ftplib::defaultfxp;
 	
-	if (result == -1) qWarning("evil result!");
+	qWarning("bla_thread: %d", alt);
+	
+	if (resume) qWarning("WARNING: fxp resume isn't supported. overwriting file instead");
+	result == ftplib::Fxp(mp_ftp, dstftp->Ftp(), src, dst, ftplib::image, method);
 	
 	FxpReportResult(result);
 	dstftp->FxpReportResult(result);

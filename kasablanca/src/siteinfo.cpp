@@ -23,6 +23,7 @@
 
 siteinfo::siteinfo() 
 {
+	m_alternativefxp = 0;
     mp_dir = NULL;
     mp_info = NULL;
 }
@@ -135,6 +136,8 @@ void siteinfo::Clear()
 	m_dir = "";
 	m_pasv = 0;
 	m_tls = 0;
+	m_alternativefxp = 0;
+	m_defaultdirectory = "";
 }
 
 void siteinfo::setIsGroup(bool g)

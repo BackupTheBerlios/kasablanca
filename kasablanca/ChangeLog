@@ -1,5 +1,8 @@
 [v 0.4 pre3]
 
+-default directory for bookmarks
+-define standard directory in bookmarks
+-support alternative fxp
 -added systray support [bochi]
 -added drag and drop movement in queue
 -password is masked in log window

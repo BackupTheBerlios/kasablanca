@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>630</width>
-            <height>282</height>
+            <width>865</width>
+            <height>301</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -26,6 +26,9 @@
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>2</number>
         </property>
         <widget class="KPushButton" row="1" column="0">
             <property name="name">
@@ -89,6 +92,9 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
+                    <property name="margin">
+                        <number>2</number>
+                    </property>
                     <widget class="KComboBox" row="4" column="1">
                         <item>
                             <property name="text">
@@ -117,95 +123,6 @@
                             <string>There are 4 encryption levels available. Unencrypted leaves all traffic clear and without encryption. Most ftp servers allow only this mode. Level 1 encryption means that the traffic on the control connection is encrypted while data transfer remains clear. Level 2 is basically the same with the exception of directory information which is transfered on the data channel, but is encrypted too. Eventually Level 3 encrypts everything all communication and all data traffic.</string>
                         </property>
                     </widget>
-                    <widget class="KLineEdit" row="2" column="1">
-                        <property name="name">
-                            <cstring>UserEdit</cstring>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The ftp Login Username. On open ftp servers you usually login using "anonymous".</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="5" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_2_2_3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p align="right"&gt;Mode&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="KLineEdit" row="3" column="1">
-                        <property name="name">
-                            <cstring>PassEdit</cstring>
-                        </property>
-                        <property name="echoMode">
-                            <enum>Password</enum>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The user's password. Anonymous ftp servers ussually don't use passwords or accept passwords in the form of "user@emailaddress.com".</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="2" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p align="right"&gt;Username&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="KLineEdit" row="1" column="1">
-                        <property name="name">
-                            <cstring>InfoEdit</cstring>
-                        </property>
-                        <property name="inputMask">
-                            <string></string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>This information points to the the ftp server. HOST can either be a standard ip adress like 192.168.2.1 or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p align="right"&gt;Host:Port&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="KLineEdit" row="0" column="1">
-                        <property name="name">
-                            <cstring>NameEdit</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The ftp's name is entered here.</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>textLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p align="right"&gt;Name&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="4" column="0">
-                        <property name="name">
-                            <cstring>textLabel1_2_2_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p align="right"&gt;Encryption&lt;/p&gt;</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string></string>
-                        </property>
-                    </widget>
                     <widget class="KComboBox" row="5" column="1">
                         <item>
                             <property name="text">
@@ -224,12 +141,101 @@
                             <string>The mode you are using for data transfer. This is quite important in case you're behind a firewall or a router. In these cases you depend on the passive mode, which makes the client connects to the ftp server for data transfer. Passive mode is the standard method today, while active mode is the old way to do data transfers, the client listens for the server to connect in active mode.</string>
                         </property>
                     </widget>
+                    <widget class="KLineEdit" row="3" column="1">
+                        <property name="name">
+                            <cstring>PassEdit</cstring>
+                        </property>
+                        <property name="echoMode">
+                            <enum>Password</enum>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The user's password. Anonymous ftp servers ussually don't use passwords or accept passwords in the form of "user@emailaddress.com".</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="2" column="1">
+                        <property name="name">
+                            <cstring>UserEdit</cstring>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The ftp Login Username. On open ftp servers you usually login using "anonymous".</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>InfoEdit</cstring>
+                        </property>
+                        <property name="inputMask">
+                            <string></string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This information points to the the ftp server. HOST can either be a standard ip adress like 192.168.2.1 or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="0" column="1">
+                        <property name="name">
+                            <cstring>NameEdit</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The ftp's name is entered here.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Username:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Name:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2_2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Encryption:</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Host:Port:</string>
+                        </property>
+                    </widget>
                     <widget class="QLabel" row="3" column="0">
                         <property name="name">
                             <cstring>textLabel1_2_2</cstring>
                         </property>
                         <property name="text">
-                            <string>&lt;p align="right"&gt;Password&lt;/p&gt;</string>
+                            <string>Password:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="5" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2_2_3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Mode:</string>
                         </property>
                     </widget>
                 </grid>
@@ -241,10 +247,94 @@
                 <attribute name="title">
                     <string>Advanced</string>
                 </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>2</number>
+                    </property>
+                    <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>DefaultDirectoryEdit</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Default directory:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Alternative fxp:</string>
+                        </property>
+                    </widget>
+                    <spacer row="1" column="2">
+                        <property name="name">
+                            <cstring>spacer8</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>120</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QCheckBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>AlternativeFxpCheckBox</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Enabled</string>
+                        </property>
+                    </widget>
+                </grid>
             </widget>
+        </widget>
+        <widget class="QTextEdit" row="0" column="4" rowspan="2" colspan="1">
+            <property name="name">
+                <cstring>textEdit2</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;h3&gt;Help&lt;/h3&gt;
+&lt;b&gt;Name&lt;/b&gt;: The ftp's name is entered here.&lt;br/&gt;
+&lt;br/&gt;
+&lt;b&gt;Host:Port&lt;/b&gt;: This information points to the the ftp server. HOST can either be a standard ip adress like 192.168.2.1 or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".&lt;br/&gt;&lt;br/&gt;
+&lt;b&gt;Username&lt;/b&gt;: The ftp Login Username. On open ftp servers you usually login using "anonymous".&lt;br/&gt;
+&lt;br/&gt;
+&lt;b&gt;Password&lt;/b&gt;: The user's password. Anonymous ftp servers ussually don't use passwords or accept passwords in the form of "user@emailaddress.com".&lt;br/&gt;
+&lt;br/&gt;
+&lt;b&gt;Encryption&lt;/b&gt;: There are 4 encryption levels available. Unencrypted leaves all traffic clear and without encryption. Most ftp servers allow only this mode. Level 1 encryption means that the traffic on the control connection is encrypted while data transfer remains clear. Level 2 is basically the same with the exception of directory information which is transfered on the data channel, but is encrypted too. Eventually Level 3 encrypts everything all communication and all data traffic.&lt;br/&gt;
+&lt;br/&gt;
+&lt;b&gt;Mode&lt;/b&gt;: The mode you are using for data transfer. This is quite important in case you're behind a firewall or a router. In these cases you depend on the passive mode, which makes the client connects to the ftp server for data transfer. Passive mode is the standard method today, while active mode is the old way to do data transfers, the client listens for the server to connect in active mode.&lt;br/&gt;
+&lt;br/&gt;
+&lt;b&gt;Default directory&lt;/b&gt;: Here you can type in a path which kasablanca attempts to enter after login.&lt;br/&gt;
+&lt;br/&gt;
+&lt;b&gt;Alternative fxp&lt;/b&gt;: Some ftp servers have problems with either active or pasv mode, which is needed for fxp. Using alternative fxp might help in such cases. </string>
+            </property>
+            <property name="wordWrap">
+                <enum>WidgetWidth</enum>
+            </property>
+            <property name="readOnly">
+                <bool>true</bool>
+            </property>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <tabstops>
     <tabstop>NameEdit</tabstop>
     <tabstop>InfoEdit</tabstop>
@@ -263,10 +353,10 @@
     <includehint>kpushbutton.h</includehint>
     <includehint>klistbox.h</includehint>
     <includehint>kcombobox.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
     <includehint>kcombobox.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
 </includehints>
 </UI>

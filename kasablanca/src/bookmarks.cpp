@@ -83,11 +83,13 @@ int Bookmarks::ParseBookmarks()
 
                     if( !curElement.isNull() )
                     {
-                        if( curElement.tagName() == "user" ) entry.SetUser(curElement.text().latin1());
-                        if( curElement.tagName() == "pass" ) entry.SetPass(curElement.text().latin1());
-                        if( curElement.tagName() == "info" ) entry.SetInfo(curElement.text().latin1());
-                        if( curElement.tagName() == "pasv" ) entry.SetPasv(curElement.text().toInt());
-                        if( curElement.tagName() == "tls" ) entry.SetTls(curElement.text().toInt());
+                        if(curElement.tagName() == "user") entry.SetUser(curElement.text().latin1());
+                        if(curElement.tagName() == "pass") entry.SetPass(curElement.text().latin1());
+                        if(curElement.tagName() == "info") entry.SetInfo(curElement.text().latin1());
+                        if(curElement.tagName() == "pasv") entry.SetPasv(curElement.text().toInt());
+                        if(curElement.tagName() == "tls") entry.SetTls(curElement.text().toInt());
+								if(curElement.tagName() == "defaultdirectory") entry.SetDefaultDirectory(curElement.text().latin1());
+								if(curElement.tagName() == "alternativefxp") entry.SetAlternativeFxp(curElement.text().toInt());
                     }
 
                     siteNode = siteNode.nextSibling();
@@ -144,11 +146,20 @@ int Bookmarks::WriteBookmarks()
                 siteElement.appendChild( curElement );
                 text = doc.createTextNode(QString::number(m_bookmarks.at(i).GetTls()));
                 curElement.appendChild(text);
+					 
+					 curElement = doc.createElement( "alternativefxp" );
+                siteElement.appendChild( curElement );
+                text = doc.createTextNode(QString::number(m_bookmarks.at(i).GetAlternativeFxp()));
+                curElement.appendChild(text);
+
+                curElement = doc.createElement( "defaultdirectory" );
+                siteElement.appendChild( curElement );
+                text = doc.createTextNode(m_bookmarks.at(i).GetDefaultDirectory());
+                curElement.appendChild(text);
         }
     }
 		
 	 QFile fileout(locateLocal("appdata", "bookmarks.xml"));
-    //QFile fileout( QDir::homeDirPath() + "/.kasablanca/bookmarks.xml" );
     
     if( !fileout.open( IO_WriteOnly ) ) return -1;
 

@@ -24,6 +24,7 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qdir.h>
+#include <qcheckbox.h>
 
 #include <kcombobox.h>
 #include <kcompletion.h>
@@ -65,12 +66,14 @@ BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
     connect(ui_->NewButton, SIGNAL(clicked()), SLOT(SLOT_NewEntry()));
     connect(ui_->RemoveButton, SIGNAL(clicked()), SLOT(SLOT_RemoveEntry()));
 	 
-	 connect(ui_->NameEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
-	 connect(ui_->InfoEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
-	 connect(ui_->UserEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
-	 connect(ui_->PassEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
-	 connect(ui_->EncryptionComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
-	 connect(ui_->ModeComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&))); 
+	 connect(ui_->NameEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(ui_->InfoEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(ui_->UserEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(ui_->PassEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(ui_->DefaultDirectoryEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(ui_->EncryptionComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(ui_->ModeComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&))); 
+	 connect(ui_->AlternativeFxpCheckBox, SIGNAL(clicked()), SLOT(SLOT_StateChanged()));
 }
 
 BookmarkDialog::~BookmarkDialog()
@@ -136,6 +139,8 @@ void BookmarkDialog::SLOT_NewEntry()
     newsite.SetPass("me@my");
     newsite.SetPasv(1);
     newsite.SetTls(0);
+	 newsite.SetAlternativeFxp(0);
+	 newsite.SetDefaultDirectory("");
     m_bookmarks.push_back(newsite);
 
     ui_->BookmarkListBox->insertItem("New Site");
@@ -182,6 +187,8 @@ void BookmarkDialog::RefreshEntry(siteinfo site)
     ui_->InfoEdit->setText(site.GetInfo());
     ui_->EncryptionComboBox->setCurrentItem(site.GetTls());
     ui_->ModeComboBox->setCurrentItem(site.GetPasv());
+	 ui_->AlternativeFxpCheckBox->setChecked(site.GetAlternativeFxp());
+	 ui_->DefaultDirectoryEdit->setText(site.GetDefaultDirectory());
 }
 
 void BookmarkDialog::EnableInput(bool b)
@@ -193,6 +200,8 @@ void BookmarkDialog::EnableInput(bool b)
     ui_->EncryptionComboBox->setEnabled(b);
     ui_->ModeComboBox->setEnabled(b);
     ui_->RemoveButton->setEnabled(b);
+	 ui_->AlternativeFxpCheckBox->setEnabled(b);
+	 ui_->DefaultDirectoryEdit->setEnabled(b);
 }
 
 void BookmarkDialog::clearInput()
@@ -203,9 +212,16 @@ void BookmarkDialog::clearInput()
     ui_->InfoEdit->clear();
     ui_->EncryptionComboBox->clear();
     ui_->ModeComboBox->clear();
+	 ui_->AlternativeFxpCheckBox->setChecked(false);
+	 ui_->DefaultDirectoryEdit->clear();
 }
 
-void BookmarkDialog::SLOT_InputChanged(const QString&)
+void BookmarkDialog::SLOT_StateChanged()
+{
+	ui_->ApplyButton->setEnabled(true);
+}
+
+void BookmarkDialog::SLOT_TextChanged(const QString&)
 {
 	ui_->ApplyButton->setEnabled(true);
 }
@@ -219,17 +235,24 @@ int BookmarkDialog::ApplyEntry(siteinfo * site)
     entry.SetInfo(ui_->InfoEdit->text().latin1());
     entry.SetTls(ui_->EncryptionComboBox->currentItem());
     entry.SetPasv(ui_->ModeComboBox->currentItem());
+	 if (ui_->AlternativeFxpCheckBox->isChecked()) entry.SetAlternativeFxp(1);
+	 else entry.SetAlternativeFxp(0);
+	 entry.SetDefaultDirectory(ui_->DefaultDirectoryEdit->text().latin1());
 
     if (entry.CheckContent())
     {
-        site->SetName(ui_->NameEdit->text().latin1());
-        site->SetUser(ui_->UserEdit->text().latin1());
-        site->SetPass(ui_->PassEdit->text().latin1());
-        site->SetInfo(ui_->InfoEdit->text().latin1());
-        site->SetTls(ui_->EncryptionComboBox->currentItem());
-        site->SetPasv(ui_->ModeComboBox->currentItem());
-        
-        return 1;
+		site->SetName(ui_->NameEdit->text().latin1());
+		site->SetUser(ui_->UserEdit->text().latin1());
+		site->SetPass(ui_->PassEdit->text().latin1());
+		site->SetInfo(ui_->InfoEdit->text().latin1());
+		site->SetTls(ui_->EncryptionComboBox->currentItem());
+		site->SetPasv(ui_->ModeComboBox->currentItem());
+		if (ui_->AlternativeFxpCheckBox->isChecked()) site->SetAlternativeFxp(1);
+		else site->SetAlternativeFxp(0);
+		site->SetDefaultDirectory(ui_->DefaultDirectoryEdit->text().latin1());  
+		
+		qWarning("set: %d", site->GetAlternativeFxp());
+		return 1;
     }
     else return 0;
 }

@@ -1,8 +1,8 @@
-[v 0.4 pre3]
+[v 0.4 pre4]
 
--define standard directory in bookmarks
--add alternative fxp
 -extend bookmarks
+-make queues saveable
+-add waiting window
 
 [v 0.4]
 

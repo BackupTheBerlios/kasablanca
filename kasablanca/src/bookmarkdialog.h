@@ -42,7 +42,8 @@ public slots:
     void SLOT_NewEntry();
     void SLOT_RemoveEntry();
     void slotOk();
-	 void SLOT_InputChanged(const QString& s);
+	 void SLOT_TextChanged(const QString& s);
+	 void SLOT_StateChanged();
 private:
     int ApplyEntry(siteinfo * site);
     void RefreshEntry(siteinfo site);

@@ -274,6 +274,7 @@ void FtpSession::SLOT_ConnectMenu(int i)
 	if (mp_siteinfo->GetPasv() > 0) mp_ftpthread->Pasv(true);
 	else mp_ftpthread->Pasv(false);
 	mp_ftpthread->Login(mp_siteinfo->GetUser(), mp_siteinfo->GetPass());
+	if (QString(mp_siteinfo->GetDefaultDirectory()) != "") mp_ftpthread->Chdir(mp_siteinfo->GetDefaultDirectory());
 	RefreshBrowser();
 	mp_ftpthread->start();
 }
@@ -1002,7 +1003,7 @@ void FtpSession::Transfer(KbTransferItem *item)
 void FtpSession::FxpFile(KbTransferItem *item, filecheck fc)
 {
 	bool result;
-	int srctls, dsttls;
+	int srctls, dsttls, alternativefxp;
 	QString localfile, remotefile;
 	unsigned long offset;
 
@@ -1013,8 +1014,10 @@ void FtpSession::FxpFile(KbTransferItem *item, filecheck fc)
 	FtpThread* dstftp = item->DstSession()->Ftp();
 	offset = item->DstFileInfo()->Size();
 	
-	if (fc == resume) result = mp_ftpthread->Transfer_Fxp(remotefile, localfile, dstftp, srctls, dsttls, offset );
-	else result = mp_ftpthread->Transfer_Fxp(remotefile, localfile, dstftp, srctls, dsttls);
+	alternativefxp = mp_siteinfo->GetAlternativeFxp() | mp_currenttransfer->DstSession()->mp_siteinfo->GetAlternativeFxp();
+	
+	if (fc == resume) result = mp_ftpthread->Transfer_Fxp(remotefile, localfile, dstftp, srctls, dsttls, offset, alternativefxp);
+	else result = mp_ftpthread->Transfer_Fxp(remotefile, localfile, dstftp, srctls, dsttls, 0, alternativefxp);
 	
 	if (result) mp_ftpthread->start();
 	else qWarning("ERROR: thread error, thread was still busy.");

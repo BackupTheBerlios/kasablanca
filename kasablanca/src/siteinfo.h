@@ -35,10 +35,14 @@ public:
 	const char *GetPass();
 	const char *GetDir();
 	const char *GetName();
+	const char *GetDefaultDirectory() { return m_defaultdirectory.c_str(); };
+	int GetAlternativeFxp() { return m_alternativefxp; };
 	int GetPasv();
 	int GetTls();
 	void SetPasv(int pasv);
 	void SetTls(int tls);
+	void SetDefaultDirectory(const char * path) { m_defaultdirectory = path; };
+	void SetAlternativeFxp(int i) { m_alternativefxp = i; };
 	void SetUser(const char *user);
 	void SetInfo(const char *info);
 	void SetPass(const char *pass);
@@ -58,6 +62,8 @@ private:
 	string m_name;
 	string m_dir;
 	string m_pass;
+	string m_defaultdirectory;
+	int m_alternativefxp;
 	int m_pasv;
 	int m_tls;
         bool b_isGroup;
