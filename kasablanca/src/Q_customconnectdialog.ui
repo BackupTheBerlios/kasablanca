@@ -351,10 +351,12 @@
     <tabstop>HostLineEdit</tabstop>
     <tabstop>UserLineEdit</tabstop>
     <tabstop>PassLineEdit</tabstop>
-    <tabstop>ModeComboBox</tabstop>
     <tabstop>EncryptionComboBox</tabstop>
-    <tabstop>buttonOk</tabstop>
+    <tabstop>ModeComboBox</tabstop>
+    <tabstop>PortLineEdit</tabstop>
+    <tabstop>AnonymousCheckBox</tabstop>
     <tabstop>buttonCancel</tabstop>
+    <tabstop>buttonOk</tabstop>
 </tabstops>
 <slots>
     <slot>SLOT_AnonymousToggled()</slot>

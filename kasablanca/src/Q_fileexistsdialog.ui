@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KasablancaFileExistsDialog</class>
 <widget class="QDialog">
     <property name="name">
@@ -99,6 +99,12 @@
         <slot>Rename()</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>OverwriteButton</tabstop>
+    <tabstop>ResumeButton</tabstop>
+    <tabstop>RenameButton</tabstop>
+    <tabstop>SkipButton</tabstop>
+</tabstops>
 <slots>
     <slot>Skip()</slot>
     <slot>Overwrite()</slot>

@@ -324,8 +324,8 @@
     <property name="name">
         <cstring>menubar</cstring>
     </property>
-    <item text="Start" name="PopupMenu">
-        <action name="ActionQuit"/>
+    <item text="Start" name="Start">
+        <action name="ActionClose"/>
     </item>
     <item text="Edit" name="EditMenu">
         <action name="ActionEditBookmarks"/>
@@ -350,13 +350,13 @@
     </action>
     <action>
         <property name="name">
-            <cstring>ActionQuit</cstring>
+            <cstring>ActionClose</cstring>
         </property>
         <property name="text">
-            <string>Quit</string>
+            <string>Close</string>
         </property>
         <property name="menuText">
-            <string>Quit</string>
+            <string>Close</string>
         </property>
     </action>
     <action>
@@ -421,22 +421,16 @@
         <slot>SLOT_EditBookmarks()</slot>
     </connection>
     <connection>
-        <sender>ActionQuit</sender>
+        <sender>ActionClose</sender>
         <signal>activated()</signal>
         <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_Quit()</slot>
+        <slot>SLOT_Close()</slot>
     </connection>
     <connection>
         <sender>ActionAbout</sender>
         <signal>activated()</signal>
         <receiver>KasablancaMainWindow</receiver>
         <slot>SLOT_About()</slot>
-    </connection>
-    <connection>
-        <sender>RefreshButtonA</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_UpdateA()</slot>
     </connection>
     <connection>
         <sender>TransferButtonA</sender>
@@ -454,13 +448,13 @@
         <sender>RefreshButtonB</sender>
         <signal>clicked()</signal>
         <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_UpdateB()</slot>
+        <slot>SLOT_RefreshBrowserB()</slot>
     </connection>
     <connection>
         <sender>RefreshButtonA</sender>
         <signal>clicked()</signal>
         <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_UpdateA()</slot>
+        <slot>SLOT_RefreshBrowserA()</slot>
     </connection>
     <connection>
         <sender>ConnectButtonA</sender>
@@ -486,21 +480,19 @@
     <tabstop>LogWindow</tabstop>
 </tabstops>
 <slots>
-    <slot>SLOT_DisconnectA()</slot>
     <slot>SLOT_EnterCommandA()</slot>
-    <slot>SLOT_ConnectCustom()</slot>
     <slot>SLOT_ConnectBookmark( int n )</slot>
     <slot>SLOT_EnterCwdA()</slot>
     <slot>SLOT_EnterCommandB()</slot>
-    <slot>SLOT_UpdateA()</slot>
+    <slot>SLOT_RefreshBrowserA()</slot>
     <slot>SLOT_EnterCwdB()</slot>
     <slot>SLOT_SelectionChanged()</slot>
     <slot>SLOT_EditBookmarks()</slot>
-    <slot>SLOT_Quit()</slot>
+    <slot>SLOT_Close()</slot>
     <slot>SLOT_About()</slot>
     <slot>SLOT_TransferA()</slot>
     <slot>SLOT_TransferB()</slot>
-    <slot>SLOT_UpdateB()</slot>
+    <slot>SLOT_RefreshBrowserB()</slot>
     <slot>SLOT_ConnectButtonA()</slot>
     <slot>SLOT_ConnectButtonB()</slot>
 </slots>

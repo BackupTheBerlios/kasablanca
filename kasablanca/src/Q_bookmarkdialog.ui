@@ -288,6 +288,19 @@
         <slot>SLOT_Done()</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>BookmarkListBox</tabstop>
+    <tabstop>NameEdit</tabstop>
+    <tabstop>InfoEdit</tabstop>
+    <tabstop>UserEdit</tabstop>
+    <tabstop>PassEdit</tabstop>
+    <tabstop>EncryptionComboBox</tabstop>
+    <tabstop>ModeComboBox</tabstop>
+    <tabstop>NewButton</tabstop>
+    <tabstop>RemoveButton</tabstop>
+    <tabstop>ApplyButton</tabstop>
+    <tabstop>DoneButton</tabstop>
+</tabstops>
 <slots>
     <slot>SLOT_EntrySelected(int i)</slot>
     <slot>SLOT_ApplyEntry()</slot>
