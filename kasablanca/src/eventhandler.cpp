@@ -67,13 +67,16 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
 	}
 	else if (type == outlog) 
 	{   
-		emit ftp_log(mp_thread->out_outlog, true);
-		mp_thread->out_outlog = "";
+		QString *line = static_cast<QString*>(static_cast<QCustomEvent*>(e)->data());
+		emit ftp_log(*line, true);
+		delete line;
       return TRUE; 
    }
 	else if (type == inlog) 
 	{   
-		emit ftp_log(mp_thread->out_inlog, false);
+		QString *line = static_cast<QString*>(static_cast<QCustomEvent*>(e)->data());
+		emit ftp_log(*line, false);
+		delete line;
       return TRUE; 
    }
 	else if (type == finished) 
@@ -138,9 +141,9 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
    }
 	else if (type == pwd_success) 
 	{   
-		QString path;
-		path = mp_thread->out_path; 
-		emit ftp_pwd(true, path);
+		QString *path = static_cast<QString*>(static_cast<QCustomEvent*>(e)->data());
+		emit ftp_pwd(true, *path);
+		delete path;
       return TRUE; 
    } 
 	else if (type == pwd_failure) 
@@ -170,17 +173,20 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
    }
 	else if (type == dir_success) 
 	{   
-		emit ftp_dir(true, mp_thread->out_dirlist, mp_thread->out_filelist);
+		contentpair *content = static_cast<contentpair*>(static_cast<QCustomEvent*>(e)->data());
+		emit ftp_dir(true, content->first, content->second);
       return TRUE; 
    }
 	else if (type == dir_failure) 
 	{   
-		emit ftp_dir(false, mp_thread->out_dirlist, mp_thread->out_filelist);
+		contentpair *content = static_cast<contentpair*>(static_cast<QCustomEvent*>(e)->data());
+		emit ftp_dir(false, content->first, content->second);
       return TRUE; 
    }
 	else if (type == scandir_success) 
 	{   
-		emit ftp_scandir(true, mp_thread->out_scandir);
+		kbdirectory *dir = static_cast<kbdirectory*>(static_cast<QCustomEvent*>(e)->data());
+		emit ftp_scandir(true, dir);
       return TRUE; 
    }
 	else if (type == scandir_failure) 

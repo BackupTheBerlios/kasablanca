@@ -31,6 +31,8 @@ class ftplib;
 class QObject;
 class kbdirectory;
 
+typedef list<RemoteFileInfo> rfilist;
+
 /**
 @author Magnus Kulke
 */
@@ -62,12 +64,13 @@ public:
 	bool Raw(QString cmd);
 private:
 	void run();
-	void Event(EventHandler::EventType type);
+	void Event(EventHandler::EventType type, void *data = NULL);
 	bool FormatFilelist(const char *filename,
 		QString current,
 		list<RemoteFileInfo> *filetable,
 		list<RemoteFileInfo> *dirtable
 	);
+	void InitInternals();
 	void Connect_thread(); 
 	void Login_thread(); 
 	void Pwd_thread();
@@ -119,6 +122,11 @@ private:
 	QString m_host;
 	QString m_user;
 	QString m_pass;
+	QString m_pwd;
+	bool m_dataencrypted;
+	kbdirectory* m_scandir;
+	rfilist m_dirlist, m_filelist;
+	pair<rfilist, rfilist> m_dircontent;
 	list<QString> m_chdirlist;
 	list<QString> m_rmlist;
 	list<QString> m_rmdirlist;
@@ -134,12 +142,7 @@ private:
 	list<QString> m_rawlist;
 	QValueList<task> m_tasklist;
 public:
-	QString out_outlog;
-	QString out_inlog;
-	QString out_path;
-	kbdirectory* out_scandir;
-	list<RemoteFileInfo> out_dirlist;
-	list<RemoteFileInfo> out_filelist;
+	QString m_linebuffer;
 };
 
 #endif

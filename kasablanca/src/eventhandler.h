@@ -35,6 +35,9 @@ class c;
 @author Magnus Kulke
 */
 
+typedef list<RemoteFileInfo> rfilist;
+typedef pair<rfilist, rfilist> contentpair;
+
 class EventHandler : public QObject
 {
 Q_OBJECT

@@ -184,14 +184,9 @@ void FtpSession::SLOT_Connect(bool success)
 	PrintLog(success);	
 }
 
-void FtpSession::SLOT_EncryptData(bool success, bool enabled)
+void FtpSession::SLOT_EncryptData(bool success, bool)
 {
-	PrintLog(success);
-	if (success)
-	{
-		if (enabled) mp_encryptionicon->setPixmap(m_iconencrypted);
-		else mp_encryptionicon->setPixmap(m_iconunencrypted);
-	} 	
+	PrintLog(success);	
 }
 	
 void FtpSession::SLOT_Chdir(bool success)
@@ -304,7 +299,6 @@ void FtpSession::RefreshBrowser()
 {
 	mp_ftpthread->Pwd();
 	if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true);
-	else if (mp_siteinfo->GetTls() > 0) mp_encryptionicon->setPixmap(m_iconunencrypted);
 	mp_ftpthread->Dir();
 }
 

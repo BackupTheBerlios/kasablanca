@@ -49,12 +49,6 @@ FtpThread::FtpThread() : QThread()
 	
 	mp_ftp->SetCallbackArg(this);
 	mp_ftp->SetCallbackLogFunction(FtpThread::CallbackLog);
-	
-	m_host = "";
-	m_user = "";
-	m_pass = "";
-	
-	out_path = "";
 }
 
 FtpThread::~FtpThread()
@@ -62,28 +56,41 @@ FtpThread::~FtpThread()
 	delete mp_ftp;
 }
 
+/* init the variables the ftp session needs */
+
+void FtpThread::InitInternals()
+{
+	m_host = "";
+	m_user = "";
+	m_pass = "";
+	m_pwd = "";
+	m_dataencrypted = false;
+}
+
 /* callback function for the logs */
 
 void FtpThread::CallbackLog(char *log, void *arg, bool out)
 {
-	FtpThread* ftp = static_cast<FtpThread*>(arg);
+	/* the incoming log message isn't formatted at all. data
+	can be "end.\r\n230 ne" for example. the log gets chopped 
+	into lines and for every line an events is posted. for 
+	in-logs there's no need for this procedure, as the logs
+	always arrive in line-format. */ 
 
+	FtpThread* ftp = static_cast<FtpThread*>(arg);	
+		
 	if (out)
 	{	
-		ftp->out_outlog+=log;
-	
-		if (ftp->out_outlog.endsWith("\r\n")) 
+		int pos;
+		QString buffer = ftp->m_linebuffer + log;
+		while ((pos = buffer.find('\n')) != -1)
 		{
-			ftp->out_outlog.replace("\r\n", "\n");
-			ftp->Event(EventHandler::outlog);
+			ftp->Event(EventHandler::outlog, new QString(buffer.left(pos + 1)));
+			buffer.remove(0, pos + 1);
 		}
+		ftp->m_linebuffer = buffer;
 	}
-	else 
-	{
-		ftp->out_inlog = log;
-		ftp->out_inlog.replace("\r\n", "\n");
-		ftp->Event(EventHandler::inlog);
-	}
+	else ftp->Event(EventHandler::inlog, new QString(log));
 }
 
 /* set the receiver for the events the thread posts when a certain ftp operation is done */
@@ -97,6 +104,8 @@ void FtpThread::SetEventReceiver(QObject* eventreceiver)
 
 bool FtpThread::Connect(QString host)
 {
+	InitInternals();
+
 	if (running()) return false;
 	else
 	{	
@@ -323,7 +332,7 @@ bool FtpThread::Scandir(kbdirectory* dir)
 	else
 	{
 		m_tasklist.append(FtpThread::scandir);
-		out_scandir = dir;
+		m_scandir = dir;
 		return true;
 	}
 }
@@ -332,7 +341,7 @@ bool FtpThread::Scandir(kbdirectory* dir)
 void FtpThread::Connect_thread()
 {
 	int result;
-		
+	
 	result = mp_ftp->Connect(m_host.latin1());
 
 	if (result) Event(EventHandler::connect_success);
@@ -377,7 +386,11 @@ void FtpThread::Dataencoff_thread()
 	
 	result = mp_ftp->SetDataEncryption(ftplib::unencrypted);
 
-	if (result) Event(EventHandler::encryptdataoff_success);
+	if (result) 
+	{
+		Event(EventHandler::encryptdataoff_success);
+		m_dataencrypted = false;
+	}
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
@@ -391,7 +404,11 @@ void FtpThread::Dataencon_thread()
 	
 	result = mp_ftp->SetDataEncryption(ftplib::secure);
 
-	if (result) Event(EventHandler::encryptdataon_success);
+	if (result) 
+	{
+		Event(EventHandler::encryptdataon_success);
+		m_dataencrypted = true;
+	}
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
@@ -422,8 +439,8 @@ void FtpThread::Pwd_thread()
 	
 	if (result) 
 	{
-		out_path = buffer;
-		Event(EventHandler::pwd_success);
+		Event(EventHandler::pwd_success, new QString(buffer));
+		m_pwd = buffer;
 	}
 	else 
 	{
@@ -574,15 +591,17 @@ void FtpThread::Dir_thread()
 
 	if (result) 
 	{		
-		out_dirlist.clear();
-		out_filelist.clear();		
-		FormatFilelist(dirname.latin1(), out_path, &out_dirlist, &out_filelist); 
-		Event(EventHandler::dir_success);
+		m_dirlist.clear();
+		m_filelist.clear();		
+		FormatFilelist(dirname.latin1(), m_pwd, &m_dirlist, &m_filelist); 
+		m_dircontent.first = m_dirlist;
+		m_dircontent.second = m_filelist;
+		Event(EventHandler::dir_success, &m_dircontent);
 	}
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
-		else Event(EventHandler::dir_failure);
+		else Event(EventHandler::dir_failure, &m_dircontent);
 	}
 	
 	QFile::remove(dirname);
@@ -594,12 +613,12 @@ void FtpThread::Scandir_thread()
 
 	list<kbdirectory*>::iterator dirIterator;
 	
-	for(dirIterator = out_scandir->Dirlist()->begin(); dirIterator != out_scandir->Dirlist()->end(); dirIterator++)
+	for(dirIterator = m_scandir->Dirlist()->begin(); dirIterator != m_scandir->Dirlist()->end(); dirIterator++)
 	{
 		result = Scandir_recurse(*dirIterator);
 	}
 	
-	if (result) Event(EventHandler::scandir_success);
+	if (result) Event(EventHandler::scandir_success, m_scandir);
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
@@ -716,10 +735,15 @@ void FtpThread::run()
 
 /* event is posted to the eventreceiver */
 
-void FtpThread::Event(EventHandler::EventType type)
+void FtpThread::Event(EventHandler::EventType type, void *data)
 {
 	if (mp_eventreceiver == NULL) qWarning("mp_eventreceiver is NULL");
-	else qApp->postEvent(mp_eventreceiver, new QCustomEvent(type));		
+	else 
+	{
+		QCustomEvent* e = new QCustomEvent(type);
+		if (data != NULL) e->setData(data);	
+		qApp->postEvent(mp_eventreceiver, e);	
+	}
 }
 
 /* parses the dir file */
@@ -749,7 +773,7 @@ bool FtpThread::FormatFilelist(const char *filename,
 	dirfile = fopen(filename, "r");
 	if (dirfile == NULL)
 	{
-		qWarning("failed open dirfile");
+		qWarning("ERROR: failed open dirfile");
 		return false;
 	}
 
@@ -769,9 +793,7 @@ bool FtpThread::FormatFilelist(const char *filename,
 		}
 		if( loc == string::npos )
 		{
-			#ifdef DEBUG
-				qWarning("no month entry found");
-			#endif
+			qWarning("INFO: no month entry found");
 			loc = buffer.length();
 		}
 
@@ -808,9 +830,7 @@ bool FtpThread::FormatFilelist(const char *filename,
 		}
 		if (blocks != 3)
 		{
-				#ifdef DEBUG
-				qWarning("ignoring invalid line in dirlist");
-				#endif
+			qWarning("INFO: ignoring invalid line in dirlist");
 		}
 		else
 		{
@@ -870,7 +890,7 @@ bool FtpThread::FormatFilelist(const char *filename,
 				}
 				else if ((*file == 'l') || (*file == 'L'))
 				{
-					qWarning("links to files not supported yet!");
+					qWarning("INFO: links to files not supported yet");
 				}
 				else
 				{
