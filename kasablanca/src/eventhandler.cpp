@@ -58,7 +58,7 @@ from the events type and a possible out_ variable from the ftp thread object. */
 
 bool EventHandler::eventFilter(QObject*, QEvent *e )
 {
-	EventType type = static_cast<EventType>(e->type());
+	EventType type = (EventType)(e->type());
 
 	if (mp_thread == NULL)
 	{
