@@ -71,6 +71,7 @@ public:
 	void SetRclickMenu(QPopupMenu *rclickmenu) { mp_rclickmenu = rclickmenu; };
 	void SetSessionList(list<FtpSession*> *sessionlist) { mp_sessionlist = sessionlist; };
 	void SetCurrentTransfer(KbTransferItem* currenttransfer) { mp_currenttransfer = currenttransfer; };
+	void SetCorrectPasv(bool correctpasv);
 	bool Connected() { return m_connected; };
 	void Disconnect();
 	void Connect();

@@ -89,6 +89,7 @@ struct netbuf {
 	SSL_CTX* ctx;
 	BIO* sbio;
 	int offset;
+	bool correctpasv;
 };
   
 class ftplib {
@@ -134,6 +135,7 @@ public:
 	 void SetCallbackXferFunction(FtpCallbackXfer pointer);
 	 void SetCallbackArg(void *arg);
     void SetCallbackBytes(long bytes);
+	 void SetCorrectPasv(bool b) { mp_netbuf->correctpasv = b; };
     void SetCallbackIdletime(int time);
     void SetConnmode(ftplib::ftp mode);
     static int Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method);
@@ -153,6 +155,7 @@ private:
     int writeline(char *buf, int len, netbuf *nData);
     int readresp(char c, netbuf *nControl);
 	 void ClearNetbuf();
+	 int CorrectPasvResponse(unsigned int *v);
 };
 
 #endif

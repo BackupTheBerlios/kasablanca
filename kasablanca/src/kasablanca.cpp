@@ -157,12 +157,14 @@ void Kasablanca::setupGUI()
 
 void Kasablanca::applyConfig() 
 { 	
+	bool correctpasv;
 	FtpSession::filecheck def;
 	if (!KbConfig::onFileExistsIsEnabled()) def = FtpSession::off;
 	else if(KbConfig::onFileExistsOverwrite()) def = FtpSession::clear;
 	else if(KbConfig::onFileExistsResume()) def = FtpSession::resume;
 	else if(KbConfig::onFileExistsSkip()) def = FtpSession::skip;
-
+	
+	correctpasv = KbConfig::correctPasvResponsesIsEnabled();	
 	m_skiplist.setPattern(KbConfig::skiplist());
 	m_skiplistenabled = KbConfig::skiplistIsEnabled();
 	m_onqueuefinishedenabled = KbConfig::onQueueFinishedIsEnabled();
@@ -173,6 +175,7 @@ void Kasablanca::applyConfig()
 	{
 		(*i)->SetColors(KbConfig::localColor(), KbConfig::successColor(), KbConfig::failureColor(), KbConfig::backgroundColor());
 		(*i)->SetOnFileExistsDefault(def);
+		(*i)->SetCorrectPasv(correctpasv);
 	}
 } 
 

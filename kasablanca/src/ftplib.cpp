@@ -427,7 +427,7 @@ int ftplib::Connect(const char *host)
 		net_close(sControl);
 		return 0;
 	}
-	
+
 	mp_netbuf->handle = sControl;
 
 	if (readresp('2', mp_netbuf) == 0)
@@ -816,6 +816,7 @@ int ftplib::FtpOpenPasv(netbuf *nControl, netbuf **nData, int mode, int dir, cha
 	if (cp == NULL) return -1;
 	cp++;
 	sscanf(cp,"%u,%u,%u,%u,%u,%u",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+	if (nControl->correctpasv) if (!CorrectPasvResponse(v)) return -1;
 	sin.sa.sa_data[2] = v[2];
 	sin.sa.sa_data[3] = v[3];
 	sin.sa.sa_data[4] = v[4];
@@ -1349,6 +1350,7 @@ int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathD
 		if (cp == NULL) return -1;
 		cp++;
 		sscanf(cp,"%u,%u,%u,%u,%u,%u",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+		if (dst->mp_netbuf->correctpasv) if (!dst->CorrectPasvResponse(v)) return -1;
 
 		// PORT src
 
@@ -1402,6 +1404,7 @@ int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathD
 		if (cp == NULL) return -1;
 		cp++;
 		sscanf(cp,"%u,%u,%u,%u,%u,%u",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+		if (src->mp_netbuf->correctpasv) if (!src->CorrectPasvResponse(v)) return -1;
 
 		// PORT dst
 
@@ -1536,4 +1539,22 @@ void ftplib::ClearNetbuf()
 	mp_netbuf->handle = 0;
 	mp_netbuf->logcb = NULL;
 	mp_netbuf->xfercb = NULL;
+	mp_netbuf->correctpasv = true;
+}
+
+int ftplib::CorrectPasvResponse(unsigned int *v)
+{
+	struct sockaddr ipholder;
+	unsigned int ipholder_size = sizeof(ipholder);
+
+	if (getpeername(mp_netbuf->handle, &ipholder, &ipholder_size) == -1)
+	{
+		perror("getpeername");
+		net_close(mp_netbuf->handle);
+		return 0;
+	}
+	
+	for (int i = 2; i < 5; i++) v[i] = ipholder.sa_data[i];
+
+	return 1;
 }

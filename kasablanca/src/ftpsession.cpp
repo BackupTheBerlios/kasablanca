@@ -42,6 +42,7 @@
 #include "kbdirinfo.h"
 #include "kbfile.h"
 #include "kbfileinfo.h"
+#include "ftplib.h"
 
 FtpSession::FtpSession(QObject *parent, const char *name)
  : QObject(parent, name)
@@ -1056,6 +1057,11 @@ void FtpSession::PutFile(KbTransferItem *item, filecheck fc)
 void FtpSession::timerEvent(QTimerEvent*)
 {
 	if (mp_currenttransfer) mp_currenttransfer->ShowProgress();
+}
+
+void FtpSession::SetCorrectPasv(bool correctpasv) 
+{ 
+	mp_ftpthread->Ftp()->SetCorrectPasv(correctpasv); 
 }
 
 #include "ftpsession.moc"

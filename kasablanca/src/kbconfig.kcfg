@@ -24,6 +24,9 @@
 		<entry name="OnFileExistsIsEnabled" type="Bool">
 			<default>false</default>
 		</entry>
+		<entry name="CorrectPasvResponsesIsEnabled" type="Bool">
+			<default>false</default>
+		</entry>
 	</group>  
 	<group name="colors">
 		<entry name="LocalColor" type="Color">

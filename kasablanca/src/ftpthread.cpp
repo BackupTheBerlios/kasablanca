@@ -408,6 +408,10 @@ void FtpThread::Connect_thread()
 
 	result = mp_ftp->Connect(host.latin1());
 
+	//unsigned long int xxx = mp_ftp->mp_netbuf->ipappr;
+	//qWarning("INFO %lu.%lu.%lu.%lu", xxx & 0xff, (xxx >> 8) & 0xff, (xxx >> 16) & 0xff, (xxx >> 24) & 0xff); 
+	//qWarning("INFO: ip:%lu", mp_ftp->mp_netbuf->ipappr);
+	
 	if (result) Event(EventHandler::connect_success);
 	else 
 	{
@@ -697,7 +701,7 @@ void FtpThread::Quit_thread()
 
 void FtpThread::Transfer_Fxp_thread()
 {
-	int result;
+	int result = 0;
 	
 	QString src = m_stringlist.front();
 	m_stringlist.pop_front();
