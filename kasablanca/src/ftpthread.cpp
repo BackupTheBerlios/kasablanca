@@ -586,6 +586,8 @@ void FtpThread::Transfer_Changedir_thread()
 
 void FtpThread::Transfer_Mkdir_thread()
 {
+	qWarning("Transfer_Mkdir_thread()");
+
 	int result;
 	QString dir = m_stringlist.front();
 	m_stringlist.pop_front();
@@ -749,8 +751,6 @@ void FtpThread::Transfer_Fxp_thread()
 	
 	if (alt) method = ftplib::alternativefxp;
 	else method = ftplib::defaultfxp;
-	
-	qWarning("bla_thread: %d", alt);
 	
 	if (resume) qWarning("WARNING: fxp resume isn't supported. overwriting file instead");
 	result == ftplib::Fxp(mp_ftp, dstftp->Ftp(), src, dst, ftplib::image, method);
@@ -1095,7 +1095,7 @@ void FtpThread::Event(EventHandler::EventType type, void *data)
 bool FtpThread::FormatFilelist(const char *filename, QString current, filist *dirtable, filist *filetable)
 {
 	int i, blocks, space, month_int = 1;
-	unsigned int loc, fileloc, datebegin, sizebegin = 0;
+	string::size_type loc, fileloc, datebegin, sizebegin = 0;
 	string buffer, filestring;
 
 	FILE* dirfile;

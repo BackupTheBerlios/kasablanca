@@ -1,3 +1,7 @@
+[v 0.4.0.3]
+
+-fixed 64bit support [g. guidi]
+
 [v 0.4.0.2]
 
 -changed: changed the local dir deletion functionality for a
