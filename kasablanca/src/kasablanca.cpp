@@ -1008,6 +1008,14 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 			}	
 			break;
 		}
+		case transferitem::fxp_a_to_b:
+		{
+			break;
+		}
+		case transferitem::fxp_b_to_a:
+		{
+			break;
+		}
 	}	
 }
 
