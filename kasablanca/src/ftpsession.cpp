@@ -196,7 +196,6 @@ void FtpSession::SLOT_ActionMenu(int i)
 	{
 		if (Connected())
 		{
-			Occupy();
 			QListViewItemIterator it(mp_browser);
 			while (it.current())
 			{
@@ -205,7 +204,12 @@ void FtpSession::SLOT_ActionMenu(int i)
 					bool b;
 					KbItem* item = static_cast<KbItem*>(it.current());
 					QString name = KInputDialog::getText(i18n("Enter new name"), i18n("Enter new name:"), item->File(), &b);
-					if (b) mp_ftpthread->Rename(item->File(), name);
+					if (b) 
+					{
+						Occupy();
+						mp_ftpthread->Rename(item->File(), name);
+					}
+					else return;
 				}
 				it++;
 			}
@@ -223,6 +227,7 @@ void FtpSession::SLOT_ActionMenu(int i)
 					KbItem* item = static_cast<KbItem*>(it.current());
 					QString name = KInputDialog::getText(i18n("Enter new name"), i18n("Enter new name:"), item->File(), &b);
 					if (b) m_localworkingdir.rename(item->text(0), name);
+					else return;
 				}
 				it++;
 			}
