@@ -380,6 +380,11 @@ void FtpSession::SetColors(QColor local, QColor success, QColor failure, QColor 
 	mp_logwindow->setPaletteBackgroundColor(background);	
 }
 
+void FtpSession::SetFont(QFont font)
+{
+       mp_logwindow->setFont(font);
+}
+
 void FtpSession::Abort()
 {
 	mp_logwindow->setColor(m_colorlocal);

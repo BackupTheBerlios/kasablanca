@@ -187,6 +187,7 @@ void Kasablanca::applyConfig()
 		(*i)->SetOnFileExistsDefault(def);
 		(*i)->SetCorrectPasv(correctpasv);
 		(*i)->EnableCmdLine(KbConfig::commandLineIsEnabled());
+		(*i)->SetFont( KbConfig::logwindowFont() );
 	}
 	
 	// make the system tray switch on/off when settings are changed

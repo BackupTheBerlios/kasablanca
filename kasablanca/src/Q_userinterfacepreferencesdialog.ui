@@ -27,14 +27,6 @@
                 <string>Show System Tray Icon:</string>
             </property>
         </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>textLabel1_2_2_2_2_2</cstring>
-            </property>
-            <property name="text">
-                <string>Show Command Lines:</string>
-            </property>
-        </widget>
         <spacer row="0" column="1" rowspan="2" colspan="1">
             <property name="name">
                 <cstring>spacer3</cstring>
@@ -68,9 +60,30 @@
                 <string>Enabled</string>
             </property>
         </widget>
-        <spacer row="2" column="0">
+        <widget class="QLabel" row="1" column="0">
             <property name="name">
-                <cstring>spacer5</cstring>
+                <cstring>textLabel1_2_2_2_2_2</cstring>
+            </property>
+            <property name="text">
+                <string>Show Command Lines:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>textLabel1_2_2_2_2_2_2</cstring>
+            </property>
+            <property name="text">
+                <string>Logwindow Font:</string>
+            </property>
+        </widget>
+        <widget class="KFontRequester" row="2" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>kcfg_LogwindowFont</cstring>
+            </property>
+        </widget>
+        <spacer row="3" column="1">
+            <property name="name">
+                <cstring>spacer4</cstring>
             </property>
             <property name="orientation">
                 <enum>Vertical</enum>
@@ -80,12 +93,17 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>31</width>
-                    <height>40</height>
+                    <width>20</width>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kfontrequester.h</includehint>
+</includehints>
 </UI>

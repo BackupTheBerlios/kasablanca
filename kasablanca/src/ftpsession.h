@@ -85,6 +85,7 @@ public:
 	FtpThread* Ftp() { return mp_ftpthread; };
 	siteinfo* SiteInfo() { return mp_siteinfo; };
 	void SetColors(QColor local, QColor success, QColor failure, QColor background);
+	void SetFont(QFont font);
 	void SetOnFileExistsDefault(filecheck onfileexistsdefault) {m_onfileexistsdefault = onfileexistsdefault; };
 	void EnableCmdLine(bool b);
 private:
@@ -100,6 +101,7 @@ private:
 	QString m_remoteworkingdir; 
 	QDir m_localworkingdir;
 	QColor m_colorsuccess, m_colorfailure, m_colorlocal;
+	QFont m_logwindowfont;
 	bool m_connected, m_occupied, m_sortascending, m_startqueue;
 	list<logentries> m_loglist;
 	QPixmap m_iconencrypted, m_iconunencrypted;

@@ -1,5 +1,7 @@
 [v 0.4 pre3]
 
+-configure log window font [bochi]
+-added some explanations to the config and bookmark dialogs
 -define standard directory in bookmarks
 -support alternative fxp
 -added systray support [bochi]

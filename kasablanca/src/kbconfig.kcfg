@@ -51,5 +51,9 @@
 			<label>The color value for failed remote messages on the logging window.</label>
 			<default>222,9,48</default>
 		</entry>
+		<entry name="LogwindowFont" type="Font">
+			<label>The font for the logwindow.</label>
+		<default>QFont( "DEC Terminal" )</default>
+		</entry>
 	</group>
 </kcfg>
