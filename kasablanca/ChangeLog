@@ -1,5 +1,6 @@
 [v 0.4.0.1]
 
+-changed: reduced cpu quite a bit again
 -added: status tooltip for systray icon
 -fixed: correct-pasv bug
 -fixed: evil flaw in local delete method, added option to move 
