@@ -1,12 +1,14 @@
 v 0.4 pre1
 
 -abort transfers
--delete queue on connect changes
 -size variable is too small for calculations?
--fxp
 
 v 0.4
 
+-alternative fxp
+-add resume to fxp
+-fix ftpthread code
+-change speed count
 -get rid of this eventhandler stuff
 -add waiting window
 -make log colouring dependent on the answer code
