@@ -94,7 +94,6 @@ private:
 public slots:
 	void SLOT_Log(QString log, bool out);
 	void SLOT_Xfered(int xfered, bool encrypted);
-	void SLOT_XferDone();
 	void SLOT_ActionMenu(int i);
 	void SLOT_ConnectMenu(int i);
 	void SLOT_HeaderClicked(int section);
@@ -134,9 +133,8 @@ private:
 	void MakeDirectory(QString dir);
 signals:
 	void gui_update();
-	void gui_queueitems(KbDirInfo* dir, FtpSession* src, FtpSession* dst);
+	void gui_queueitems(KbDirInfo* dir, FtpSession* src, FtpSession* dst, bool startqueue);
 	void gui_succeedtransfer(QListViewItem* item);
-	void gui_startqueue();
 };
 
 #endif

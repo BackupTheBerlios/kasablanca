@@ -173,15 +173,12 @@ Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new Kasablanc
 	connect(mp_view->CommandLineB, SIGNAL(returnPressed()), mp_session_b, SLOT(SLOT_CmdLine()));
 	connect(mp_session_a, SIGNAL(gui_update()), SLOT(SLOT_SelectionChanged()));
 	connect(mp_session_b, SIGNAL(gui_update()), SLOT(SLOT_SelectionChanged()));
-	connect(mp_session_a, SIGNAL(gui_queueitems(KbDirInfo*, FtpSession*, FtpSession*)), 
-	 	SLOT(SLOT_QueueItems(KbDirInfo*, FtpSession*, FtpSession*)));
-	connect(mp_session_b, SIGNAL(gui_queueitems(KbDirInfo*, FtpSession*, FtpSession*)), 
-	 	SLOT(SLOT_QueueItems(KbDirInfo*, FtpSession*, FtpSession*)));
+	connect(mp_session_a, SIGNAL(gui_queueitems(KbDirInfo*, FtpSession*, FtpSession*, bool)), 
+	 	SLOT(SLOT_QueueItems(KbDirInfo*, FtpSession*, FtpSession*, bool)));
+	connect(mp_session_b, SIGNAL(gui_queueitems(KbDirInfo*, FtpSession*, FtpSession*, bool)), 
+	 	SLOT(SLOT_QueueItems(KbDirInfo*, FtpSession*, FtpSession*, bool)));
 	connect(mp_session_a, SIGNAL(gui_succeedtransfer(QListViewItem*)), SLOT(SLOT_NextTransfer(QListViewItem*)));
 	connect(mp_session_b, SIGNAL(gui_succeedtransfer(QListViewItem*)), SLOT(SLOT_NextTransfer(QListViewItem*)));	
-	
-	connect(mp_session_a, SIGNAL(gui_startqueue()), SLOT(SLOT_ProcessQueue()));
-	connect(mp_session_b, SIGNAL(gui_startqueue()), SLOT(SLOT_ProcessQueue()));	
 	
 	 mp_session_a->Disconnect();
 	 mp_session_b->Disconnect();
@@ -407,9 +404,10 @@ int Kasablanca::initBookmarks()
    return 1;
 }
 
-void Kasablanca::SLOT_QueueItems(KbDirInfo *dir, FtpSession* src, FtpSession* dst)
+void Kasablanca::SLOT_QueueItems(KbDirInfo *dir, FtpSession* src, FtpSession* dst, bool startqueue)
 {
 	QueueItemsRecurse(dir, src, dst);
+	if ((mp_view->TaskView->firstChild()) && (startqueue)) static_cast<KbTransferItem*>(mp_view->TaskView->firstChild())->Init();
 }
 
 void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* dst, QListViewItem* parent)
@@ -567,9 +565,6 @@ void Kasablanca::SLOT_ProcessQueue()
 
 void Kasablanca::ProcessQueue(KbTransferItem* item)
 {
-	item->setSelected(false);
-	item->setSelectable(false);
-	item->repaint();
 	FtpSession *srcsession = item->SrcSession();
 	srcsession->Transfer(item);
 }

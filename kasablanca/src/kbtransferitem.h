@@ -50,6 +50,7 @@ public:
 	void Finish();
 	void IncrementStatus() { m_status = m_status + 1; };
 	void Init();
+	void Xfered(unsigned long xfered);
 	FtpSession* SrcSession() { return mp_srcsession; };
 	KbFileInfo* SrcFileInfo() { return mp_src; };
 	FtpSession* DstSession() { return mp_dstsession; };

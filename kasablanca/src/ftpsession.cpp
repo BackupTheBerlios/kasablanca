@@ -99,7 +99,8 @@ void FtpSession::SLOT_Xfered(int xfered, bool encrypted)
 {
 	if (encrypted) mp_encryptionicon->setPixmap(m_iconencrypted);
 	else mp_encryptionicon->setPixmap(m_iconunencrypted);	
-	//qWarning("INFO: %d bytes transfered", xfered);
+	
+	if (mp_currenttransfer) mp_currenttransfer->Xfered(xfered);
 }
 
 void FtpSession::SLOT_HeaderClicked(int section)
@@ -221,10 +222,14 @@ void FtpSession::SLOT_ActionMenu(int i)
 			UpdateLocal();
 		}
 	}
-	else if (i == Kasablanca::Queue) QueueItems();
+	else if (i == Kasablanca::Queue) 
+	{
+		m_startqueue = false;
+		QueueItems();
+	}
 	else if (i == Kasablanca::Transfer) 
 	{
-		this->m_startqueue = true;
+		m_startqueue = true;
 		QueueItems();
 	}
 }
@@ -420,12 +425,7 @@ void FtpSession::QueueItems()
 		
 		/* /temporary hack */
 		
-		emit gui_queueitems(dir, this, dst);
-		if (m_startqueue)
-		{
-			m_startqueue = false;
-			emit gui_startqueue();
-		}	
+		emit gui_queueitems(dir, this, dst, m_startqueue);
 	}
 }
 
@@ -451,12 +451,7 @@ void FtpSession::SLOT_Scandir(bool success, KbDirInfo* dir)
 		
 		/* /temporary hack */
 		
-		emit gui_queueitems(dir, this, dst);
-		if (m_startqueue)
-		{
-			m_startqueue = false;
-			emit gui_startqueue();
-		}	
+		emit gui_queueitems(dir, this, dst, m_startqueue);
 	}
 	else qWarning("INFO: scandir error");
 }
@@ -479,7 +474,6 @@ void FtpSession::SLOT_EncryptData(bool success, bool)
 void FtpSession::SLOT_Get(bool success)
 {
 	PrintLog(success);
-	//emit gui_xferdone();
 }
 	
 void FtpSession::SLOT_Misc(bool success)
@@ -511,7 +505,7 @@ void FtpSession::SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInf
 		list<KbFileInfo>::iterator i;
 		for (i = dirlist.begin(); i != dirlist.end(); i++) new KbDir(*i, mp_browser, mp_browser->lastItem());	
 		for (i = filelist.begin(); i != filelist.end(); i++) new KbFile(*i, mp_browser, mp_browser->lastItem());	
-		emit gui_update(); //static_cast<Kasablanca*>(parent())->SLOT_SelectionChanged();
+		emit gui_update();
 	}
 }
 
@@ -523,17 +517,6 @@ void FtpSession::SLOT_Pwd(bool success, QString pwd)
 		m_remoteworkingdir = pwd;
 		mp_cwdline->setText(pwd);
 	}
-}
-
-void FtpSession::SLOT_XferDone() 
-{
-	if (Connected()) qWarning("ERROR: SLOT_XferDone should not be called when session is connected"); 
-	else
-	{
-		UpdateLocal();
-		Free();
-	}
-	disconnect(this, SIGNAL(gui_update()), 0, 0);
 }
 
 void FtpSession::PrintLog(bool success)

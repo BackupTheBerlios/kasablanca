@@ -600,7 +600,7 @@ void FtpThread::Transfer_Get_thread()
 	
 	if (resume == 0) result = mp_ftp->Get(dst.latin1(), src.latin1(), ftplib::image);
 	else result = mp_ftp->Get(dst.latin1(), src.latin1(), ftplib::image, resume);
-
+	
 	if (result) Event(EventHandler::get_success);
 	else 
 	{
@@ -941,7 +941,7 @@ void FtpThread::run()
 
 void FtpThread::Event(EventHandler::EventType type, void *data)
 {
-	if (mp_eventreceiver == NULL) qWarning("mp_eventreceiver is NULL");
+	if (mp_eventreceiver == NULL) qWarning("WARNING: mp_eventreceiver is NULL");
 	else 
 	{
 		QCustomEvent* e = new QCustomEvent(type);

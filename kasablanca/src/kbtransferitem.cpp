@@ -56,8 +56,18 @@ void KbTransferItem::Info()
 {
 }
 
+void KbTransferItem::Xfered(unsigned long xfered)
+{
+	QString progress = QString::number(xfered) + "/" + QString::number(mp_src->Size());
+	setText(1, progress);
+}
+
 void KbTransferItem::Init()
 {
+	setSelected(false);
+	setSelectable(false);
+	setOpen(true);
+	repaint();
 	mp_srcsession->Occupy();
 	mp_dstsession->Occupy();
 	mp_srcsession->SetCurrentTransfer(this);

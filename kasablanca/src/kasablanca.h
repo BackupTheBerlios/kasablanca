@@ -76,7 +76,7 @@ public slots:
     void SLOT_SelectionChanged();
     void SLOT_SkipTasks();
 	 void SLOT_ProcessQueue();
-	 void SLOT_QueueItems(KbDirInfo *dir, FtpSession* src, FtpSession* dst);
+	 void SLOT_QueueItems(KbDirInfo *dir, FtpSession* src, FtpSession* dst, bool startqueue);
 	 void SLOT_NextTransfer(QListViewItem* item);
 	 
 private slots:
