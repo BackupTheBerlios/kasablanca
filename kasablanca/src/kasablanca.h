@@ -80,6 +80,7 @@ public slots:
 	 void SLOT_QueueItems(KbDirInfo *dir, FtpSession* src, FtpSession* dst, bool startqueue);
 	 void SLOT_NextTransfer(QListViewItem* item);
 	 void SLOT_ClearQueue(FtpSession* session);
+	 void SLOT_LocalProcessExited(KProcess* proc) { delete proc; };
 	 
 private slots:
     void optionsShowToolbar();
@@ -100,6 +101,7 @@ private:
 	 void saveSettings();
 	 void ProcessQueue(KbTransferItem* item);
 	 QListViewItem* NextTransfer(QListViewItem* item);
+	 void QueueFinished();
 	 
     KasablancaMainWindow *mp_view;
     Bookmarks bookmarks;
@@ -112,6 +114,8 @@ private:
     KToggleAction *m_statusbarAction;	 
 	 FtpSession *mp_session_a, *mp_session_b;
 	 list<FtpSession*> *mp_sessionlist;
+	 bool m_skiplistenabled, m_onqueuefinishedenabled;
+	 QString m_onqueuefinished;
 };
 
 #endif

@@ -50,7 +50,8 @@ Q_OBJECT
 public:
 	enum filecheck
 	{
-		skip = 0,
+		off = 0,
+		skip,
 		clear,
 		resume
 	};
@@ -83,6 +84,7 @@ public:
 	FtpThread* Ftp() { return mp_ftpthread; };
 	siteinfo* SiteInfo() { return mp_siteinfo; };
 	void SetColors(QColor local, QColor success, QColor failure, QColor background);
+	void SetOnFileExistsDefault(filecheck onfileexistsdefault) {m_onfileexistsdefault = onfileexistsdefault; };
 private:
 	FtpThread *mp_ftpthread;
 	EventHandler *mp_eventhandler;
@@ -102,6 +104,7 @@ private:
 	QHeader *mp_header;
 	list<FtpSession*> *mp_sessionlist;
 	KbTransferItem *mp_currenttransfer;
+	filecheck m_onfileexistsdefault;
 	
 public slots:
 	void SLOT_Log(QString log, bool out);

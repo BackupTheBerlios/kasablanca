@@ -157,11 +157,21 @@ void Kasablanca::setupGUI()
 
 void Kasablanca::applyConfig() 
 { 	
-	m_skiplist.setPattern(KbConfig::skiplist());
+	FtpSession::filecheck def;
+	if (!KbConfig::onFileExistsIsEnabled()) def = FtpSession::off;
+	else if(KbConfig::onFileExistsOverwrite()) def = FtpSession::clear;
+	else if(KbConfig::onFileExistsResume()) def = FtpSession::resume;
+	else if(KbConfig::onFileExistsSkip()) def = FtpSession::skip;
 
+	m_skiplist.setPattern(KbConfig::skiplist());
+	m_skiplistenabled = KbConfig::skiplistIsEnabled();
+	m_onqueuefinishedenabled = KbConfig::onQueueFinishedIsEnabled();
+	m_onqueuefinished = KbConfig::onQueueFinished();
+	
 	for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != mp_sessionlist->end(); i++)
 	{
 		(*i)->SetColors(KbConfig::localColor(), KbConfig::successColor(), KbConfig::failureColor(), KbConfig::backgroundColor());
+		(*i)->SetOnFileExistsDefault(def);
 	}
 } 
 
@@ -391,7 +401,7 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 	after = NULL;	
 	for(list<KbFileInfo>::iterator fileIterator = filelist->begin(); fileIterator != filelist->end(); fileIterator++)
 	{
-		if (m_skiplist.search((*fileIterator).fileName()) < 0) 
+		if ((m_skiplist.search((*fileIterator).fileName()) < 0) || (!m_skiplistenabled))
 		{
 			KbFileInfo *srcfi = new KbFileInfo(*fileIterator);
 			KbFileInfo *dstfi = new KbFileInfo(*fileIterator);
@@ -406,7 +416,7 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 	after = NULL;
 	for(list<KbDirInfo*>::iterator dirIterator = dirlist->begin(); dirIterator != dirlist->end(); dirIterator++)
 	{
-		if (m_skiplist.search((*dirIterator)->fileName()) < 0) 
+		if ((m_skiplist.search((*dirIterator)->fileName()) < 0) || (!m_skiplistenabled)) 
 		{
 			KbFileInfo *srcfi = new KbFileInfo(*(*dirIterator));
 			KbFileInfo *dstfi = new KbFileInfo(*(*dirIterator));
@@ -500,7 +510,19 @@ void Kasablanca::SLOT_NextTransfer(QListViewItem* item)
 {
 	QListViewItem *next;
 	next = NextTransfer(item);
-	if (next) ProcessQueue(static_cast<KbTransferItem*>(next));	
+	if (next) ProcessQueue(static_cast<KbTransferItem*>(next));
+	else QueueFinished();	
+}
+
+void Kasablanca::QueueFinished()
+{
+	if (m_onqueuefinishedenabled)
+	{
+		KProcess* p = new KProcess();
+		*p << QStringList::split(" ", m_onqueuefinished);
+		connect(p, SIGNAL(processExited(KProcess*)), SLOT(SLOT_LocalProcessExited(KProcess*)));
+		p->start();
+	}
 }
 
 QListViewItem* Kasablanca::NextTransfer(QListViewItem* item)

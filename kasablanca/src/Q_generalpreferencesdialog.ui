@@ -8,16 +8,30 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>344</width>
-            <height>91</height>
+            <width>422</width>
+            <height>195</height>
         </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
     </property>
     <property name="caption">
         <string>General</string>
     </property>
+    <property name="sizeGripEnabled">
+        <bool>false</bool>
+    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
+        </property>
+        <property name="resizeMode">
+            <enum>Minimum</enum>
         </property>
         <widget class="QLabel" row="0" column="0">
             <property name="name">
@@ -27,34 +41,65 @@
                 <string>Skiplist:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="0" column="1">
-            <property name="name">
-                <cstring>kcfg_Skiplist</cstring>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Here you can enter a Regular Expression. Transfer items which match this Regular Expression are skipped.</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>textLabel1_3</cstring>
-            </property>
-            <property name="text">
-                <string>Example:</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="1" rowspan="2" colspan="1">
+        <widget class="QLabel" row="1" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>textLabel1_2</cstring>
             </property>
             <property name="text">
-                <string>Use "^\." to exclude files or dirs
-beginning with "." from transfer.</string>
+                <string>On queue finished:</string>
             </property>
         </widget>
-        <spacer row="2" column="0">
+        <widget class="QLineEdit" row="1" column="3">
             <property name="name">
-                <cstring>spacer1</cstring>
+                <cstring>kcfg_OnQueueFinished</cstring>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This field can hold an executable and its arguments which will be run, when last item of in queue has finished transferring. For Example, on KDE desktops the entry "dcop ksmserver ksmserver logout 0 0 0" would shutdown the computer automatically.</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>kcfg_Skiplist</cstring>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Here you can enter a Regular Expression. Transfer items which match this Regular Expression are skipped. For example a value of "^\." excludes every entry beginning with "." from transfer.</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="0" column="4">
+            <property name="name">
+                <cstring>kcfg_SkiplistIsEnabled</cstring>
+            </property>
+            <property name="text">
+                <string>Enabled</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="1" column="4">
+            <property name="name">
+                <cstring>kcfg_OnQueueFinishedIsEnabled</cstring>
+            </property>
+            <property name="text">
+                <string>Enabled</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>textLabel1_2_2</cstring>
+            </property>
+            <property name="text">
+                <string>On file exist:</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="2" column="4">
+            <property name="name">
+                <cstring>kcfg_OnFileExistsIsEnabled</cstring>
+            </property>
+            <property name="text">
+                <string>Enabled</string>
+            </property>
+        </widget>
+        <spacer row="3" column="4">
+            <property name="name">
+                <cstring>spacer2</cstring>
             </property>
             <property name="orientation">
                 <enum>Vertical</enum>
@@ -65,10 +110,73 @@ beginning with "." from transfer.</string>
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>21</height>
+                    <height>71</height>
                 </size>
             </property>
         </spacer>
+        <spacer row="3" column="0">
+            <property name="name">
+                <cstring>spacer2_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>71</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QButtonGroup" row="2" column="2" rowspan="2" colspan="2">
+            <property name="name">
+                <cstring>buttonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string></string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>kcfg_OnFileExistsResume</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Resume (if possible)</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>These Radio Buttons indicate how the application should proceed if a file to be transfered already exists on the destination. Usually the user is asked by the application how to proceed if this occurs, in case you aren't present during the transfer you can enable this feature.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="2" column="0">
+                    <property name="name">
+                        <cstring>kcfg_OnFileExistsSkip</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Skip</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>These Radio Buttons indicate how the application should proceed if a file to be transfered already exists on the destination. Usually the user is asked by the application how to proceed if this occurs, in case you aren't present during the transfer you can enable this feature.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="0" column="0">
+                    <property name="name">
+                        <cstring>kcfg_OnFileExistsOverwrite</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Overwrite</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>These Radio Buttons indicate how the application should proceed if a file to be transfered already exists on the destination. Usually the user is asked by the application how to proceed if this occurs, in case you aren't present during the transfer you can enable this feature.</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
     </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>

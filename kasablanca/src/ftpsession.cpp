@@ -843,6 +843,7 @@ int FtpSession::CheckFile(KbTransferItem *item)
 			KbItem* kbi;
 			QString newname;
 			bool b;
+			int result;
 			
 			kbi = static_cast<KbItem*>(it.current());
 			item->DstFileInfo()->SetSize(kbi->Size());
@@ -853,10 +854,20 @@ int FtpSession::CheckFile(KbTransferItem *item)
 			}
 			else if (kbi->rtti() == KbItem::file)
 			{
-				//qWarning("kbi: dst: %d, src: %d", item->DstFileInfo()->Size(), item->SrcFileInfo()->Size());
 				if (item->DstFileInfo()->Size() >= item->SrcFileInfo()->Size()) dlg.ResumeButton->setEnabled(false);
 			}
-			switch (dlg.exec())
+			
+			if (m_onfileexistsdefault != off)
+			{			
+				if (m_onfileexistsdefault == clear) item->DstFileInfo()->SetSize(0);
+				if ((m_onfileexistsdefault == resume) &&
+					(item->DstFileInfo()->Size() >= item->SrcFileInfo()->Size())
+				) return skip;
+				return m_onfileexistsdefault;
+			}
+			else result = dlg.exec();
+			
+			switch (result)
 			{
 				case FileExistsDialog::overwrite:
 					item->DstFileInfo()->SetSize(0);
