@@ -638,15 +638,19 @@ void Kasablanca::SLOT_ItemClickedA(QListViewItem * item)
 
 void Kasablanca::SLOT_EnterCommandB()
 {
-   KProcess* p = new KProcess();
-
-	connect( p, SIGNAL (processExited (KProcess*)), this, SLOT (SLOT_ProcessExited(KProcess*)));
-
- 	p->setWorkingDirectory(m_currentlocaldir_a.absPath());
-
-	*p << QStringList::split(" ", CommandLineB->text());
-
-	if (p->start() == TRUE) CommandLineB->setText("");
+	if (m_status_b == connected)
+	{
+		m_proc_b.writeStdin("raw " + CommandLineB->text());
+		CommandLineB->setText("");
+	}
+	else if (m_status_b == disconnected)
+	{
+		KProcess* p = new KProcess();
+		connect( p, SIGNAL(processExited (KProcess*)), this, SLOT(SLOT_ProcessExited(KProcess*)));
+ 		p->setWorkingDirectory(m_currentlocaldir_b.absPath());
+		*p << QStringList::split(" ", CommandLineB->text());
+		if (p->start() == TRUE) CommandLineB->setText("");
+	}
 }
 
 void Kasablanca::UpdateLocalDisplay(Browser x)
