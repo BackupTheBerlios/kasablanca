@@ -28,6 +28,10 @@ transferfile::transferfile(QListView* taskview, QListViewItem* after, QFileInfo 
 {
 }
 
+transferfile::transferfile(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type) : transferitem(taskview, after, fifxpsrc, fifxpdst, type)
+{
+}
+
 transferfile::~transferfile()
 {
 }

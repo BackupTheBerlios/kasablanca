@@ -29,6 +29,11 @@ transferdir::transferdir(QListView* taskview, QListViewItem* after, QFileInfo fi
 {
 }
 
+transferdir::transferdir(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type)
+ : transferitem(taskview, after, fifxpsrc, fifxpdst, type)
+{
+}
+
 transferdir::~transferdir()
 {
 }

@@ -186,6 +186,8 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	
 	m_dcount = 0;
 	m_qstate = done;
+	m_fxpstate = 0;
+	m_fxpportinfo = "";
 	
 	connect(&m_proc_a, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
 	connect(&m_proc_b, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
@@ -359,7 +361,7 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			LogWindow->setColor(white);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
-			connectbutton_other->setEnabled(false);
+			//connectbutton_other->setEnabled(false);
 			connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
 			refreshbutton->setEnabled(false);
 			commandline->setEnabled(false);
@@ -1010,10 +1012,76 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 		}
 		case transferitem::fxp_a_to_b:
 		{
+			QListViewItemIterator it(BrowserA);
+			while (it.current())
+			{
+				if (it.current()->isSelected())
+				{
+					QListViewItem* item = it.current();
+
+					RemoteFileInfo fifxpsrc(m_currentremotedir_a,
+						static_cast<diritem*>(item)->m_file,
+						static_cast<diritem*>(item)->m_size,
+						static_cast<diritem*>(item)->m_date,
+						static_cast<diritem*>(item)->m_date_int);
+
+					RemoteFileInfo fifxpdst(m_currentremotedir_b,
+						static_cast<diritem*>(item)->m_file,
+						static_cast<diritem*>(item)->m_size,
+						static_cast<diritem*>(item)->m_date,
+						static_cast<diritem*>(item)->m_date_int);
+
+					if (item->rtti() == 1001)
+					{
+						qWarning("fxp a directory from a to b...");
+						lastitem = new transferdir(TaskView, lastitem, fifxpsrc, fifxpdst, t);
+					}
+					else if (item->rtti() == 1002)
+					{
+						qWarning("fxp a file from a to b...");
+						lastitem = new transferfile(TaskView, lastitem, fifxpsrc, fifxpdst, t);
+					}
+					item->setSelected(false);
+				}
+				++it;
+			}
 			break;
 		}
 		case transferitem::fxp_b_to_a:
 		{
+			QListViewItemIterator it(BrowserB);
+			while (it.current())
+			{
+				if (it.current()->isSelected())
+				{
+					QListViewItem* item = it.current();
+
+					RemoteFileInfo fifxpsrc(m_currentremotedir_b,
+						static_cast<diritem*>(item)->m_file,
+						static_cast<diritem*>(item)->m_size,
+						static_cast<diritem*>(item)->m_date,
+						static_cast<diritem*>(item)->m_date_int);
+
+					RemoteFileInfo fifxpdst(m_currentremotedir_a,
+						static_cast<diritem*>(item)->m_file,
+						static_cast<diritem*>(item)->m_size,
+						static_cast<diritem*>(item)->m_date,
+						static_cast<diritem*>(item)->m_date_int);
+
+					if (item->rtti() == 1001)
+					{
+						qWarning("fxp a directory from b to a...");
+						lastitem = new transferdir(TaskView, lastitem, fifxpsrc, fifxpdst, t);
+					}
+					else if (item->rtti() == 1002)
+					{
+						qWarning("fxp a file from b to a...");
+						lastitem = new transferfile(TaskView, lastitem, fifxpsrc, fifxpdst, t);
+					}
+					item->setSelected(false);
+				}
+				++it;
+			}
 			break;
 		}
 	}	
@@ -1021,12 +1089,12 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 
 void Kasablanca::Xfer()
 {
-	kbprocess* proc;
-	QString remotedir;
+	kbprocess* proc, *proc_fxpsrc, *proc_fxpdst;
+	QString remotedir, dir_fxpsrc, dir_fxpdst;
 	QDir* localdir;
-	Browser remotebrowser, localbrowser;
-	siteinfo* site;
-	QListView* remoteview;
+	Browser remotebrowser, localbrowser, browser_fxpsrc, browser_fxpdst;
+	siteinfo* site, *site_fxpsrc, *site_fxpdst;
+	QListView* remoteview, *view_fxpsrc, *view_fxpdst;
 
 	if (TaskView->childCount() == 0)
 	{
@@ -1064,223 +1132,233 @@ void Kasablanca::Xfer()
 		remotedir = m_currentremotedir_b;
 		localdir = &m_currentlocaldir_a;
 	}
-	else return; /* shpuld not happen! */
+	else if (item->type() == transferitem::fxp_a_to_b)
+	{
+		site_fxpsrc = &m_site_a;
+		site_fxpdst = &m_site_b;
+		proc_fxpsrc = &m_proc_a;
+		proc_fxpdst = &m_proc_b;
+		browser_fxpsrc = A;
+		browser_fxpdst = B;
+		view_fxpsrc = BrowserA;
+		view_fxpdst = BrowserB;
+		dir_fxpsrc = m_currentremotedir_a;
+		dir_fxpdst = m_currentremotedir_b;
+	}
+	else if (item->type() == transferitem::fxp_b_to_a)
+	{
+		site_fxpsrc = &m_site_b;
+		site_fxpdst = &m_site_a;
+		proc_fxpsrc = &m_proc_b;
+		proc_fxpdst = &m_proc_a;
+		browser_fxpsrc = B;
+		browser_fxpdst = A;
+		view_fxpsrc = BrowserB;
+		view_fxpdst = BrowserA;
+		dir_fxpsrc = m_currentremotedir_b;
+		dir_fxpdst = m_currentremotedir_a;
+	}
+	else return; /* should not happen! */
 	
 	/* process first queue item */
-
-	if (TaskView->firstChild()->rtti() == transferitem::dir)
+	
+	/* check if it's fxp and if we're in the correct directory 
+	yet. if not issue a change to the transfer directory. */
+		
+	if ((item->type() == transferitem::fxp_a_to_b) || (item->type() == transferitem::fxp_b_to_a))
 	{
-		qWarning("...is a dir");
-		transferdir* dir = static_cast<transferdir*>(TaskView->firstChild());
-
-		/* check if we're in the correct remote directory yet.
-		if not issue a change to the transfer directory */
-
-		if (dir->m_firemote.dirPath() != remotedir)
+		if (item->m_fifxpsrc.dirPath() != dir_fxpsrc)
 		{
 			qWarning("in the wrong path");
 			m_qstate = changedir;
 
-			proc->writeStdin("chdir " + dir->m_firemote.dirPath());
+			proc_fxpsrc->writeStdin("chdir " + item->m_fifxpsrc.dirPath());
+			UpdateRemote(browser_fxpsrc);
+			return;
+		}
+		else if (item->m_fifxpdst.dirPath() != dir_fxpdst)
+		{
+			qWarning("in the wrong path");
+			m_qstate = changedir;
+
+			proc_fxpdst->writeStdin("chdir " + item->m_fifxpdst.dirPath());
+			UpdateRemote(browser_fxpdst);
+			return;
+		}
+	}
+	else
+	{
+		/* check if we're in the correct remote directory yet.
+		if not issue a change to the transfer directory */
+
+		if (item->m_firemote.dirPath() != remotedir)
+		{
+			qWarning("in the wrong path");
+			m_qstate = changedir;
+
+			proc->writeStdin("chdir " + item->m_firemote.dirPath());
+			UpdateRemote(remotebrowser);
+		
+			return;
+		}
+					
+		localdir->cd(item->m_filocal.dirPath());
+		UpdateLocalDisplay(localbrowser);
+	}
+	
+	// handle items	
+	
+	if (item->rtti() == transferitem::dir)
+	{
+		qWarning("...is a dir");
+		transferdir* dir = static_cast<transferdir*>(TaskView->firstChild());
+					 	
+		/*-------------upload/download---------------*/
+		
+		if ((dir->type() == transferitem::upload_a_to_b) || (dir->type() == transferitem::upload_b_to_a))
+		{
+			/* the scanlocal flag is set */
+
+			m_qstate = scanlocal;
+
+			/* create dir on remote */
+
+			proc->writeStdin("mkdir " + dir->m_firemote.fileName());
+
+			/* change to remote dir */
+
+			proc->writeStdin("chdir " + dir->m_firemote.fileName());
+
+			/* enter dir on local */
+
+			localdir->cd(dir->m_filocal.fileName());
+			
+			UpdateLocalDisplay(localbrowser);
 			UpdateRemote(remotebrowser);
 		}
-		else
+		else if ((dir->type() == transferitem::download_a_to_b) || (dir->type() == transferitem::download_b_to_a))
 		{
-			/* change to the local transfer directory */
+			/* the scan dir flag is set */
 
-			localdir->cd(dir->m_filocal.dirPath());
+			m_qstate = scanremote;
+
+			/* cwd to new dir on remote.  */
+
+			proc->writeStdin("chdir " + dir->m_firemote.fileName());
+
+			/* create dir on local */
+
+			localdir->mkdir(dir->m_filocal.fileName());
+
+			/* enter dir on local */
+
+			localdir->cd(dir->m_filocal.fileName());
+			
 			UpdateLocalDisplay(localbrowser);
-
-			/*-------------upload/download---------------*/
-
-			if ((dir->type() == transferitem::upload_a_to_b) || (dir->type() == transferitem::upload_b_to_a))
-			{
-				/* the scanlocal flag is set */
-
-				m_qstate = scanlocal;
-
-				/* create dir on remote */
-
-				proc->writeStdin("mkdir " + dir->m_firemote.fileName());
-
-				/* change to remote dir */
-
-				proc->writeStdin("chdir " + dir->m_firemote.fileName());
-
-				/* enter dir on local */
-
-				localdir->cd(dir->m_filocal.fileName());
-				UpdateLocalDisplay(localbrowser);
-			}
-			else if ((dir->type() == transferitem::download_a_to_b) || (dir->type() == transferitem::download_b_to_a))
-			{
-				/* the scan dir flag is set */
-
-				m_qstate = scanremote;
-
-				/* cwd to new dir on remote.  */
-
-				proc->writeStdin("chdir " + dir->m_firemote.fileName());
-
-				/* create dir on local */
-
-				localdir->mkdir(dir->m_filocal.fileName());
-
-				/* enter dir on local */
-
-				localdir->cd(dir->m_filocal.fileName());
-				UpdateLocalDisplay(localbrowser);
-			}
-
-			/* the remote directory content gets updated for
-			further processing */
-
 			UpdateRemote(remotebrowser);
-		}	
+		}
+		else if ((dir->type() == transferitem::fxp_a_to_b) or (dir->type() == transferitem::fxp_b_to_a))
+		{
+			/* the scan dir flag is set */
+
+			m_qstate = scanfxp;  
+
+			/* cwd to new dir on src.  */
+			
+			proc_fxpsrc->writeStdin("chdir " + dir->m_fifxpsrc.fileName());
+
+			/* create dir on dst*/
+
+			proc_fxpdst->writeStdin("mkdir " + dir->m_fifxpdst.fileName());
+			
+			/* enter dir on dst */
+
+			proc_fxpdst->writeStdin("chdir " + dir->m_fifxpdst.fileName());
+			
+			if (dir->type() == transferitem::fxp_a_to_b) UpdateRemote(A);
+			else UpdateRemote(B);
+		}		
 	}
-	else if (TaskView->firstChild()->rtti() == transferitem::file)
+	else if (item->rtti() == transferitem::file)
 	{
 		qWarning("...is a file");
 		transferfile* file = static_cast<transferfile*>(TaskView->firstChild());
 
-		/* change to correct local directory */
+		/*-------------upload/download---------------*/
 
-		localdir->cd(file->m_filocal.dirPath());
-		UpdateLocalDisplay(localbrowser);
+		QString remotename = file->m_firemote.fileName();
+		QString localname = file->m_filocal.fileName();
+		FileExistsDialog dialog;
+		bool resume = false;
+		bool skip = false;
+		bool filepresent = false;
 
-		/* check if we're in the correct remote directory yet.
-		if not issue a change to the transfer directory */
-
-		if (remotedir != file->m_firemote.dirPath())
-		{
-			qWarning("path is '%s' and should be '%s'.", remotedir.latin1(), file->m_firemote.dirPath().latin1());
-			m_qstate = changedir;
-			proc->writeStdin("chdir " + file->m_firemote.dirPath());
-			UpdateRemote(remotebrowser);
-		}
-		else
-		{
-			/*-------------upload/download---------------*/
-
-			QString remotename = file->m_firemote.fileName();
-			QString localname = file->m_filocal.fileName();
-			FileExistsDialog dialog;
-			bool resume = false;
-			bool skip = false;
-			bool filepresent = false;
-
-			if ((file->type() == transferitem::upload_a_to_b) || (file->type() == transferitem::upload_b_to_a))
+		if ((file->type() == transferitem::fxp_a_to_b) || (file->type() == transferitem::fxp_b_to_a))
+		{		
+			/* if tls level is bigger-equal 2 then disable data encryption, fxp encryption doesn't work
+			the common way. */
+			
+			if (m_fxpstate == 0)
 			{
-				uint offset = file->m_filocal.size();
-
-				// search the whole remote browser list for the same filename
-
-				QListViewItemIterator it(remoteview);
-				while ( it.current() )
-				{
-					if (file->m_firemote.fileName().lower() == it.current()->text(0).lower())
-					{
-						filepresent = true;
-						if (it.current()->rtti() == 1002)
-						{
-							fileitem* firemote = static_cast<fileitem*>(it.current());
-							if (offset < firemote->m_size)
-            				{
-                				dialog.ResumeButton->setEnabled(true);
-            				}
-						}
-						if (it.current()->rtti() == 1002) dialog.ResumeButton->setEnabled(false);
-					}
-					++it;
-				}
-				if (filepresent)
-				{
-					dialog.setCaption(file->m_filocal.fileName() + " exists yet...");
-
-					switch (dialog.exec())
-					{
-						case 0:
-							skip = false;
-							break;
-						case 1:
-							resume = true;
-							break;
-						case 3:
-							skip = true;
-							break;
-						case 4:
-							bool b = false;
-							
-							/* a new name is entered and checked if it exists yet,
-							if so, it's looped. */
-							
-							while ((filepresent) || (!b))
-							{
-								#if KDE_IS_VERSION(3,2,0)
-								remotename = KInputDialog::getText("Enter New Name:", "Enter New Name:", remotename + "_alt", &b, this);
-								#else
-								remotename = KLineEditDlg::getText("Enter New Name:", remotename + "_alt", &b, this);
-								#endif
-								filepresent = false;
-												
-								QListViewItemIterator it(remoteview);
-								while ( it.current() )
-								{
-									if (remotename.lower() == it.current()->text(0).lower())
-									{
-										filepresent = true;
-									}
-									++it;
-								}
-							}
-							break;
-					}
-				}
-				if (skip)
-				{
-					delete TaskView->firstChild();
-					Xfer();
-				}
-				else
-				{
-					/* if tls level is 2 then disable data encryption, on level 3 enable it */
-
-					if (site->GetTls() == 2) proc->writeStdin("setdataencryption off");
-					else if (site->GetTls() == 3) proc->writeStdin("setdataencryption on");
-
-					/* resume the file if resume is set */
-
-					if (resume) proc->writeStdin("putresume " + file->m_filocal.filePath() + " "
-						+ remotename + " " + QString::number(offset));
-					else proc->writeStdin("put " + file->m_filocal.filePath() + " "
-						+ remotename);
-				}
+				proc_fxpdst->writeStdin("fxpinit pasv");
 			}
-			else if ((file->type() == transferitem::download_a_to_b) || (file->type() == transferitem::download_b_to_a))
+			else if (m_fxpstate == 1)
 			{
-				uint offset = file->m_filocal.size();
-				bool filepresent;
-				
-				/* check if file is yet present */
+				proc_fxpsrc->writeStdin("fxpinit port " + m_fxpportinfo);
+			}
+			else if (m_fxpstate == 2)
+			{
+				proc_fxpsrc->writeStdin("fxpget " + file->m_fifxpsrc.fileName());
+			}
+			else if (m_fxpstate == 3)
+			{
+				proc_fxpdst->writeStdin("fxpput " + file->m_fifxpdst.fileName());
+			}
+			else if (m_fxpstate == 4)
+			{		
+				proc_fxpsrc->writeStdin("fxpxferfinished");
+			}
+			else if (m_fxpstate == 5)
+			{		
+				proc_fxpdst->writeStdin("fxpxferfinished");
+			}
+			else if (m_fxpstate == 6)
+			{
+				delete file;
+				m_fxpstate = 0;
+				Xfer();
+			}
+		}
+		else if ((file->type() == transferitem::upload_a_to_b) || (file->type() == transferitem::upload_b_to_a))
+		{
+			uint offset = file->m_filocal.size();
 
-				if (file->m_filocal.isFile())
-				{
-					if (offset < file->m_firemote.size())
-					{
-						dialog.ResumeButton->setEnabled(true);
-					}
-				}
-				if (file->m_filocal.isDir())
-				{
-					dialog.OverwriteButton->setEnabled(false);
-				}
+			// search the whole remote browser list for the same filename
 
-				if ((file->m_filocal.isFile() == true) or (file->m_filocal.isDir() == true))
+			QListViewItemIterator it(remoteview);
+			while ( it.current() )
+			{
+				if (file->m_firemote.fileName().lower() == it.current()->text(0).lower())
 				{
 					filepresent = true;
-					dialog.setCaption(file->m_filocal.fileName() + " exists yet...");
-					switch (dialog.exec())
+					if (it.current()->rtti() == 1002)
 					{
+						fileitem* firemote = static_cast<fileitem*>(it.current());
+						if (offset < firemote->m_size)
+							{
+								dialog.ResumeButton->setEnabled(true);
+							}
+					}
+					if (it.current()->rtti() == 1002) dialog.ResumeButton->setEnabled(false);
+				}
+				++it;
+			}
+			if (filepresent)
+			{
+				dialog.setCaption(file->m_filocal.fileName() + " exists yet...");
+
+				switch (dialog.exec())
+				{
 					case 0:
 						skip = false;
 						break;
@@ -1293,45 +1371,126 @@ void Kasablanca::Xfer()
 					case 4:
 						bool b = false;
 						
-						while ((filepresent) or (!b))
-						//while ((localname.lower() == file->m_firemote.fileName().lower()) || (!b))
+						/* a new name is entered and checked if it exists yet,
+						if so, it's looped. */
+						
+						while ((filepresent) || (!b))
 						{
 							#if KDE_IS_VERSION(3,2,0)
-							localname = KInputDialog::getText("Enter New Name:", "Enter New Name:", localname + "_alt", &b, this);
+							remotename = KInputDialog::getText("Enter New Name:", "Enter New Name:", remotename + "_alt", &b, this);
 							#else
-							localname = KLineEditDlg::getText("Enter New Name:", localname + "_alt", &b, this);
+							remotename = KLineEditDlg::getText("Enter New Name:", remotename + "_alt", &b, this);
 							#endif
-	
 							filepresent = false;
-							QFileInfo fi(file->m_filocal.dirPath() + "/" + localname);
-							if ((fi.isFile() == true) or (fi.isDir() == true)) filepresent = true;
+											
+							QListViewItemIterator it(remoteview);
+							while ( it.current() )
+							{
+								if (remotename.lower() == it.current()->text(0).lower())
+								{
+									filepresent = true;
+								}
+								++it;
+							}
 						}
 						break;
+				}
+			}
+			if (skip)
+			{
+				delete TaskView->firstChild();
+				Xfer();
+			}
+			else
+			{
+				/* if tls level is 2 then disable data encryption, on level 3 enable it */
+
+				if (site->GetTls() == 2) proc->writeStdin("setdataencryption off");
+				else if (site->GetTls() == 3) proc->writeStdin("setdataencryption on");
+
+				/* resume the file if resume is set */
+
+				if (resume) proc->writeStdin("putresume " + file->m_filocal.filePath() + " "
+					+ remotename + " " + QString::number(offset));
+				else proc->writeStdin("put " + file->m_filocal.filePath() + " "
+					+ remotename);
+			}
+		}
+		else if ((file->type() == transferitem::download_a_to_b) || (file->type() == transferitem::download_b_to_a))
+		{
+			uint offset = file->m_filocal.size();
+			bool filepresent;
+			
+			/* check if file is yet present */
+
+			if (file->m_filocal.isFile())
+			{
+				if (offset < file->m_firemote.size())
+				{
+					dialog.ResumeButton->setEnabled(true);
+				}
+			}
+			if (file->m_filocal.isDir())
+			{
+				dialog.OverwriteButton->setEnabled(false);
+			}
+
+			if ((file->m_filocal.isFile() == true) or (file->m_filocal.isDir() == true))
+			{
+				filepresent = true;
+				dialog.setCaption(file->m_filocal.fileName() + " exists yet...");
+				switch (dialog.exec())
+				{
+				case 0:
+					skip = false;
+					break;
+				case 1:
+					resume = true;
+					break;
+				case 3:
+					skip = true;
+					break;
+				case 4:
+					bool b = false;
+					
+					while ((filepresent) or (!b))
+					//while ((localname.lower() == file->m_firemote.fileName().lower()) || (!b))
+					{
+						#if KDE_IS_VERSION(3,2,0)
+						localname = KInputDialog::getText("Enter New Name:", "Enter New Name:", localname + "_alt", &b, this);
+						#else
+						localname = KLineEditDlg::getText("Enter New Name:", localname + "_alt", &b, this);
+						#endif
+
+						filepresent = false;
+						QFileInfo fi(file->m_filocal.dirPath() + "/" + localname);
+						if ((fi.isFile() == true) or (fi.isDir() == true)) filepresent = true;
 					}
+					break;
 				}
+			}
 
-				/* if skip is set the first child in the taskview gets deleted
-				and Xfer is called recursive */
+			/* if skip is set the first child in the taskview gets deleted
+			and Xfer is called recursive */
 
-				if (skip)
-				{
-					delete TaskView->firstChild();
-					Xfer();
-				}
-				else
-				{
-					/* if tls level is 2 then disable data encryption, on level 3 enable it */
+			if (skip)
+			{
+				delete TaskView->firstChild();
+				Xfer();
+			}
+			else
+			{
+				/* if tls level is 2 then disable data encryption, on level 3 enable it */
 
-					if (site->GetTls() == 2) proc->writeStdin("setdataencryption off");
-					else if (site->GetTls() == 3) proc->writeStdin("setdataencryption on");
+				if (site->GetTls() == 2) proc->writeStdin("setdataencryption off");
+				else if (site->GetTls() == 3) proc->writeStdin("setdataencryption on");
 
-					/* resume the file if resume is set */
+				/* resume the file if resume is set */
 
-					if (resume) proc->writeStdin("getresume " + file->m_filocal.dirPath() + "/" + localname + " "
-						+ remotename + " " + QString::number(offset));
-					else proc->writeStdin("get " + file->m_filocal.dirPath() + "/" + localname + " "
-						+ remotename);
-				}
+				if (resume) proc->writeStdin("getresume " + file->m_filocal.dirPath() + "/" + localname + " "
+					+ remotename + " " + QString::number(offset));
+				else proc->writeStdin("get " + file->m_filocal.dirPath() + "/" + localname + " "
+					+ remotename);
 			}
 		}
 	}
@@ -1398,7 +1557,9 @@ void Kasablanca::SLOT_TransferA()
 	}
 	else if ((m_status_a == connected) && (m_status_b == connected))
 	{
-		KMessageBox::error(0,"site to site transfer (fxp) is not supported yet.");
+		InsertMarkedItems(transferitem::fxp_a_to_b);
+		Xfer();
+		//KMessageBox::error(0,"site to site transfer (fxp) is not supported yet.");
 	}
 }
 
@@ -1418,7 +1579,9 @@ void Kasablanca::SLOT_TransferB()
 	}
 	else if ((m_status_a == connected) && (m_status_b == connected))
 	{
-		KMessageBox::error(0,"site to site transfer (fxp) is not supported yet.");
+		InsertMarkedItems(transferitem::fxp_b_to_a);
+		Xfer();
+		//KMessageBox::error(0,"site to site transfer (fxp) is not supported yet.");
 	}
 }
 
@@ -1436,7 +1599,8 @@ void Kasablanca::SLOT_QueueA()
 	}
 	else if ((m_status_a == connected) && (m_status_b == connected))
 	{
-		KMessageBox::error(0,"site to site transfer (fxp) is not supported yet.");
+		InsertMarkedItems(transferitem::fxp_a_to_b);
+		//KMessageBox::error(0,"site to site transfer (fxp) is not supported yet.");
 	}
 }
 
@@ -1454,7 +1618,8 @@ void Kasablanca::SLOT_QueueB()
 	}	
 	else if ((m_status_a == connected) && (m_status_b == connected))
 	{
-		KMessageBox::error(0,"site to site transfer (fxp) is not supported yet.");
+		InsertMarkedItems(transferitem::fxp_b_to_a);
+		//KMessageBox::error(0,"site to site transfer (fxp) is not supported yet.");
 	}
 }
 
@@ -1865,6 +2030,11 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					m_xferresumesize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
 					m_timer.start();
 				}
+				/*else if (s.left(12) == "kb.issue.fxp")
+				{
+					SetGuiStatus(occupied, A);
+					SetGuiStatus(occupied, B);
+				}*/
 
 				SetGuiStatus(occupied, b);
 				LogWindow->setColor(white);
@@ -1876,13 +2046,26 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				LogWindow->setColor(red);
 				LogWindow->append(*log);
 				*log = "";
+								
 				if (s.left(16) == "kb.failure.fatal")
 				{
 					/* on connection changes the task view has to be cleared */
 					while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
 				
-					UpdateLocalDisplay(b);
-					SetGuiStatus(disconnected, b);
+					UpdateLocalDisplay(A);
+					SetGuiStatus(disconnected, A);
+					UpdateLocalDisplay(B);
+					SetGuiStatus(disconnected, B);
+					
+					m_fxpstate = 0;
+				}
+				else if (s.left(14) == "kb.failure.fxp")
+				{					
+					if (s.left(19) == "kb.failure.fxp.init")		
+					{		
+						m_fxpstate = 4;
+						Xfer();
+					}
 				}
 				else
 				{
@@ -1939,6 +2122,17 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 									if (p == &m_proc_a) InsertMarkedItems(transferitem::upload_b_to_a);
 									else InsertMarkedItems(transferitem::upload_a_to_b);
 								}
+								else if (m_qstate == scanfxp)
+								{								
+									QListViewItemIterator it(browser);
+									while ( it.current() )
+									{
+										it.current()->setSelected(true);
+										++it;
+									}
+									if (p == &m_proc_a) InsertMarkedItems(transferitem::fxp_a_to_b);
+									else InsertMarkedItems(transferitem::fxp_b_to_a);
+								}
 							}
 						}
 						m_qstate = done;
@@ -1957,7 +2151,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					/* delete current queue item */
 
 					delete TaskView->firstChild();
-
+					
 					Xfer();
 				}
 				else
@@ -1968,6 +2162,40 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 						+ " of " + QString::number(m_xferallsize >> 10) + " kb transfered"
 						+ "(" + QString::number(xfered / m_timer.elapsed()) + " kb/s) "
 						+ "(" + QString::number(((xfered + m_xferresumesize)* 100 ) / m_xferallsize) + "%) ");
+				}
+			}
+			else if (s.left(15) == "kb.fxpinit.pasv")
+			{
+				m_fxpstate = 1;
+				m_fxpportinfo = s.remove(0, 16);
+				Xfer();
+			}
+			else if (s.left(15) == "kb.fxpinit.port")
+			{
+				m_fxpstate = 2;
+				Xfer();
+			}
+			else if (s.left(9) == "kb.fxpget")
+			{
+				m_fxpstate = 3;
+				Xfer();
+			}
+			else if (s.left(9) == "kb.fxpput")
+			{
+				m_fxpstate = 4;
+				Xfer();
+			}
+			else if (s.left(14) == "kb.fxpfinished")
+			{
+				if (m_fxpstate == 4) 
+				{
+					m_fxpstate = 5;
+					Xfer();
+				}
+				if (m_fxpstate == 5) 
+				{
+					m_fxpstate = 6;
+					Xfer();
 				}
 			}
 			else if (s == "kb.quit")

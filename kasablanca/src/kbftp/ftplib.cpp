@@ -1358,6 +1358,12 @@ int ftplib::FxpGet(const char *path)
 {	
 	char buf[256];
 
+	if (mp_netbuf->tlsdata)
+	{ 
+		if (!FtpSendCmd("PBSZ 0",'2',mp_netbuf)) return 0;
+		if (!FtpSendCmd("PROT C",'2',mp_netbuf)) return 0;
+	}
+	
 	sprintf(buf, "TYPE %c", ftplib::image);
 	if (!FtpSendCmd(buf,'2',mp_netbuf)) return 0;
 	
@@ -1378,6 +1384,12 @@ int ftplib::FxpGet(const char *path)
 int ftplib::FxpPut(const char *path)
 {	
 	char buf[256];
+	
+	if (mp_netbuf->tlsdata)
+	{ 
+		if (!FtpSendCmd("PBSZ 0",'2',mp_netbuf)) return 0;
+		if (!FtpSendCmd("PROT C",'2',mp_netbuf)) return 0;
+	}
 
 	sprintf(buf, "TYPE %c", ftplib::image);
 	if (!FtpSendCmd(buf,'2',mp_netbuf)) return 0;
@@ -1392,8 +1404,14 @@ int ftplib::FxpPut(const char *path)
 	}
 	else return 0;
 	if (!FtpSendCmd(buf, '1', mp_netbuf)) return 0;
+	
 	return 1;
 } 
+
+int ftplib::FxpXferFinished()
+{
+	return readresp('2', mp_netbuf);
+}
 
 int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method)
 {

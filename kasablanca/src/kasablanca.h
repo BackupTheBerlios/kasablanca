@@ -62,7 +62,8 @@ public:
 		changedir,
 		proceed,
 		scanremote,
-		scanlocal
+		scanlocal,
+		scanfxp
 	};
 	
 	enum State
@@ -133,6 +134,8 @@ public slots:
 
 private:
 
+	int m_fxpstate;
+	QString m_fxpportinfo;
 	int m_dcount;
 	int m_xferallsize;
 	int m_xferresumesize;

@@ -30,6 +30,7 @@ class transferdir : public transferitem
 public:
 	transferdir(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
 	transferdir(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
+	transferdir(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type);
     ~transferdir();
 	int rtti() const;
 
