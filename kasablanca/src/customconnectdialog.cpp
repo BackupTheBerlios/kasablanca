@@ -14,7 +14,8 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
+ 
+#include <klocale.h>
 #include "siteinfo.h"
 #include <qstring.h>
 #include <qlineedit.h>
@@ -34,7 +35,7 @@ CustomConnectDialog::~CustomConnectDialog(){
 
 void CustomConnectDialog::accept()
 {
-    mp_site->SetName("Custom Site");
+    mp_site->SetName(i18n("Custom Site"));
     mp_site->SetInfo(InfoEdit->text());
     mp_site->SetUser(UserLineEdit->text().latin1());
     mp_site->SetPass(PassLineEdit->text().latin1());

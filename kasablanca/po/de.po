@@ -1,0 +1,413 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-06-12 21:27+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: _translatorinfo.cpp:1
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Magnus Kulke"
+msgstr ""
+
+#: _translatorinfo.cpp:3
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"sikor_sxe@radicalapproach.de"
+msgstr ""
+
+#: ftpsession.cpp:137
+msgid "Enter directory name"
+msgstr "Bitte Verzeichnisnamen eingeben"
+
+#: ftpsession.cpp:137
+msgid "Enter directory name:"
+msgstr "Bitte Verzeichnisnamen eingeben:"
+
+#: ftpsession.cpp:163 ftpsession.cpp:183
+msgid "Delete this item?"
+msgstr "Dieses Eintrag loeschen?"
+
+#: ftpsession.cpp:207 ftpsession.cpp:224
+msgid "Enter new name"
+msgstr "Bitte neuen Namen eingeben"
+
+#: ftpsession.cpp:207 ftpsession.cpp:224
+msgid "Enter new name:"
+msgstr "Bitte neuen Namen eingeben:"
+
+#: ftpsession.cpp:338
+msgid "Cancel transfer?"
+msgstr "Transfer Abbrechen?"
+
+#: ftpsession.cpp:378
+msgid "Aborted ftp operation"
+msgstr "Ftp Aktion abgebrochen"
+
+#: ftpsession.cpp:491
+msgid "connection failed"
+msgstr "Verbindung fehlgeschlagen"
+
+#: ftpsession.cpp:582 ftpsession.cpp:606
+msgid "Occupied"
+msgstr "Beschaeftigt"
+
+#: ftpsession.cpp:592 ftpsession.cpp:621
+msgid "Disconnected"
+msgstr "Nicht verbunden"
+
+#: ftpsession.cpp:620
+msgid "Connected"
+msgstr "Verbunden"
+
+#: ftpsession.cpp:869
+msgid "Enter New Name"
+msgstr "Bitte neuen Namen eingeben"
+
+#: ftpsession.cpp:869
+msgid "Enter New Name:"
+msgstr "Bitte neuen Namen eingeben:"
+
+#: ftpsession.cpp:869
+msgid "_alt"
+msgstr "_neu"
+
+#: ftpsession.cpp:254
+msgid "That site information is not legit."
+msgstr "Diese Server Information ist nicht zulaessig."
+
+#: Q_customconnectdialog.cpp:150 rc.cpp:42
+#msgid "Custom Connect"
+#msgstr "Benutzerdefinierte Verbindung"
+
+#: kasablanca.cpp:84
+msgid "Could not open Kasablanca bookmark xml."
+msgstr "Kasablanca Lesezeichen XML konnte nicht geoeffnet werden."
+
+#: kasablanca.cpp:239 kasablanca.cpp:241 rc.cpp:11 rc.cpp:71
+msgid "General"
+msgstr "Allgemein"
+
+#: kasablanca.cpp:240 kasablanca.cpp:242 rc.cpp:33
+msgid "Colors"
+msgstr "Farben"
+
+#: kasablanca.cpp:272 kasablanca.cpp:280
+msgid "Session A"
+msgstr ""
+
+#: kasablanca.cpp:273 kasablanca.cpp:281
+msgid "Session B"
+msgstr ""
+
+#: kasablanca.cpp:282
+msgid "Queue"
+msgstr "Warteschlange"
+
+#: kasablanca.cpp:285 kasablanca.cpp:293
+msgid "Transfer"
+msgstr "Uebertragung"
+
+#: kasablanca.cpp:286 kasablanca.cpp:294
+msgid "Put in Queue"
+msgstr "In die Warteschlange setzen"
+
+#: kasablanca.cpp:289 kasablanca.cpp:297 rc.cpp:69
+msgid "Rename"
+msgstr "Umbenennen"
+
+#: kasablanca.cpp:291 kasablanca.cpp:299
+msgid "Mkdir"
+msgstr "Neues Verzeichnis"
+
+#: kasablanca.cpp:301
+msgid "Start Queue"
+msgstr "Warteschlange starten"
+
+#: kasablanca.cpp:303
+msgid "Skip Item(s)"
+msgstr "Eintraege ueberspringen"
+
+#: kasablanca.cpp:357 kasablanca.cpp:358
+msgid "Custom"
+msgstr ""
+
+#: main.cpp:13
+msgid "A KDE Ftp Client"
+msgstr "Ein KDE Ftp Client"
+
+#: main.cpp:25
+msgid "kasablanca"
+msgstr ""
+
+#: rc.cpp:2
+msgid "Connect"
+msgstr "Verbinden"
+
+#: rc.cpp:3
+msgid "Action"
+msgstr "Aktion"
+
+#: rc.cpp:5
+msgid "New"
+msgstr "Neu"
+
+#: rc.cpp:6
+msgid "Add a new bookmark entry."
+msgstr "Neuen Lesezeichen-Eintrag hinzufuegen"
+
+#: rc.cpp:8
+msgid "Apply the changes to the bookmark entry."
+msgstr "Einstellungen auf den Lesezeichen-Eintrag anwenden."
+
+#: rc.cpp:10
+msgid "Remove a bookmark entry."
+msgstr "Den Lesezeichen-Eintrag loeschen."
+
+#: rc.cpp:12 rc.cpp:55
+msgid "Unencrypted"
+msgstr "Unverschluesselt"
+
+#: rc.cpp:13 rc.cpp:56
+msgid "Level 1"
+msgstr "Stufe 1"
+
+#: rc.cpp:14 rc.cpp:57
+msgid "Level 2"
+msgstr "Stufe 2"
+
+#: rc.cpp:15 rc.cpp:58
+msgid "Level 3"
+msgstr "Stufe 3"
+
+#: rc.cpp:16 rc.cpp:59
+msgid ""
+"There are 4 encryption levels available. Unencrypted leaves all traffic "
+"clear and without encryption. Most ftp servers allow only this mode. Level 1 "
+"encryption means that the traffic on the control connection is encrypted "
+"while data transfer remains clear. Level 2 is basically the same with the "
+"exception of directory information which is transfered on the data channel, "
+"but is encrypted too. Eventually Level 3 encrypts everything all "
+"communication and all data traffic."
+msgstr ""
+
+#: rc.cpp:17 rc.cpp:46
+msgid ""
+"The ftp Login Username. On open ftp servers you usually login using "
+"\"anonymous\"."
+msgstr ""
+
+#: rc.cpp:18
+msgid "<p align=\"right\">Mode</p>"
+msgstr "<p align=\"right\">Modus</p>"
+
+#: rc.cpp:19 rc.cpp:45
+msgid ""
+"The user's password. Anonymous ftp servers ussually don't use passwords or "
+"accept passwords in the form of \"user@emailaddress.com\"."
+msgstr ""
+
+#: rc.cpp:20
+msgid "<p align=\"right\">Username</p>"
+msgstr "<p align=\"right\">Benutzername</p>"
+
+#: rc.cpp:22
+msgid ""
+"This information points to the the ftp server. HOST can either be a standard "
+"ip adress like 192.168.2.1 or a domain name. PORT is the port number on "
+"which the ftp server listens. In most cases this is 21. Both are seperated "
+"by a \":\" character. A legit input would be \"ftp.kde.org:21\"."
+msgstr ""
+
+#: rc.cpp:23
+msgid "<p align=\"right\">Host:Port</p>"
+msgstr ""
+
+#: rc.cpp:24
+msgid "The ftp's name is entered here."
+msgstr ""
+
+#: rc.cpp:25
+msgid "<p align=\"right\">Name</p>"
+msgstr ""
+
+#: rc.cpp:26
+msgid "<p align=\"right\">Encryption</p>"
+msgstr "<p align=\"right\">Verschluesselung</p>"
+
+#: rc.cpp:28 rc.cpp:61
+msgid "Active Mode"
+msgstr "Aktiver Modus"
+
+#: rc.cpp:29 rc.cpp:60
+msgid "Passive Mode"
+msgstr "Passiver Modus"
+
+#: rc.cpp:30 rc.cpp:62
+msgid ""
+"The mode you are using for data transfer. This is quite important in case "
+"you're behind a firewall or a router. In these cases you depend on the "
+"passive mode, which makes the client connects to the ftp server for data "
+"transfer. Passive mode is the standard method today, while active mode is "
+"the old way to do data transfers, the client listens for the server to "
+"connect in active mode."
+msgstr "Betrifft den Modus fuer Datentransfer. Dies ist wichtig fuer den Fall, "
+"dass Sie hinter einer Firewall oder einem Router an das Netz angeschlossen sind. In "
+"diesen Faellen muessen Sie den Passiven Modus verwenden, welcher bewirkt, dass der "
+"Client bei Datentransfer zum Server verbindet. Der Passive Modus ist der Standart heute, "
+"waehrend der Aktive Modus die aeltere Variante ist, bei der der Client auf Verbindung vom "
+"Server wartet."
+
+#: rc.cpp:31
+msgid "<p align=\"right\">Password</p>"
+msgstr ""
+
+#: rc.cpp:32
+msgid "Advanced"
+msgstr ""
+
+#: rc.cpp:34
+msgid "Background:"
+msgstr "Hintergrund"
+
+#: rc.cpp:37
+msgid "Success Text:"
+msgstr "Erfolgsmeldungen:"
+
+#: rc.cpp:39
+msgid "Failure Text:"
+msgstr "Fehlermeldungen:"
+
+#: rc.cpp:41
+msgid "Local Text:"
+msgstr "Lokale Meldungen:"
+
+#: rc.cpp:42
+msgid "Custom Connect"
+msgstr "Benutzerdefinierte Verbindung"
+
+#: rc.cpp:43
+msgid "Encryption"
+msgstr "Verschluesselung"
+
+#: rc.cpp:44
+msgid ""
+"This information points to the the ftp server. HOST can either be a standard "
+"ip adress like \"192.168.2.1\" or a domain name. PORT is the port number on "
+"which the ftp server listens. In most cases this is 21. Both are seperated "
+"by a \":\" character. A legit input would be \"ftp.kde.org:21\"."
+msgstr ""
+
+#: rc.cpp:47
+msgid "Host:Port"
+msgstr ""
+
+#: rc.cpp:48
+msgid "Username"
+msgstr "Benutzername"
+
+#: rc.cpp:49
+msgid "Password"
+msgstr "Passwort"
+
+#: rc.cpp:50
+msgid "Mode"
+msgstr "Modus"
+
+#: rc.cpp:53
+msgid "Cancel the connection attempt."
+msgstr "Den Verbindungsversuch abbrechen."
+
+#: rc.cpp:54
+msgid "Anonymous"
+msgstr "Anonym"
+
+#: rc.cpp:65
+msgid "Accept the entrys and try connecting to the ftp server."
+msgstr "Uebernimmt die Eintraege und versucht zum Ftp-Server zu verbinden."
+
+#: rc.cpp:66
+msgid "File Exists"
+msgstr "Datei existiert bereits"
+
+#: rc.cpp:67
+msgid "Skip"
+msgstr "Ueberspringen"
+
+#: rc.cpp:68
+msgid "Resume"
+msgstr "Wiederaufnehmen"
+
+#: rc.cpp:70
+msgid "Overwrite"
+msgstr "Ueberschreiben"
+
+#: rc.cpp:72
+msgid "Skiplist:"
+msgstr "Skipliste"
+
+#: rc.cpp:73
+msgid ""
+"Here you can enter a Regular Expression. Transfer items which match this "
+"Regular Expression are skipped."
+msgstr ""
+
+#: rc.cpp:74
+msgid "Example:"
+msgstr "Beispiel:"
+
+#: rc.cpp:75
+msgid ""
+"Use \"^\\.\" to exclude files or dirs\n"
+"beginning with \".\" from transfer."
+msgstr "\"^\\.\" schliesst Dateien oder Verzeichnisse, welche mit \".\" beginnen von der Uebertragung aus."
+
+#: rc.cpp:76
+msgid "Kasablanca x"
+msgstr ""
+
+#: rc.cpp:83 rc.cpp:86
+msgid "Name"
+msgstr ""
+
+#: rc.cpp:84 rc.cpp:87
+msgid "Size"
+msgstr "Groesse"
+
+#: rc.cpp:85 rc.cpp:88
+msgid "Date"
+msgstr "Datum"
+
+#: rc.cpp:89
+msgid "Task"
+msgstr "Aufgabe"
+
+#: rc.cpp:90
+msgid "Progress"
+msgstr "Fortschritt"
+
+#: rc.cpp:93
+msgid "A RegExp which describes the items to skip at transfer."
+msgstr "Eine RegExp, welche beschreibt welche Eintraege beim Transfer zu ueberspringen sind."
+
+#: rc.cpp:94
+msgid "The color value for local messages on the logging window."
+msgstr "Die Farbe fuer Lokale Meldungen im Log-Fenster"
+
+#: rc.cpp:95
+msgid "The color value for successful remote messages on the logging window."
+msgstr "Die Farbe fuer Erfolgsmeldungen vom Server im Log-Fenster"
+
+#: rc.cpp:96
+msgid "The color value for the background on the logging window."
+msgstr "Die Hintergrundfarbe fuer das Log-Fenster"
+
+#: rc.cpp:97
+msgid "The color value for failed remote messages on the logging window."
+msgstr "Die Farbe fuer Fehlermeldungen vom Server im Log-Fenster"

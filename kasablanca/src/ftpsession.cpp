@@ -251,7 +251,7 @@ void FtpSession::SLOT_ConnectMenu(int i)
     	if (dlg.exec() == QDialog::Rejected) return; 	
     	else if (!mp_siteinfo->CheckContent()) 
 		{
-			KMessageBox::error(0,"That site information is not legit.");
+			KMessageBox::error(0,i18n("That site information is not legit."));
 			return;
 		}
 	}
