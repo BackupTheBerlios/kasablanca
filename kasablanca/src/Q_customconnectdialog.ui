@@ -36,6 +36,9 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <property name="margin">
+            <number>2</number>
+        </property>
         <widget class="QLabel" row="3" column="0">
             <property name="name">
                 <cstring>textLabel1</cstring>

@@ -30,6 +30,9 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <property name="margin">
+            <number>2</number>
+        </property>
         <widget class="QToolButton" row="0" column="0">
             <property name="name">
                 <cstring>ConnectButtonA</cstring>
@@ -379,53 +382,9 @@
     <property name="name">
         <cstring>menubar</cstring>
     </property>
-    <item text="Start" name="Start">
-        <action name="ActionClose"/>
-    </item>
-    <item text="Edit" name="EditMenu">
-        <action name="ActionEditBookmarks"/>
-    </item>
-    <item text="Help" name="HelpMenu">
-        <action name="ActionAbout"/>
-    </item>
 </menubar>
 <toolbars>
 </toolbars>
-<actions>
-    <action>
-        <property name="name">
-            <cstring>ActionEditBookmarks</cstring>
-        </property>
-        <property name="text">
-            <string>Bookmarks</string>
-        </property>
-        <property name="menuText">
-            <string>Bookmarks</string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>ActionClose</cstring>
-        </property>
-        <property name="text">
-            <string>Close</string>
-        </property>
-        <property name="menuText">
-            <string>Close</string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>ActionAbout</cstring>
-        </property>
-        <property name="text">
-            <string>About</string>
-        </property>
-        <property name="menuText">
-            <string>About</string>
-        </property>
-    </action>
-</actions>
 <connections>
     <connection>
         <sender>CommandLineA</sender>
@@ -468,24 +427,6 @@
         <signal>selectionChanged()</signal>
         <receiver>KasablancaMainWindow</receiver>
         <slot>SLOT_SelectionChanged()</slot>
-    </connection>
-    <connection>
-        <sender>ActionEditBookmarks</sender>
-        <signal>activated()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_EditBookmarks()</slot>
-    </connection>
-    <connection>
-        <sender>ActionClose</sender>
-        <signal>activated()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_Close()</slot>
-    </connection>
-    <connection>
-        <sender>ActionAbout</sender>
-        <signal>activated()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_About()</slot>
     </connection>
     <connection>
         <sender>TransferButtonA</sender>

@@ -30,6 +30,9 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <property name="margin">
+            <number>2</number>
+        </property>
         <property name="resizeMode">
             <enum>Fixed</enum>
         </property>
