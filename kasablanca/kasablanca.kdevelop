@@ -3,7 +3,7 @@
   <general>
     <author>Magnus Kulke</author>
     <email>mkulke@magnusmachine</email>
-    <version>0.4.0.1</version>
+    <version>0.4.0.2</version>
     <projectmanagement>KDevKDEAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <keywords>
@@ -112,6 +112,14 @@
       <toc>php</toc>
       <toc>perl</toc>
     </ignoretocs>
+    <projectdoc>
+      <userdocDir>html/</userdocDir>
+      <apidocDir>html/</apidocDir>
+    </projectdoc>
+    <ignoreqt_xml/>
+    <ignoredoxygen/>
+    <ignorekdocs/>
+    <ignoredevhelp/>
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
@@ -139,7 +147,10 @@
     </useglobaltypes>
   </kdevfilecreate>
   <kdevcppsupport>
-    <references/>
+    <references>
+      <pcs>Qt</pcs>
+      <pcs>KDElibs</pcs>
+    </references>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>

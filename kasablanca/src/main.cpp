@@ -12,7 +12,7 @@
 static const char description[] =
     I18N_NOOP("A KDE Ftp Client");
 
-static const char version[] = "0.4.0.1";
+static const char version[] = "0.4.0.2";
 
 static KCmdLineOptions options[] =
 {
@@ -31,6 +31,7 @@ int main(int argc, char **argv)
     about.addAuthor( "Big Biff", 0, "bigbiff@chunkyfilms.org" );
 	 about.addCredit( "Stefan Bogner", 0, "bochi@online.ms" );
 	 about.addCredit( "Christoph Thielecke", 0, "u15119@hs-harz.de" );
+	about.addCredit( "Richard Stellingwerf", 0, "justremenic@hotmail.com" );
     KCmdLineArgs::init(argc, argv, &about);
     KCmdLineArgs::addCmdLineOptions(options);
     KApplication app;

@@ -1,6 +1,6 @@
 Summary: A Kde Ftp Client
 Name: kasablanca
-Version: 0.4.0.1
+Version: 0.4.0.2
 Release: 1
 Copyright: GPL
 Group: Applications/Internet

@@ -23,6 +23,7 @@
 #include <qcheckbox.h>
 #include <qheader.h>
 #include <qtabwidget.h>
+#include <qaction.h>
 
 #include <kcombobox.h>
 #include <kcompletion.h>
@@ -73,6 +74,11 @@ BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
 	 m_newitemselected = false;
 	 
 	 enableButton(KDialogBase::User2, false);
+	 
+	 QAction *deleteShortcut = new QAction( QPixmap(), "&Delete",
+                                      Key_Delete, this, "delete" );
+									  
+	 connect( deleteShortcut, SIGNAL( activated() ) , this, SLOT( slotUser2() ) );
 }
 
 BookmarkDialog::~BookmarkDialog()
