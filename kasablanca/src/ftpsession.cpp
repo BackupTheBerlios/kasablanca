@@ -76,7 +76,7 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_log(QString, bool)), SLOT(SLOT_Log(QString, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_connect(bool)), SLOT(SLOT_Connect(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
-	connect(mp_eventhandler, SIGNAL(ftp_xfered(unsigned long, bool)), SLOT(SLOT_Xfered(unsigned long, bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_xfered(off_t, bool)), SLOT(SLOT_Xfered(off_t, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_quit(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_chdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_raw(bool)), SLOT(SLOT_Misc(bool)));
@@ -124,7 +124,7 @@ void FtpSession::SLOT_Log(QString log, bool out)
 	else m_loglist.push_back(make_pair(log, false));
 }
 
-void FtpSession::SLOT_Xfered(unsigned long xfered, bool encrypted)
+void FtpSession::SLOT_Xfered(off_t xfered, bool encrypted)
 {
 	//if (encrypted) mp_encryptionicon->setPixmap(m_iconencrypted);
 	//else mp_encryptionicon->setPixmap(m_iconunencrypted);	
@@ -299,7 +299,6 @@ void FtpSession::SLOT_ConnectMenu(int i)
 			KMessageBox::error(0,i18n("That site information is not legit."));
 			return;
 		}
-		mp_siteinfo->SetName("");
 	}
 	else 
 	{
@@ -695,11 +694,7 @@ void FtpSession::Occupy()
 	mp_cmdline->setEnabled(false);
 	mp_cwdline->setEnabled(false);
 	mp_refreshbutton->setEnabled(false);
-	if (m_connected) 
-	{
-		if (QString(mp_siteinfo->GetName()) == "") mp_statusline->setText(mp_siteinfo->GetInfo() + i18n(" is occupied"));
-		else mp_statusline->setText(mp_siteinfo->GetName() + i18n(" is occupied"));
-	}
+	if (m_connected) mp_statusline->setText(mp_siteinfo->GetName() + i18n(" is occupied"));
 	else mp_statusline->setText("Local " + i18n(" is occupied"));
 	m_occupied = true;
 	emit gui_update();
@@ -714,11 +709,7 @@ void FtpSession::Free()
 	mp_cmdline->setEnabled(true);
 	mp_cwdline->setEnabled(true);
 	mp_refreshbutton->setEnabled(true);
-	if (m_connected) 
-	{
-		if (QString(mp_siteinfo->GetName()) == "") mp_statusline->setText(i18n("Connected to ") + mp_siteinfo->GetInfo());
-		else mp_statusline->setText(i18n("Connected to ") + mp_siteinfo->GetName());
-	}
+	if (m_connected) mp_statusline->setText(i18n("Connected to ") + mp_siteinfo->GetName());
 	else mp_statusline->setText(i18n("Disconnected"));	
 	if ((mp_siteinfo->GetTls() > 0) && (m_connected)) mp_encryptionicon->setPixmap(m_iconencrypted);
 	else mp_encryptionicon->setPixmap(m_iconunencrypted);	
@@ -1102,7 +1093,7 @@ void FtpSession::FxpFile(KbTransferItem *item, filecheck fc)
 	bool result;
 	int srctls, dsttls, alternativefxp;
 	QString localfile, remotefile;
-	unsigned long offset;
+	off_t offset;
 
 	remotefile = item->SrcFileInfo()->fileName();
 	localfile = mp_currenttransfer->DstSession()->WorkingDir() + '/' + item->DstFileInfo()->fileName();

@@ -26,7 +26,7 @@ KbFile::KbFile(KbFileInfo kfi, QListView * parent, QListViewItem * after) : KbIt
 	setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
 }
 
-KbFile::KbFile(QListView * parent, QListViewItem * after, QString file, QString path, QString date, ulong size, uint date_int) : KbItem(parent, after)
+KbFile::KbFile(QListView * parent, QListViewItem * after, QString file, QString path, QString date, off_t size, uint date_int) : KbItem(parent, after)
 {
     setText(0,file);
 

@@ -37,7 +37,7 @@ class QObject;
 class KbDirInfo;
 
 typedef list<KbFileInfo> filist;
-typedef pair<unsigned long, bool> xferpair;
+typedef pair<off_t, bool> xferpair;
 typedef pair<filist, filist> dirpair;
 
 /**
@@ -49,7 +49,7 @@ public:
    FtpThread();
    ~FtpThread();
 	static void CallbackLog(char *log, void *arg, bool out);
-	static int CallbackXfer(unsigned long xfered, void *arg);
+	static int CallbackXfer(off_t xfered, void *arg);
 	void SetEventReceiver(QObject* eventreceiver);
 	void ClearQueue();
 	bool Connect(QString host);
@@ -65,12 +65,12 @@ public:
 	bool Authtls();
 	bool Pasv(bool flag);
 	bool EncryptData(bool flag, bool force = false);
-	bool Transfer_Fxp(QString src, QString dst, FtpThread* dstftp, int srctls, int dsttls, unsigned long resume = 0, int alt = 0);
+	bool Transfer_Fxp(QString src, QString dst, FtpThread* dstftp, int srctls, int dsttls, off_t resume = 0, int alt = 0);
 	bool Mkdir(QString path);
 	bool Rename(QString src, QString dst);
 	bool Raw(QString cmd);
-	bool Transfer_Get(QString src, QString dst, int tls, unsigned long resume = 0);
-	bool Transfer_Put(QString src, QString dst, int tls, unsigned long resume = 0);
+	bool Transfer_Get(QString src, QString dst, int tls, off_t resume = 0);
+	bool Transfer_Put(QString src, QString dst, int tls, off_t resume = 0);
 	bool Transfer_Changedir(QString dir, int tls);
 	bool Transfer_Mkdir(QString dir);
 	void Event(EventHandler::EventType type, void *data = NULL);
@@ -145,7 +145,7 @@ private:
 	QValueList<task> m_tasklist;
 	QStringList m_stringlist;
 	QValueList<int> m_intlist;
-	QValueList<unsigned long> m_ulonglist;
+	QValueList<off_t> m_ulonglist;
 	QValueList<FtpThread*> m_ftplist;
 	QValueVector<dirpair> m_cache_vector;
 	QStringList m_cache_list;

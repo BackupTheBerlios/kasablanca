@@ -729,7 +729,7 @@ int ftplib::FtpOpenPort(netbuf *nControl, netbuf **nData, int mode, int dir, cha
 	if (mp_netbuf->offset != 0)
 	{
 	char buf[256];
-	sprintf(buf,"REST %d", mp_netbuf->offset);
+	sprintf(buf,"REST %ld", mp_netbuf->offset);
 	if (!FtpSendCmd(buf,'3',nControl))
 	{
 		net_close(sData);
@@ -827,7 +827,7 @@ int ftplib::FtpOpenPasv(netbuf *nControl, netbuf **nData, int mode, int dir, cha
 	if (mp_netbuf->offset != 0)
 	{
 		char buf[256];
-		sprintf(buf,"REST %d",mp_netbuf->offset);
+		sprintf(buf,"REST %ld",mp_netbuf->offset);
 		if (!FtpSendCmd(buf,'3',nControl)) return 0;
 	}
 
@@ -1137,7 +1137,7 @@ int ftplib::FtpXfer(const char *localfile, const char *path, netbuf *nControl, i
 		if (mode == ftplib::image) ac[1] = 'b';
 
 		local = fopen(localfile, ac);
-		if (typ == FTPLIB_FILE_WRITE_APPEND) fseek(local,mp_netbuf->offset,SEEK_SET);
+		if (typ == FTPLIB_FILE_WRITE_APPEND) fseeko(local,mp_netbuf->offset,SEEK_SET);
 
 		if (local == NULL)
 		{
@@ -1252,7 +1252,7 @@ int ftplib::ModDate(const char *path, char *dt, int max)
  * return 1 if successful, 0 otherwise
  */
 
-int ftplib::Get(const char *outputfile, const char *path, ftplib::ftp mode, int offset)
+int ftplib::Get(const char *outputfile, const char *path, ftplib::ftp mode, off_t offset)
 {
 	mp_netbuf->offset = offset;
 	if (offset == 0) return FtpXfer(outputfile, path, mp_netbuf, FTPLIB_FILE_READ, mode);
@@ -1265,7 +1265,7 @@ int ftplib::Get(const char *outputfile, const char *path, ftplib::ftp mode, int 
  * return 1 if successful, 0 otherwise
  */
 
-int ftplib::Put(const char *inputfile, const char *path, ftplib::ftp mode, int offset)
+int ftplib::Put(const char *inputfile, const char *path, ftplib::ftp mode, off_t offset)
 {
 	mp_netbuf->offset = offset;
 	if (offset == 0) return FtpXfer(inputfile, path, mp_netbuf, FTPLIB_FILE_WRITE, mode);
@@ -1505,7 +1505,7 @@ void ftplib::SetCallbackArg(void *arg)
 	mp_netbuf->cbarg = arg;
 }
 
-void ftplib::SetCallbackBytes(long bytes)
+void ftplib::SetCallbackBytes(off_t bytes)
 {
 	mp_netbuf->cbbytes = bytes;
 }

@@ -6,7 +6,8 @@
 -added: import gftp bookmarks [crissi]
 -added: polish translation [tomwal]
 -fixed: compilation error
--fixed: some filesize issues
+-fixed: filesize issues, files bigger than 2GB should be 
+ supported now
 -changed: some changes to the bookmark editor
 -changed: improved directory caching
 -added: auto-completion in the lineedits

@@ -78,7 +78,7 @@ void FtpThread::InitInternals()
 
 /* callback function for the transfer */
 
-int FtpThread::CallbackXfer(unsigned long xfered, void *arg)
+int FtpThread::CallbackXfer(off_t xfered, void *arg)
 {
 	FtpThread* ftp = static_cast<FtpThread*>(arg);
 		
@@ -162,7 +162,7 @@ bool FtpThread::Quit()
 
 /* get file */
 
-bool FtpThread::Transfer_Get(QString src, QString dst, int tls, unsigned long resume)
+bool FtpThread::Transfer_Get(QString src, QString dst, int tls, off_t resume)
 {
 	if (running()) return false;
 	else
@@ -178,7 +178,7 @@ bool FtpThread::Transfer_Get(QString src, QString dst, int tls, unsigned long re
 
 /* fxp file */
 
-bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int srctls, int dsttls, unsigned long resume, int alt)
+bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int srctls, int dsttls, off_t resume, int alt)
 {
 	if (running()) return false;
 	else
@@ -197,7 +197,7 @@ bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int sr
 
 /* put file */
 
-bool FtpThread::Transfer_Put(QString src, QString dst, int tls, unsigned long resume)
+bool FtpThread::Transfer_Put(QString src, QString dst, int tls, off_t resume)
 {
 	if (running()) return false;
 	else
@@ -608,7 +608,7 @@ void FtpThread::Transfer_Get_thread()
 	m_stringlist.pop_front();
 	int tls = m_intlist.front();
 	m_intlist.pop_front();
-	unsigned long resume = m_ulonglist.front();
+	off_t resume = m_ulonglist.front();
 	m_ulonglist.pop_front();
 		
 	if (tls > 1)
@@ -654,7 +654,7 @@ void FtpThread::Transfer_Put_thread()
 	m_stringlist.pop_front();
 	int tls = m_intlist.front();
 	m_intlist.pop_front();
-	unsigned long resume = m_ulonglist.front();
+	off_t resume = m_ulonglist.front();
 	m_ulonglist.pop_front();
 	
 	if (tls > 1)
@@ -719,7 +719,7 @@ void FtpThread::Transfer_Fxp_thread()
 	m_intlist.pop_front();
 	int dsttls = m_intlist.front();
 	m_intlist.pop_front();
-	unsigned long resume = m_ulonglist.front();
+	off_t resume = m_ulonglist.front();
 	m_ulonglist.pop_front();
 	int alt = m_intlist.front();
 	m_intlist.pop_front();
@@ -1210,7 +1210,7 @@ bool FtpThread::FormatFilelist(const char *filename, QString current, list<KbFil
 				loc--;
 			}
 
-			ulong size = atol(buffer.substr( sizebegin, datebegin - sizebegin).c_str());
+			off_t size = atol(buffer.substr( sizebegin, datebegin - sizebegin).c_str());
 			
 			filestring.erase();
 			filestring.append(buffer, fileloc, buffer.length() - fileloc);

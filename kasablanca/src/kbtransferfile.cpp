@@ -57,7 +57,7 @@ void KbTransferFile::ShowProgress()
 	int time = m_time.elapsed();
 	int time_dif = time - m_time_old;
 	if (time_dif == 0) time_dif = 1;
-	ulong xfer_dif = m_xfered - m_xfered_old;
+	off_t xfer_dif = m_xfered - m_xfered_old;
 
 	setText(1, 
 		"[" +

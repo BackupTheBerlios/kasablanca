@@ -62,7 +62,7 @@ using namespace std;
   *@author mkulke
   */
 
-typedef int (*FtpCallbackXfer)(unsigned long xfered, void *arg);
+typedef int (*FtpCallbackXfer)(off_t xfered, void *arg);
 typedef int (*FtpCallbackIdle)(void *arg);
 typedef void (*FtpCallbackLog)(char *str, void* arg, bool out);
 
@@ -81,14 +81,14 @@ struct netbuf {
 	FtpCallbackIdle idlecb;
 	FtpCallbackLog logcb;
 	void *cbarg;
-	unsigned long xfered;
-	unsigned int cbbytes;
-	unsigned long xfered1;
+	off_t xfered;
+	off_t cbbytes;
+	off_t xfered1;
 	char response[256];
 	SSL* ssl;
 	SSL_CTX* ctx;
 	BIO* sbio;
-	int offset;
+	off_t offset;
 	bool correctpasv;
 };
   
@@ -123,8 +123,8 @@ public:
     int Dir(const char *outputfile, const char *path);
     int Size(const char *path, int *size, ftplib::ftp mode);
     int ModDate(const char *path, char *dt, int max);
-    int Get(const char *outputfile, const char *path, ftplib::ftp mode, int offset = 0);
-    int Put(const char *inputfile, const char *path, ftplib::ftp mode, int offset= 0);
+    int Get(const char *outputfile, const char *path, ftplib::ftp mode, off_t offset = 0);
+    int Put(const char *inputfile, const char *path, ftplib::ftp mode, off_t offset= 0);
     int Rename(const char *src, const char *dst);
     int Delete(const char *fnm);
     int SetDataEncryption(ftplib::ftp flag);
@@ -134,7 +134,7 @@ public:
     void SetCallbackLogFunction(FtpCallbackLog pointer);
 	 void SetCallbackXferFunction(FtpCallbackXfer pointer);
 	 void SetCallbackArg(void *arg);
-    void SetCallbackBytes(long bytes);
+    void SetCallbackBytes(off_t bytes);
 	 void SetCorrectPasv(bool b) { mp_netbuf->correctpasv = b; };
     void SetCallbackIdletime(int time);
     void SetConnmode(ftplib::ftp mode);

@@ -28,16 +28,16 @@ public:
 	KbFileInfo(const KbFileInfo & kfi);
 	KbFileInfo(QString workingdir);
 	KbFileInfo(KbItem* item, QString workingdir);
-	KbFileInfo(const QString & d, const QString & fileName, ulong size, QString date, uint date_int);
+	KbFileInfo(const QString & d, const QString & fileName, off_t size, QString date, uint date_int);
 	~KbFileInfo();
-	ulong Size() { return m_size; };
+	off_t Size() { return m_size; };
 	QString Date() { return m_date; };
 	uint DateInt() { return m_date_int; };
 	void SetDirPath(QString path); 
-	void SetSize(ulong size) { m_size = size; };
+	void SetSize(off_t size) { m_size = size; };
 	static bool PrioritySort(const KbFileInfo &f1, const KbFileInfo &f2);
 private:
-   ulong m_size;
+   off_t m_size;
 	uint m_date_int;
 	QString m_date;
 };

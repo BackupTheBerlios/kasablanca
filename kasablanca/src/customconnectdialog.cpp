@@ -42,7 +42,7 @@ CustomConnectDialog::~CustomConnectDialog()
 
 void CustomConnectDialog::slotOk()
 {
-	mp_site->SetName(i18n("Custom Site"));
+	mp_site->SetName(mp_dialog->InfoEdit->text());
 	mp_site->SetInfo(mp_dialog->InfoEdit->text());
 	mp_site->SetUser(mp_dialog->UserLineEdit->text());
 	mp_site->SetPass(mp_dialog->PassLineEdit->text());
