@@ -1,5 +1,6 @@
 [v 0.4 pre2]
 
+-fixed NASTY bug when fxp transfers failed.
 -~.kde/share/apps/kasablanca/ is now used instead of ~.kasablanca/
 -fixed problem with no remote directory appearing
 -fixed flickering when queuing items

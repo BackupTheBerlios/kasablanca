@@ -1,57 +1,72 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="10" >
-  <Doc0 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/src/bookmarkdialog.cpp" >
-   <View0 line="199" Type="???" >
+ <DocsAndViews NumberOfDocuments="13" >
+  <Doc0 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kasablanca.cpp" >
+   <View0 line="545" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/src/ftpsession.cpp" >
-   <View0 line="324" Type="???" >
+  <Doc1 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferitem.h" >
+   <View0 line="59" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/src/customconnectdialog.h" >
-   <View0 line="28" Type="???" >
-    <AdditionalSettings Top="2" Width="1199" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+  <Doc2 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferitem.cpp" >
+   <View0 line="64" Type="???" >
+    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/src/customconnectdialog.cpp" >
-   <View0 line="33" Type="???" >
-    <AdditionalSettings Top="2" Width="1199" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+  <Doc3 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/TODO" >
+   <View0 line="1" Type="???" >
+    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/src/kasablanca.cpp" >
-   <View0 line="524" Type="???" >
+  <Doc4 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferfile.h" >
+   <View0 line="27" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/src/kbconfig.kcfg" >
-   <View0 line="18" Type="???" >
-    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+  <Doc5 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/kbtransferfile.cpp" >
+   <View0 line="48" Type="???" >
+    <AdditionalSettings Top="2" Width="1199" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/ChangeLog" >
-   <View0 line="30" Type="???" >
+  <Doc6 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/ftpsession.cpp" >
+   <View0 line="401" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/TODO" >
-   <View0 line="3" Type="???" >
+  <Doc7 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/ChangeLog" >
+   <View0 line="9" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/src/ftpsession.h" >
-   <View0 line="114" Type="???" >
+  <Doc8 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/ftpthread.cpp" >
+   <View0 line="715" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc8>
-  <Doc9 NumberOfViews="1" URL="file:/home/mkulke/kasablanca/kasablanca/src/kasablanca.h" >
-   <View0 line="82" Type="???" >
+  <Doc9 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/bookmarks.cpp" >
+   <View0 line="48" Type="???" >
     <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
    </View0>
   </Doc9>
+  <Doc10 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/bookmarkdialog.cpp" >
+   <View0 line="102" Type="???" >
+    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+   </View0>
+  </Doc10>
+  <Doc11 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/bookmarks.h" >
+   <View0 line="29" Type="???" >
+    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+   </View0>
+  </Doc11>
+  <Doc12 NumberOfViews="1" URL="file:/home/mkulke/Development/kasablanca/src/bookmarkdialog.h" >
+   <View0 line="37" Type="???" >
+    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="756" Left="2" MinMaxMode="0" />
+   </View0>
+  </Doc12>
  </DocsAndViews>
  <pluginList>
   <kdevvalgrind>
