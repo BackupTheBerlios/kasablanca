@@ -17,8 +17,10 @@
 
 #include <kdeversion.h>
 #include <kstandarddirs.h>
+#include <qhbox.h>
 #include <qstatusbar.h>
 #include <qtextedit.h>
+#include <qsizepolicy.h>
 #include <qlineedit.h>
 #include <qcolor.h>
 #include <qpixmap.h>
@@ -26,10 +28,12 @@
 #include <kaboutdialog.h>
 #include <qmenubar.h>
 #include <qlistview.h>
+#include <qframe.h>
 #include <qpushbutton.h>
 #include <kglobal.h>
 #include <kicontheme.h>
 #include <kiconloader.h>
+#include <qlabel.h>
 #include <qevent.h>
 #include <qobject.h>
 #include <qdir.h>
@@ -73,17 +77,7 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	so the destructers of kbprocesses are called. */
 
 	setWFlags(WDestructiveClose);
-		
-	QPopupMenu* bookmarks = new QPopupMenu();
-	QPopupMenu* actions = new QPopupMenu();
-	
-	/* both bookmarkmenus are inserted into a Connect entry */
-	
-	menubar->insertItem("Connect",  bookmarks, 1001, 2);
-	menubar->insertItem("Action",  actions, 1002, 3);
-	bookmarks->insertItem("Left Window",  &m_bookmarksmenu_a, 1001);
-	bookmarks->insertItem("Right Window", &m_bookmarksmenu_b, 1002);
-	
+			
 	/* if parsebookmarks returns false, an error box appears */
 	
 	if (ParseBookmarks() != 1) KMessageBox::error(0,"could not open kasablanca bookmark xml.");
@@ -115,7 +109,50 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
    ConnectButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
 	
-   m_rclickmenu_a.insertItem("Transfer", Transfer);
+  	PrepareMenus();
+	PrepareStatusBar();
+	
+	m_dcount = 0;
+	m_qstate_a = done; m_qstate_b = done;
+	m_fxpstate = stopped;
+	m_fxpportinfo = "";
+	
+	connect(&m_proc_a, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
+	connect(&m_proc_b, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
+	
+	UpdateLocalDisplay(A);
+	UpdateLocalDisplay(B);
+	
+	SetGuiStatus(disconnected, A);
+	SetGuiStatus(disconnected, B);
+	
+
+}
+
+void Kasablanca::PrepareMenus()
+{
+	QPopupMenu* bookmarks = new QPopupMenu();
+	QPopupMenu* actions = new QPopupMenu();
+	QPopupMenu* start = new QPopupMenu();
+	QPopupMenu* edit = new QPopupMenu();
+	QPopupMenu* help = new QPopupMenu();
+	
+	menubar->insertItem("Start", start, 1001, 1);
+	start->insertItem( "Close",  this, SLOT(SLOT_Close()), CTRL+Key_C );
+	
+	menubar->insertItem("Edit", edit, 1002, 2);
+	edit->insertItem( "Bookmarks",  this, SLOT(SLOT_EditBookmarks()), CTRL+Key_B );
+	
+	menubar->insertItem("Connect",  bookmarks, 1003, 3);
+	bookmarks->insertItem("Left Window",  &m_bookmarksmenu_a, 1004);
+	bookmarks->insertItem("Right Window", &m_bookmarksmenu_b, 1005);
+	
+	menubar->insertItem("Action",  actions, 1006, 4);
+
+	menubar->insertItem("Help",  help, 1007, 5);
+	help->insertItem("About", this, SLOT(SLOT_About()));
+	
+	m_rclickmenu_a.insertItem("Transfer", Transfer);
    m_rclickmenu_a.insertItem("Put in Queue", Queue);
    m_rclickmenu_a.insertSeparator();
    m_rclickmenu_a.insertItem("Delete", Delete);
@@ -189,20 +226,33 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	
 	m_rclickmenu_t.setItemEnabled(Start, false);
 	m_rclickmenu_t.setItemEnabled(Skip, false);
+}
+
+void Kasablanca::PrepareStatusBar()
+{
+	statusBar()->setSizeGripEnabled(false);	
 	
-	m_dcount = 0;
-	m_qstate_a = done; m_qstate_b = done;
-	m_fxpstate = stopped;
-	m_fxpportinfo = "";
+	m_iconencrypted = KGlobal::iconLoader()->loadIconSet("encrypted",KIcon::Small).pixmap(QIconSet::Small,QIconSet::Normal);
+	m_iconunencrypted = KGlobal::iconLoader()->loadIconSet("encrypted",KIcon::Small).pixmap(QIconSet::Small,QIconSet::Disabled);
 	
-	connect(&m_proc_a, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
-	connect(&m_proc_b, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
-	
-	UpdateLocalDisplay(A);
-	UpdateLocalDisplay(B);
-	
-	SetGuiStatus(disconnected, A);
-	SetGuiStatus(disconnected, B);
+	//QHBox* box = new QHBox(statusBar());
+	//box->setSpacing(2);
+		
+	mp_statusline_a = new QLabel(" ", statusBar());
+
+	mp_encryptionicon_a = new QLabel(statusBar());
+	mp_encryptionicon_a->setPixmap(m_iconunencrypted);
+
+	mp_statusline_b = new QLabel(" ", statusBar());
+
+	mp_encryptionicon_b = new QLabel(statusBar());
+	mp_encryptionicon_b->setPixmap(m_iconunencrypted);
+
+	statusBar()->addWidget(mp_statusline_a, 1);
+	statusBar()->addWidget(mp_encryptionicon_a, 0);
+	//statusBar()->addWidget(box);
+	statusBar()->addWidget(mp_statusline_b, 1, true);
+	statusBar()->addWidget(mp_encryptionicon_b, 0, true);
 }
 
 Kasablanca::~Kasablanca()
@@ -298,16 +348,17 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 	QToolButton* transferbutton, *connectbutton, /**connectbutton_other,*/ *refreshbutton;
 	QLineEdit* commandline, *cwdline;
 	QPopupMenu* bookmarksmenu, *rclickmenu;
-	
-	statusBar()->clear();
-	
+	QLabel* encryptionicon;
+		
 	if (b == A)
 	{
 		m_status_a = s;
+		mp_statusline_a->setText("");
+		
+		encryptionicon = mp_encryptionicon_a;
 		browser = BrowserA;
 		transferbutton = TransferButtonA;
 		connectbutton = ConnectButtonA;
-		//connectbutton_other = ConnectButtonB;
 		refreshbutton = RefreshButtonA;
 		commandline = CommandLineA;
 		cwdline = CwdLineA;
@@ -317,10 +368,12 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 	else
 	{
 		m_status_b = s;
+		mp_statusline_b->setText("");
+		
+		encryptionicon = mp_encryptionicon_b;
 		browser = BrowserB;
 		transferbutton = TransferButtonB;
 		connectbutton = ConnectButtonB;
-		//connectbutton_other = ConnectButtonA;
 		refreshbutton = RefreshButtonB;
 		commandline = CommandLineB;
 		cwdline = CwdLineB;
@@ -335,7 +388,6 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			browser->setEnabled(true);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
-			//connectbutton_other->setEnabled(true);
 			connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
 			refreshbutton->setEnabled(true);
 			commandline->setEnabled(true);
@@ -349,10 +401,10 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			
 		case disconnected:
 
+			encryptionicon->setPixmap(m_iconunencrypted);
 			browser->setEnabled(true);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
-			//connectbutton_other->setEnabled(true);
 			connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
 			refreshbutton->setEnabled(true);
 			commandline->setEnabled(true);
@@ -486,7 +538,7 @@ void Kasablanca::SLOT_ConnectButtonA()
 	 
 	if (m_status_a == disconnected)
 	{
-		m_bookmarksmenu_a.exec(pos() + ConnectButtonA->pos());
+		m_bookmarksmenu_a.exec(mapToGlobal(ConnectButtonA->pos()));
 	}
 	else if (m_status_a == occupied)
 	{
@@ -524,7 +576,7 @@ void Kasablanca::SLOT_ConnectButtonB()
 
 	if (m_status_b == disconnected)
 	{
-		m_bookmarksmenu_b.exec(pos() + ConnectButtonB->pos());
+		m_bookmarksmenu_b.exec(mapToGlobal(ConnectButtonB->pos()));
 	}
 	else if (m_status_b == occupied)
 	{
@@ -1360,7 +1412,7 @@ void Kasablanca::Xfer()
 		bool filepresent = false;
 
 		if ((file->type() == transferitem::fxp_a_to_b) || (file->type() == transferitem::fxp_b_to_a))
-		{			
+		{					
 			if (m_fxpstate == stopped) proc_fxpdst->writeStdin("fxpinitpasv");
 			else if (m_fxpstate == initpasv)
 			{
@@ -1583,6 +1635,8 @@ void Kasablanca::Xfer()
 
 void Kasablanca::SLOT_SelectionChanged()
 {
+	qWarning("slot: SLOT_SelectionChanged()");
+
 	int counter_a = 0;
 	int counter_b = 0;
 	bool flag;
@@ -2065,9 +2119,14 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 	QListView *browser, *otherbrowser;
 	QueueState* qstate;
 	QTextEdit* logwindow;
+	QLabel* statusline, *encryptionicon;
+	siteinfo* site;
 
 	if (p == &m_proc_a)
 	{
+		site = &m_site_a;
+		encryptionicon = mp_encryptionicon_a;
+		statusline = mp_statusline_a;
 		logwindow = LogWindowA;
 		log = &m_log_a;
 		b = A;
@@ -2078,6 +2137,9 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 	}
 	else
 	{
+		site = &m_site_b;
+		encryptionicon = mp_encryptionicon_b;
+		statusline = mp_statusline_b;
 		logwindow = LogWindowB;
 		log = &m_log_b;
 		b = B;
@@ -2094,6 +2156,9 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 		{
 			if (s.left(10) == "kb.success")
 			{
+				if (site->GetTls() > 0) encryptionicon->setPixmap(m_iconencrypted);
+				else encryptionicon->setPixmap(m_iconunencrypted);
+			
 				qWarning("kb.success");
 				SetGuiStatus(connected, b);
 				logwindow->setColor(green);
@@ -2108,8 +2173,17 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 	
 				killTimers();
 				
+				if (s == "kb.issue.dir")
+				{
+					if (site->GetTls() > 1) encryptionicon->setPixmap(m_iconencrypted);
+					else encryptionicon->setPixmap(m_iconunencrypted);		
+				}
+				
 				if (s == "kb.issue.get")
 				{
+					if (site->GetTls() > 2) encryptionicon->setPixmap(m_iconencrypted);
+					else encryptionicon->setPixmap(m_iconunencrypted);	
+				
 					*qstate = xfer;
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
 					m_xferresumesize = 0;
@@ -2119,6 +2193,9 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				}
 				else if (s == "kb.issue.getresume")
 				{
+					if (site->GetTls() > 2) encryptionicon->setPixmap(m_iconencrypted);
+					else encryptionicon->setPixmap(m_iconunencrypted);
+				
 					*qstate = xfer;
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
 					m_xferresumesize = static_cast<transferitem*>(TaskView->firstChild())->m_filocal.size();
@@ -2128,6 +2205,9 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				}
 				else if (s == "kb.issue.put")
 				{
+					if (site->GetTls() > 2) encryptionicon->setPixmap(m_iconencrypted);
+					else encryptionicon->setPixmap(m_iconunencrypted);
+				
 					*qstate = xfer;
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_filocal.size();
 					m_xferresumesize = 0;
@@ -2137,6 +2217,9 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				}
 				else if (s == "kb.issue.putresume")
 				{
+					if (site->GetTls() > 2) encryptionicon->setPixmap(m_iconencrypted);
+					else encryptionicon->setPixmap(m_iconunencrypted);
+				
 					*qstate = xfer;
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_filocal.size();
 					m_xferresumesize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
@@ -2146,6 +2229,9 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				}
 				else if (s.left(12) == "kb.issue.fxp")
 				{
+					mp_encryptionicon_a->setPixmap(m_iconunencrypted);
+					mp_encryptionicon_b->setPixmap(m_iconunencrypted);
+				
 					SetGuiStatus(occupied, A);
 					SetGuiStatus(occupied, B);
 				}
@@ -2256,7 +2342,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				}
 				else
 				{
-					statusBar()->message("dir: " + s.remove(0, 7) + "kb");
+					statusline->setText("dir: " + s.remove(0, 7) + "kb");
 				}
 			}
 			else if (s.left(7) == "kb.xfer")

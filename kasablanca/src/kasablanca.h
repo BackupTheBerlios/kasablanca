@@ -26,6 +26,8 @@ class diritem;
 class fileitem;
 class QWidget;
 class QCloseEvent;
+class QLabel;
+class QPixmap;
 
 #include <kprocess.h>
 #include <klistview.h>
@@ -162,6 +164,8 @@ private:
 	void ConnectCustom(Browser b);
 	void ConnectBookmark(int n, Browser b);
 	void EndXfer();
+	void PrepareStatusBar();
+	void PrepareMenus();
 	
 	void timerEvent(QTimerEvent* e);
 	void closeEvent(QCloseEvent * e);
@@ -179,6 +183,8 @@ private:
 	vector<siteinfo> m_bookmarks;
 	QTime m_time;
 	QueueState m_qstate_a, m_qstate_b;
+	QLabel* mp_statusline_a, *mp_statusline_b, *mp_encryptionicon_a, *mp_encryptionicon_b;
+	QPixmap m_iconencrypted, m_iconunencrypted;
 };
 
 #endif
