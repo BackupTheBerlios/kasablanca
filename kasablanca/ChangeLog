@@ -1,7 +1,7 @@
 [v 0.4 pre2]
 
 -added default settings
--added .moc files for translation
+-added .pot file for translations
 -new settings on-queue-finished
 -settings can be enable or disabled now
 -on-file-exist setting added
