@@ -1554,7 +1554,7 @@ int ftplib::CorrectPasvResponse(unsigned int *v)
 		return 0;
 	}
 	
-	for (int i = 2; i < 5; i++) v[i] = ipholder.sa_data[i];
-
+	for (int i = 2; i < 6; i++) v[i] = ipholder.sa_data[i];
+	
 	return 1;
 }

@@ -1,19 +1,20 @@
 [v 0.4.0.1]
 
--fixed evil flaw in local delete method, added option to move 
+-fixed: correct-pasv bug
+-fixed: evil flaw in local delete method, added option to move 
  files into trash instead
--import gftp bookmarks [crissi]
--added polish translation [tomwal]
--fixed compilation error
--fixed some filesize issues
--applied some changes to the bookmark editor
--improved directory caching
--auto-completion in the lineedits
--items are queued at the end of the queue list now
--remember sorting preference when changing directories
--report when ftp servers do not support encryption
--fixed crash when trying to remove active item from queue.
--fixed compilation with gcc 2.95
+-added: import gftp bookmarks [crissi]
+-added: polish translation [tomwal]
+-fixed: compilation error
+-fixed: some filesize issues
+-changed: some changes to the bookmark editor
+-changed: improved directory caching
+-added: auto-completion in the lineedits
+-changed: items are queued at the end of the queue list now
+-changed: remember sorting preference when changing directories
+-changed:report when ftp servers do not support encryption
+-fixed: crash when trying to remove active item from queue
+-fixed: compilation with gcc 2.95
 
 [v 0.4]
 
