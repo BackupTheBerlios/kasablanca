@@ -116,6 +116,7 @@ public:
 
     QString m_tempdirname;
     QString m_version;
+	 vector<siteinfo> m_bookmarks;
 
 public slots:
     void SLOT_MkdirA();
@@ -196,7 +197,6 @@ private:
     bool m_sortascending_b, m_sortascending_a;
     siteinfo m_site_a, m_site_b;
     QString m_log_a, m_log_b;
-    vector<siteinfo> m_bookmarks;
     QTime m_time;
     QueueState m_qstate_a, m_qstate_b;
     QLabel* mp_statusline_a, *mp_statusline_b, *mp_encryptionicon_a, *mp_encryptionicon_b;

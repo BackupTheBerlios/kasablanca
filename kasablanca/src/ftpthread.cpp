@@ -169,6 +169,19 @@ bool FtpThread::Rename(QString src, QString dst)
 
 /* set wether the data channel is encrypted or not */
 
+bool FtpThread::Pasv(bool flag)
+{
+	if (running()) return false;
+	else
+	{
+		if (flag) mp_ftp->SetConnmode(ftplib::pasv);
+		else mp_ftp->SetConnmode(ftplib::port);
+		return true;
+	}
+}
+
+/* set wether the data channel is encrypted or not */
+
 bool FtpThread::EncryptData(bool flag)
 {
 	if (running()) return false;

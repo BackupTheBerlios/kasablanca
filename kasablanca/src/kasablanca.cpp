@@ -118,16 +118,16 @@ Kasablanca::Kasablanca()
     //when developing you might want to change the following line to the kbftp path
     //and disable the other two lines. */
 
-    m_proc_a.addArgument("kbftp/kbftp");
-    m_proc_b.addArgument("kbftp/kbftp");
+   // m_proc_a.addArgument("kbftp/kbftp");
+   // m_proc_b.addArgument("kbftp/kbftp");
 
-/*  if (locate("exe", "kbftp") == QString::null) KMessageBox::error(0,"kbftp binary is not in kde binary path.");
+  if (locate("exe", "kbftp") == QString::null) KMessageBox::error(0,"kbftp binary is not in kde binary path.");
     else 
     {
             m_proc_a.addArgument(locate("exe", "kbftp"));
             m_proc_b.addArgument(locate("exe", "kbftp"));
     }
-*/
+
     m_dcount = 0;
     m_qstate_a = done; m_qstate_b = done;
     m_fxpstate = stopped;
@@ -154,8 +154,10 @@ Kasablanca::Kasablanca()
 	 mp_session_a->SetLogWindow(m_view->LogWindowA);
 	 mp_session_a->SetBrowser(m_view->BrowserA);
 	 mp_session_a->SetConnectButton(m_view->ConnectButtonA);
+	 mp_session_a->SetBookmarksMenu(&m_bookmarksmenu_a);
 	 
 	 connect(m_view->RefreshButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_RefreshButton()));
+	 connect(m_view->ConnectButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_ConnectButton()));
 	 
 	 /* /new stuff */
 	
