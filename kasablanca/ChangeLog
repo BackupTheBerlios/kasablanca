@@ -1,6 +1,6 @@
 [v 0.4 pre2]
 
--speed improvements for large directories 
+-speed improvements for handling large directories 
 -kb/s display now reflects the current speed rather than the speed over all the file
 -changed log colouring according to response codes
 -added default settings

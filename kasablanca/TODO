@@ -1,21 +1,20 @@
-[v 0.4 pre2]
+[v 0.4 pre3]
 
--check ftpthread code
--fix iterator.end() code
+-move tasks in taskview
+-define standard directory in bookmarks
+-add alternative fxp
+-extend bookmarks
 
 [v 0.4]
 
--add alternative fxp
+-add waiting window
 -check freebsd patches
 -add translations
 -make queues saveable
 -add resume to fxp
 -get rid of eventhandler stuff
--add waiting window
--define standard directory in bookmarks
 -update FormatFileList(), make it use qt stuff instead of c
 -remember dirlistings (caching)
--move tasks in taskview
 -auto-adjustment for the header
 -kb/s for fxp transfers
 
