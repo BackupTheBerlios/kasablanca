@@ -1,5 +1,6 @@
 [v 0.4.0.2]
 
+-fixed: percentage counting bug
 -added: delete key shortcut bookmarks [r. stellingwerff]
 
 [v 0.4.0.1]
