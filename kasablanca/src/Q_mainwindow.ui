@@ -1,0 +1,578 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>KasablancaMainWindow</class>
+<widget class="QMainWindow">
+    <property name="name">
+        <cstring>KasablancaMainWindow</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>697</width>
+            <height>630</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>Kasablanca 0.2.5</string>
+    </property>
+    <property name="rightJustification">
+        <bool>false</bool>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLineEdit" row="2" column="4" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>CommandLineB</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="2" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>CommandLineA</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QListView" row="1" column="0" rowspan="1" colspan="4">
+            <column>
+                <property name="text">
+                    <string>Name</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Size</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Date</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>BrowserA</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>2</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="resizePolicy">
+                <enum>Manual</enum>
+            </property>
+            <property name="selectionMode">
+                <enum>Extended</enum>
+            </property>
+        </widget>
+        <widget class="QListView" row="1" column="4" rowspan="1" colspan="4">
+            <column>
+                <property name="text">
+                    <string>Name</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Size</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Date</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>BrowserB</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>2</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="selectionMode">
+                <enum>Extended</enum>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="0" column="0">
+            <property name="name">
+                <cstring>ConnectButtonA</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="autoRaise">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="0" column="1">
+            <property name="name">
+                <cstring>RefreshButtonA</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="autoRaise">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="3">
+            <property name="name">
+                <cstring>CwdLineA</cstring>
+            </property>
+            <property name="maxLength">
+                <number>1024</number>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="0" column="2">
+            <property name="name">
+                <cstring>TransferButtonA</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="autoRaise">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="0" column="4">
+            <property name="name">
+                <cstring>ConnectButtonB</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="autoRaise">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="0" column="5">
+            <property name="name">
+                <cstring>RefreshButtonB</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="autoRaise">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="0" column="6">
+            <property name="name">
+                <cstring>TransferButtonB</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="autoRaise">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="7">
+            <property name="name">
+                <cstring>CwdLineB</cstring>
+            </property>
+            <property name="maxLength">
+                <number>1024</number>
+            </property>
+        </widget>
+        <widget class="QListView" row="3" column="0" rowspan="1" colspan="8">
+            <column>
+                <property name="text">
+                    <string>Task</string>
+                </property>
+                <property name="clickable">
+                    <bool>false</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Progress</string>
+                </property>
+                <property name="clickable">
+                    <bool>false</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>TaskView</cstring>
+            </property>
+            <property name="selectionMode">
+                <enum>Extended</enum>
+            </property>
+        </widget>
+        <widget class="QTextEdit" row="4" column="0" rowspan="1" colspan="8">
+            <property name="name">
+                <cstring>LogWindow</cstring>
+            </property>
+            <property name="paletteForegroundColor">
+                <color>
+                    <red>255</red>
+                    <green>255</green>
+                    <blue>255</blue>
+                </color>
+            </property>
+            <property name="paletteBackgroundColor">
+                <color>
+                    <red>82</red>
+                    <green>194</green>
+                    <blue>255</blue>
+                </color>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Dec Terminal</family>
+                </font>
+            </property>
+            <property name="textFormat">
+                <enum>PlainText</enum>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="wrapPolicy">
+                <enum>AtWordOrDocumentBoundary</enum>
+            </property>
+            <property name="readOnly">
+                <bool>true</bool>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<menubar>
+    <property name="name">
+        <cstring>menubar</cstring>
+    </property>
+    <item text="Start" name="PopupMenu">
+        <action name="ActionConnectCustom"/>
+        <action name="ActionQuit"/>
+    </item>
+    <item text="Edit" name="EditMenu">
+        <action name="ActionEditBookmarks"/>
+    </item>
+    <item text="Help" name="HelpMenu">
+        <action name="ActionAbout"/>
+    </item>
+</menubar>
+<toolbars>
+    <toolbar dock="2">
+        <property name="name">
+            <cstring>Toolbar</cstring>
+        </property>
+        <property name="enabled">
+            <bool>true</bool>
+        </property>
+        <property name="label">
+            <string>Toolbar</string>
+        </property>
+        <action name="ActionDisconnectA"/>
+        <action name="ActionUpdateA"/>
+        <action name="ActionTransferA"/>
+        <action name="ActionTransferB"/>
+    </toolbar>
+</toolbars>
+<actions>
+    <action>
+        <property name="name">
+            <cstring>ActionConnectCustom</cstring>
+        </property>
+        <property name="text">
+            <string>Connect to Custom Site</string>
+        </property>
+        <property name="menuText">
+            <string>Connect to Custom Site</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>ActionDisconnectA</cstring>
+        </property>
+        <property name="on">
+            <bool>false</bool>
+        </property>
+        <property name="enabled">
+            <bool>true</bool>
+        </property>
+        <property name="iconSet">
+            <iconset>image0</iconset>
+        </property>
+        <property name="text">
+            <string>Disconnect Site A</string>
+        </property>
+        <property name="menuText">
+            <string>Disconnect Site A</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>ActionUpdateA</cstring>
+        </property>
+        <property name="on">
+            <bool>false</bool>
+        </property>
+        <property name="enabled">
+            <bool>true</bool>
+        </property>
+        <property name="iconSet">
+            <iconset>image1</iconset>
+        </property>
+        <property name="text">
+            <string>Refresh Content</string>
+        </property>
+        <property name="menuText">
+            <string>Refresh Content</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>ActionTransferB</cstring>
+        </property>
+        <property name="iconSet">
+            <iconset>image2</iconset>
+        </property>
+        <property name="text">
+            <string>Transfer Left</string>
+        </property>
+        <property name="menuText">
+            <string>Transfer Left</string>
+        </property>
+        <property name="toolTip">
+            <string>Transfer Left</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>ActionTransferA</cstring>
+        </property>
+        <property name="iconSet">
+            <iconset>image3</iconset>
+        </property>
+        <property name="text">
+            <string>Transfer Right</string>
+        </property>
+        <property name="menuText">
+            <string>Transfer Right</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>ActionEditBookmarks</cstring>
+        </property>
+        <property name="text">
+            <string>Bookmarks</string>
+        </property>
+        <property name="menuText">
+            <string>Bookmarks</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>ActionQuit</cstring>
+        </property>
+        <property name="text">
+            <string>Quit</string>
+        </property>
+        <property name="menuText">
+            <string>Quit</string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>ActionAbout</cstring>
+        </property>
+        <property name="text">
+            <string>About</string>
+        </property>
+        <property name="menuText">
+            <string>About</string>
+        </property>
+    </action>
+</actions>
+<images>
+    <image name="image0">
+        <data format="PNG" length="1315">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b000004ea49444154789ca595cd6f1dd519c67fe76366eec7dc7b6d7c6b82e338b51de288c48b466a246e0472cb86020d4820c4025129ea0a75d15d2bb16001117f0012bb208a545aa96a6941adda42549a2a23950a2ba08a184a829d98f83ab6137fdcafb933735e16e3eba46c99cd39339af39ce77dcf739e474551c4c946430c703e8a14dff279b0d1900cb0830fe7a3489d7d644e0e04160943b4d68800c8ed5522774c0773c139c1f662aec629e7a3489d6c344401124591fae3633f90c78e4e519b7b80e2481597c43827804321804270200ec932c439441c2088089de63addf905fe7ab9c9e3ef9c532a8a225e7f644e9e9b9da6f4d429e2e622dd95eb0882b2066d2d2e4b70490a4ad09e872d96309e8f28505aa3b4c6ab86f47662dc7b1ff2d6172b792bc6034b6dee015acd45362fce63c310e57b483f23e97709f74d509d9ec28615d2ce0eade612bdad0dfcb086b216444836b7290c554967a718bfb696034b18521ca9b276f112360cd1c5022e8909f78d73e889d35466be4771f400a214b88c4e73899d85fff0e5fbbf234bfb183f00a5c8e28462bd421a7839b0d61a97c479f9be874b7a8c1c9ee5d8cf5e21a88f41da67676981f6fa0a95b149ca635394c7a6a81cf93e0b6f9e216e6da16d00c680086aa00a11702eefa98b536a070e71f4f93304f531763e9f67f1cf6fd2faea0aa6580697523b34cbc11f9fa63c36c5ccb3bfe0d21b2f938943598d640e04f440320a873606c912a69efc2985d171b63ffd904f5e7b81d58f2f303ef704275efa0de1e451befaf77b2cfcea0cfdad55c2f1c3ec6ffc0897f651c6ee2945df29ee2ce9333c7984e1c3c7c1657cf1ce59e24e8b60b84e69641480e25d750a23a3b4569759fedbaf01a81d39415019cab52d72276340814b13cafb27b143756e5efa88ed2f17f06bc3200ee7dca03810c11443b697ff47ffd62ae5efeca75c1fdb03953dc6928b5c294115c33df6ce256863406994dae56034688df62cce65a4491f74ae77652cfc7f8f017128cf83b497af0f026ca194831ab3f7a7523a07d01a1b14b17e00cea18c451b0f71dfe8b1b80ce307f46fddc075b7b96be638b5e963a4bd36a650401b2f07360613f864494cb87f1a7f6894cec60af1ce26b650cc81078c4504c9326c2964f3eae76c5efe14b461fad1e7082a55924e8b246e0390c65dfaed6d2af71c64fca16700e8352f93f67b682f409c0072dbdd441c4a2bb45f60e92f6f503b384378ef71ee7bf6972c9efb2dd7fef52e373eb940d2d966f4d8fd1c7cf827f8b551baab4b343ffa075ea98a7382640e913ddbcc7741294c50a4b57a95cbbf7f95434fff9ccae1e3dc3731437b6591b8b34d697894f2dd13603ce25bab5c3bf7165996610a055496ed5aeb2e63e77655a13548de92b5cfe6e99d7d91f1071fa732394b75f2e8ae72a0bfb94e7be9bf342ffe93b41fa3fd02da7ab84c48db5d049503db5e4ca7b98e375127d9dc01a5b08532ed8d269ffde135c2bb0f50bee7bb28eba111ba1b4d7aad2d6cb18209ca68eb618a21ddb52bb4afdfc01f002fc729ddf905f4f0090a4355b238418c465b1f650cedad0ddab7d650d6a28d8f2d95308572ee315986cb84eeda15ae7ff001c1cd36cbfd94bd04f9d3a987e4e1c97df8b35314eb95fcd264bb292103a7923c395c8664b26b3879f9edeb37d037db9c5bef70eaedbfe70972b2d1900b51a4ce3efa4399082c69e0a10667caed6b7ae77b1e49bb230a1fc5b538e5f4bbefab938d867c0d91506c1b620171900000000049454e44ae426082</data>
+    </image>
+    <image name="image1">
+        <data format="PNG" length="1058">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b000003e949444154789c8d95db6f147514c73f7bdf75b7dbedc59a96b6424b694b40700d09bb48c51ba9b1d16825ea939ac88b064d7cf00f9088e1c146243112638ca1c60431a25243624cb442ef2da5b454e8c60ba5b4f6be97eeecceeceff7f341baedf4a62739c9e49c339f3973cef73763696b6b23140aa9961b10d72196829d46bb850d2c140aa9c5ebc82c748fc1541266e206f5de1e0b8075b14017f04c0d147ae18744507d3753abfe0b7a791cfac6a1ba10c2659011827038ac00ec8b4516c061533c5d0d3ea78b5f22703e16540dfe3ecb4a2040fb28cca7a0ee5e4591177a6e43321ecde6b31da70548a9504af1c866c90bbb9db8dc2ece458326a02ea0f52fc848a82b97147a14522a8484743ab51a1cd7412a99f5ea02c1abf70b8afc4ecece0695aeebf4de869fff04bf53b2a72483c3b6542fa4c2106a35389a8294a11072c9f3dc92c3c10c3b4b1c9cec84a129a80808aa0b044a996b938642d7f52c383b63a1e054af9dc65a8322aff9c9cfd54a86a66c94fa75725dffbeb669deb76c7c3f6263f0c7cf5777fcf63e30f41427ba9cf44f5810429abc26dfc06717a658ca90340fd8f9b86588f6e677e83b732c0bb62ceab8f90a44d38a78d2607822cd816d6e1a2a756c56d6b469cdca67032e0607fa71780394946e617a7a8637b78d9875bc60c053950be4fb6c04eeb2736130c187bd6ee634454648935f9eb072bcdd4d77fb45caaa833c1fdac4639bd348976fb58e2560b7081ab624b05bdc8c253c0cde8c712c1ee0e51d49b6e665900a5a7e7773ae738c5c9b46fda3fb79b87481125f864b634eb4786cf5f234033277b6f27879927b3c0ebe180ef0f7f43c1ff4e4f14485c66fb30efaae5c63774521f75596b3af3886db26c908308422955a43c7731a64a4ccfaf682346f04a314dfed67414bf26d7f0231dacdc13d95d4d5e6b3bf388add9259ba4728f4653ace763ca58166289cd6a564a14bf256708ed3c339cc27fd0472f7b277539c526f1225412c5be6c20a1d673b4ea4e1bdce00b7e256849459b72278a9769e03e569eacb6629f668a6bc90929f6eba3873ddcbd8af6be8b8f959884ca639da914fd784cb74aa8454ec284892e3304c312d03a706fc7c74e10f46be39cae8f9251d674701d0f19a8f60d324273adc1caccae150550cbb75cdaf2793493b27fbf3b871ed2ac3ef3e908db7b5b559e0ce01596987debfa40a1e3c4c4db187d777cd92eb14a67cefa4874f06034c0f5f24d2f4d02ae8ba60807038acb637c5c8f57b39b26b869abc3452c1d9482e5f774d918cb43276fa9535a11b8217e155c7a771f80a68dc1a6570c64dffd5eb4c7c75042dd2ba26f07f8117edc5963c65f315a2455a19ffb471dd2e979b7dbdc472fbf2c9394b386cfe076e0405f80759203a7edbd46be40000000049454e44ae426082</data>
+    </image>
+    <image name="image2">
+        <data format="PNG" length="1259">89504e470d0a1a0a0000000d49484452000000180000001908060000002b2bee5d000004b249444154789cad964b6c546514c77fdf37771e6da7332dd2529e6dda0a6a94209a6847c4280b838aafc4a8d1c495311175695c1917b281c415ba30015d808fb841302e8010216130205531414b538a423b7dd0c7b4f3ba8fef3b2e6ee930a5800b4f7216f7cbf9fefffb3f8f7baeca66b32cb49e9e1eb9e1f03676ead429b5d8b9732bf0a159189c82e90a147d28fb10183002564004a20ebcb9f1e6c4ea7a05d7c045e06c0eae96a0a51e96d443530292b1302e5f81d1025cca43df384c177db413e5c9c48d2ae609ae81e766e1cc30b4a7614d1334276e9d9a7ff2f06b0e7e19864a31cf8b4bcfd790e81af002fc3e0af7b408f72d139ae28295d045040104e6cfac08ab52c2b675c2964ea13195e6eba1ae9afae9ebd372fa0a74350b1d6941045ccfe7726e8c870f2af41e45c73730590963ad951adfb43af478aa9517de78576a1440287175cad29e360882b186d1d11176f5a738330e1105fb1f87250910b1d8457cd31ac3c6e5966d1f1d2293c9c83cc1f02c8c1685b6a4c58a60ac30343ccce19cc3a7fd75007cfc203cd20a6285c086318bf986659696656d3cbbe36855c1c0242c4958d23183088c8d8f737e688a0ffada00787225bcbf3eac83158b02940a5d2b45442bb45208c29a94a1abd952d7d2412693110760a20cdd4d2178b9e2726528c78797ba98f4346d75f0c5668b3142602d7e60f03c0f630c5a6be2f1384e44e3684d5447704dc09a4603d124303768d32e241d83529ad942812f475ae92da6e71a199e39ac0085a0118900b1da5e578a4dcbe093872c4a415bd220b1862a41d18578c460ace26a9060ef58d3fce591128c94ae6fed45bf082caf0f8944a02966b091ba2a4139006342f6f6b4c3ab1d1efb06c3b75c510fcbc35864116c252167772a7c0eacc5588b67a812f836ac43ccf189391176dcef7166d2a12faf698cc2b1a78564141010c219a9a6a7aacaf5032a9ecf48012aa542b58b442057d0947d1f0b3444157b7a2a3438d09787b74fce0d9684e08131f873eef98692eb315d2c31552ce3fa0117a735a5fc445581a36120efd09d2e336b2ba49375ac6b34ecdce8b2fd749cfd038a2d2b84d73a2d6e609898291018bb682d00fe9c7098191dac2a587b07fc311e65301fc1f57df2c5325a2b5e6af778b92300e0bd9f35176614312742446bcc5cae177adf6484dfc6a28c9f3d502578fe2ef08d70723841608592eb53727db4d2ec7ac0e7ce9450f0e1f5e3117c5168adb13799e4e35712f49f3e42eed8eeb92690b064050fb6ee836d9d336ced2810d19ae6c67aea6351267d875157a35174360a85d93c858a8b48ede2fbf15292ef2ea4e8dd1e47028f6c36abf4b555978c413498e1e0c5243f5c6cc00f0c53b325f2a50a2d71cb8666cbbd4d016eb940c5f3b1c6d67c4d0f5d6ce0fb812497beda8e045eb5cb162e9cbb778e116d6ce5b1554536af28b2b6d9476b8d560a98db03731d05d03f1de3c450033f5d6960f8dbed4c9df80c806c36abe6bb08c2a5ddd3d3237b1f1d504fbcf29494df3a44ef582beb975658d7ecd2dee8d15a1f4ecf58c9e1efd9187f4dc6397735c1e5de230c7dfe1c62bc1af01a050b2d93c9c8ca778e125dd2818e2751b10674b42edc686e01539a209818a470ee00f913bbe7ef5d0f5ea360a15d0bcc64baffd32fcc42e0db2af8bfec5f1d61bf0a852076880000000049454e44ae426082</data>
+    </image>
+    <image name="image3">
+        <data format="PNG" length="1270">89504e470d0a1a0a0000000d49484452000000180000001908060000002b2bee5d000004bd49444154789cad964b6c546514c77fdfbd771e6da733d3d29637541e22c427c6904e20a824124cf0b5728161618c0b341a37c685092ed8f8882ec485892626c6171b1ec647200a448704a428242010da82b4a5ed94763aefb9f79ee3e2b69d4eabe0c2939cc9e49b73fffffbff7fe73bdf98743acdece8eaead2398bb78913274e987f5a776e05de9f83de31182f43c185920b9e0fbe8228a842c88117d6ff3bb199a9600a5c154e0f42a608ed8dd0da08c928c4c2415db60c4379e8cbc2c511182fb8584e88add1b92aa609a6c00773706a0096276069025a1b6e6dcdb52c9c1984df06a05cc8f24cdbf93a12ab0e3c0f7f0cc1ba76e59ef94a32aa8806a95aff5d015565495cd9be46d9b242698e27f8b27f65ddfe59336d39791d56b6289d0945a496aa9029c31d5f19ec4f0c1b0e182a5e80a30a22cac6a54146e21d3cbdf365ad530081c4a5716179c24754ea525568090b9f6df6b10d9ccac09bdda08031a028a2c2c6653eeb170adb771f22954ae934c1400e860aca8298e08bce494f024bba3a94b7d60b00ef9e35fc703d5060308806b5f7cf17dae72fe0893d476a0aaedc84f6462119152c6330060cb54415cf177c5f78759dc7638b0207761e35dc28ea64bd4144581af759d92234b477924aa5d401182dc1dded828a92af94c8643200388e833141538808957219d773f9e081253c321667a86478ee98e1fbad8a6d59b89e8f2fc2b2661f42b1000360bc028988e27a3eaffce27126b73000b72c66f69c4e7e98198b3f0f1ade39076fdca75896a1ea090b62a0e1a61a41a102114bf17d1826cef9bc7debe69f15bbbb0d3b57435bd8e08b900c2b6237d4084a1e7822846c8b5509c854035fd1c9cd987a7d13b42cc05009068ac18fcfaf81c54d5028fbc15e89a1ea532370053279614932c47b0f09b6a518cb606618a40467c2f57c26aacac33f4600589784f7372828942a2e9e2fdcc8db948bf91a816a70e49bc225a22187b0e3e058d6f4db1b405429573d8ad52aaf75c7b83c618839f0cd1625eac078a144c97511517ac64314b3c33502c7828b63369dcd454ae5ea1c8f1ddba2311266642ccbc1c106f65d0d86f0de94b23609c572955ca18ceb07be5c18759818ea0526cfc19df3e0dc4888deac8d2f32276dcba258a9d2570cb1e7522b003b56293b560763623457a0e2baf8225cbc69f3fb708891d3fb6b044fdd05aeaffc3a109d738a4514cbb2c07278fd421b05cfb026017b53c1b0bb313641b1e2e24dd61fbb1ee5f2c9c30cfef46160af6ad017f92a6cfb1cb6af98605b677eda1e630cb1680475a25c2bd9846c9b65cd160b1a606422cf58ae882fc1f8f8ae2fc6be4b71ba774550af4a3a9d36d6d455170b43c89be0604f8c6f7b9a6ad3d417ca5597302e0fce83f5f394a4ed327033cb58ae88ebf98828877a9a38702546df17bb50afb68f732e9cb56f0f136aee60f392029b1615589dac62198365192c134c2751454410552e8f8739dedfc4d1eb4d0c7cbd8bb1e31f01904ea7cd7417417069777575e9a79bae98479f7d5c4b2f1ea27bb8837bdbcaac69a9b0bcb94a47a307c070d1e16aae813f6f46389b89f257f761fa3f7e12f5ab75e0750a66472a95d2c52f1d21d4da89158961c24d58a10614904a1ebf388a37da4bfeec7eb2c73f9c7e6e26789d82d93155984aadfa4f7f616603df56c1ff157f03c520b3c99591db530000000049454e44ae426082</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>ActionConnectCustom</sender>
+        <signal>activated()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_ConnectCustom()</slot>
+    </connection>
+    <connection>
+        <sender>ActionDisconnectA</sender>
+        <signal>activated()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_DisconnectA()</slot>
+    </connection>
+    <connection>
+        <sender>CommandLineA</sender>
+        <signal>returnPressed()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_EnterCommandA()</slot>
+    </connection>
+    <connection>
+        <sender>CwdLineA</sender>
+        <signal>returnPressed()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_EnterCwdA()</slot>
+    </connection>
+    <connection>
+        <sender>CommandLineB</sender>
+        <signal>returnPressed()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_EnterCommandB()</slot>
+    </connection>
+    <connection>
+        <sender>BrowserB</sender>
+        <signal>selectionChanged()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_SelectionChanged()</slot>
+    </connection>
+    <connection>
+        <sender>BrowserA</sender>
+        <signal>selectionChanged()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_SelectionChanged()</slot>
+    </connection>
+    <connection>
+        <sender>ActionUpdateA</sender>
+        <signal>activated()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_UpdateA()</slot>
+    </connection>
+    <connection>
+        <sender>CwdLineB</sender>
+        <signal>returnPressed()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_EnterCwdB()</slot>
+    </connection>
+    <connection>
+        <sender>TaskView</sender>
+        <signal>selectionChanged()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_SelectionChanged()</slot>
+    </connection>
+    <connection>
+        <sender>ActionEditBookmarks</sender>
+        <signal>activated()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_EditBookmarks()</slot>
+    </connection>
+    <connection>
+        <sender>ActionQuit</sender>
+        <signal>activated()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_Quit()</slot>
+    </connection>
+    <connection>
+        <sender>ActionAbout</sender>
+        <signal>activated()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_About()</slot>
+    </connection>
+    <connection>
+        <sender>RefreshButtonA</sender>
+        <signal>clicked()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_UpdateA()</slot>
+    </connection>
+    <connection>
+        <sender>TransferButtonA</sender>
+        <signal>clicked()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_TransferA()</slot>
+    </connection>
+    <connection>
+        <sender>TransferButtonB</sender>
+        <signal>clicked()</signal>
+        <receiver>KasablancaMainWindow</receiver>
+        <slot>SLOT_TransferB()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="local" impldecl="in implementation">Q_mainwindow.ui.h</include>
+</includes>
+<slots>
+    <slot>SLOT_DisconnectA()</slot>
+    <slot>SLOT_EnterCommandA()</slot>
+    <slot>SLOT_ConnectCustom()</slot>
+    <slot>SLOT_ConnectBookmark( int n )</slot>
+    <slot>SLOT_EnterCwdA()</slot>
+    <slot>SLOT_EnterCommandB()</slot>
+    <slot>SLOT_UpdateA()</slot>
+    <slot>SLOT_EnterCwdB()</slot>
+    <slot>SLOT_SelectionChanged()</slot>
+    <slot>SLOT_EditBookmarks()</slot>
+    <slot>SLOT_Quit()</slot>
+    <slot>SLOT_About()</slot>
+    <slot>SLOT_TransferA()</slot>
+    <slot>SLOT_TransferB()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

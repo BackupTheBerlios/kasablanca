@@ -1,0 +1,116 @@
+/****************************************************************************
+** BookmarkDialog meta object code from reading C++ file 'bookmarkdialog.h'
+**
+** Created: Mon Mar 22 15:50:26 2004
+**      by: The Qt MOC ($Id: bookmarkdialog.moc,v 1.1 2004/03/22 18:58:44 mkulke Exp $)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#undef QT_NO_COMPAT
+#include "bookmarkdialog.h"
+#include <qmetaobject.h>
+#include <qapplication.h>
+
+#include <private/qucomextra_p.h>
+#if !defined(Q_MOC_OUTPUT_REVISION) || (Q_MOC_OUTPUT_REVISION != 26)
+#error "This file was generated using the moc from 3.3.1. It"
+#error "cannot be used with the include files from this version of Qt."
+#error "(The moc has changed too much.)"
+#endif
+
+const char *BookmarkDialog::className() const
+{
+    return "BookmarkDialog";
+}
+
+QMetaObject *BookmarkDialog::metaObj = 0;
+static QMetaObjectCleanUp cleanUp_BookmarkDialog( "BookmarkDialog", &BookmarkDialog::staticMetaObject );
+
+#ifndef QT_NO_TRANSLATION
+QString BookmarkDialog::tr( const char *s, const char *c )
+{
+    if ( qApp )
+	return qApp->translate( "BookmarkDialog", s, c, QApplication::DefaultCodec );
+    else
+	return QString::fromLatin1( s );
+}
+#ifndef QT_NO_TRANSLATION_UTF8
+QString BookmarkDialog::trUtf8( const char *s, const char *c )
+{
+    if ( qApp )
+	return qApp->translate( "BookmarkDialog", s, c, QApplication::UnicodeUTF8 );
+    else
+	return QString::fromUtf8( s );
+}
+#endif // QT_NO_TRANSLATION_UTF8
+
+#endif // QT_NO_TRANSLATION
+
+QMetaObject* BookmarkDialog::staticMetaObject()
+{
+    if ( metaObj )
+	return metaObj;
+    QMetaObject* parentObject = KasablancaBookmarkDialog::staticMetaObject();
+    static const QUMethod slot_0 = {"SLOT_Done", 0, 0 };
+    static const QUParameter param_slot_1[] = {
+	{ "n", &static_QUType_int, 0, QUParameter::In }
+    };
+    static const QUMethod slot_1 = {"SLOT_EntrySelected", 1, param_slot_1 };
+    static const QUMethod slot_2 = {"SLOT_ApplyEntry", 0, 0 };
+    static const QUMethod slot_3 = {"SLOT_NewEntry", 0, 0 };
+    static const QUMethod slot_4 = {"SLOT_RemoveEntry", 0, 0 };
+    static const QMetaData slot_tbl[] = {
+	{ "SLOT_Done()", &slot_0, QMetaData::Public },
+	{ "SLOT_EntrySelected(int)", &slot_1, QMetaData::Public },
+	{ "SLOT_ApplyEntry()", &slot_2, QMetaData::Public },
+	{ "SLOT_NewEntry()", &slot_3, QMetaData::Public },
+	{ "SLOT_RemoveEntry()", &slot_4, QMetaData::Public }
+    };
+    metaObj = QMetaObject::new_metaobject(
+	"BookmarkDialog", parentObject,
+	slot_tbl, 5,
+	0, 0,
+#ifndef QT_NO_PROPERTIES
+	0, 0,
+	0, 0,
+#endif // QT_NO_PROPERTIES
+	0, 0 );
+    cleanUp_BookmarkDialog.setMetaObject( metaObj );
+    return metaObj;
+}
+
+void* BookmarkDialog::qt_cast( const char* clname )
+{
+    if ( !qstrcmp( clname, "BookmarkDialog" ) )
+	return this;
+    return KasablancaBookmarkDialog::qt_cast( clname );
+}
+
+bool BookmarkDialog::qt_invoke( int _id, QUObject* _o )
+{
+    switch ( _id - staticMetaObject()->slotOffset() ) {
+    case 0: SLOT_Done(); break;
+    case 1: SLOT_EntrySelected((int)static_QUType_int.get(_o+1)); break;
+    case 2: SLOT_ApplyEntry(); break;
+    case 3: SLOT_NewEntry(); break;
+    case 4: SLOT_RemoveEntry(); break;
+    default:
+	return KasablancaBookmarkDialog::qt_invoke( _id, _o );
+    }
+    return TRUE;
+}
+
+bool BookmarkDialog::qt_emit( int _id, QUObject* _o )
+{
+    return KasablancaBookmarkDialog::qt_emit(_id,_o);
+}
+#ifndef QT_NO_PROPERTIES
+
+bool BookmarkDialog::qt_property( int id, int f, QVariant* v)
+{
+    return KasablancaBookmarkDialog::qt_property( id, f, v);
+}
+
+bool BookmarkDialog::qt_static_property( QObject* , int , int , QVariant* ){ return FALSE; }
+#endif // QT_NO_PROPERTIES

@@ -1,0 +1,146 @@
+/****************************************************************************
+** KasablancaMainWindow meta object code from reading C++ file 'Q_mainwindow.h'
+**
+** Created: Mon Mar 22 17:36:20 2004
+**      by: The Qt MOC ($Id: Q_mainwindow.moc,v 1.1 2004/03/22 18:58:59 mkulke Exp $)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#undef QT_NO_COMPAT
+#include "Q_mainwindow.h"
+#include <qmetaobject.h>
+#include <qapplication.h>
+
+#include <private/qucomextra_p.h>
+#if !defined(Q_MOC_OUTPUT_REVISION) || (Q_MOC_OUTPUT_REVISION != 26)
+#error "This file was generated using the moc from 3.3.1. It"
+#error "cannot be used with the include files from this version of Qt."
+#error "(The moc has changed too much.)"
+#endif
+
+const char *KasablancaMainWindow::className() const
+{
+    return "KasablancaMainWindow";
+}
+
+QMetaObject *KasablancaMainWindow::metaObj = 0;
+static QMetaObjectCleanUp cleanUp_KasablancaMainWindow( "KasablancaMainWindow", &KasablancaMainWindow::staticMetaObject );
+
+#ifndef QT_NO_TRANSLATION
+QString KasablancaMainWindow::tr( const char *s, const char *c )
+{
+    if ( qApp )
+	return qApp->translate( "KasablancaMainWindow", s, c, QApplication::DefaultCodec );
+    else
+	return QString::fromLatin1( s );
+}
+#ifndef QT_NO_TRANSLATION_UTF8
+QString KasablancaMainWindow::trUtf8( const char *s, const char *c )
+{
+    if ( qApp )
+	return qApp->translate( "KasablancaMainWindow", s, c, QApplication::UnicodeUTF8 );
+    else
+	return QString::fromUtf8( s );
+}
+#endif // QT_NO_TRANSLATION_UTF8
+
+#endif // QT_NO_TRANSLATION
+
+QMetaObject* KasablancaMainWindow::staticMetaObject()
+{
+    if ( metaObj )
+	return metaObj;
+    QMetaObject* parentObject = QMainWindow::staticMetaObject();
+    static const QUMethod slot_0 = {"SLOT_DisconnectA", 0, 0 };
+    static const QUMethod slot_1 = {"SLOT_EnterCommandA", 0, 0 };
+    static const QUMethod slot_2 = {"SLOT_ConnectCustom", 0, 0 };
+    static const QUParameter param_slot_3[] = {
+	{ "n", &static_QUType_int, 0, QUParameter::In }
+    };
+    static const QUMethod slot_3 = {"SLOT_ConnectBookmark", 1, param_slot_3 };
+    static const QUMethod slot_4 = {"SLOT_EnterCwdA", 0, 0 };
+    static const QUMethod slot_5 = {"SLOT_EnterCommandB", 0, 0 };
+    static const QUMethod slot_6 = {"SLOT_UpdateA", 0, 0 };
+    static const QUMethod slot_7 = {"SLOT_EnterCwdB", 0, 0 };
+    static const QUMethod slot_8 = {"SLOT_SelectionChanged", 0, 0 };
+    static const QUMethod slot_9 = {"SLOT_EditBookmarks", 0, 0 };
+    static const QUMethod slot_10 = {"SLOT_Quit", 0, 0 };
+    static const QUMethod slot_11 = {"SLOT_About", 0, 0 };
+    static const QUMethod slot_12 = {"SLOT_TransferA", 0, 0 };
+    static const QUMethod slot_13 = {"SLOT_TransferB", 0, 0 };
+    static const QUMethod slot_14 = {"languageChange", 0, 0 };
+    static const QMetaData slot_tbl[] = {
+	{ "SLOT_DisconnectA()", &slot_0, QMetaData::Public },
+	{ "SLOT_EnterCommandA()", &slot_1, QMetaData::Public },
+	{ "SLOT_ConnectCustom()", &slot_2, QMetaData::Public },
+	{ "SLOT_ConnectBookmark(int)", &slot_3, QMetaData::Public },
+	{ "SLOT_EnterCwdA()", &slot_4, QMetaData::Public },
+	{ "SLOT_EnterCommandB()", &slot_5, QMetaData::Public },
+	{ "SLOT_UpdateA()", &slot_6, QMetaData::Public },
+	{ "SLOT_EnterCwdB()", &slot_7, QMetaData::Public },
+	{ "SLOT_SelectionChanged()", &slot_8, QMetaData::Public },
+	{ "SLOT_EditBookmarks()", &slot_9, QMetaData::Public },
+	{ "SLOT_Quit()", &slot_10, QMetaData::Public },
+	{ "SLOT_About()", &slot_11, QMetaData::Public },
+	{ "SLOT_TransferA()", &slot_12, QMetaData::Public },
+	{ "SLOT_TransferB()", &slot_13, QMetaData::Public },
+	{ "languageChange()", &slot_14, QMetaData::Protected }
+    };
+    metaObj = QMetaObject::new_metaobject(
+	"KasablancaMainWindow", parentObject,
+	slot_tbl, 15,
+	0, 0,
+#ifndef QT_NO_PROPERTIES
+	0, 0,
+	0, 0,
+#endif // QT_NO_PROPERTIES
+	0, 0 );
+    cleanUp_KasablancaMainWindow.setMetaObject( metaObj );
+    return metaObj;
+}
+
+void* KasablancaMainWindow::qt_cast( const char* clname )
+{
+    if ( !qstrcmp( clname, "KasablancaMainWindow" ) )
+	return this;
+    return QMainWindow::qt_cast( clname );
+}
+
+bool KasablancaMainWindow::qt_invoke( int _id, QUObject* _o )
+{
+    switch ( _id - staticMetaObject()->slotOffset() ) {
+    case 0: SLOT_DisconnectA(); break;
+    case 1: SLOT_EnterCommandA(); break;
+    case 2: SLOT_ConnectCustom(); break;
+    case 3: SLOT_ConnectBookmark((int)static_QUType_int.get(_o+1)); break;
+    case 4: SLOT_EnterCwdA(); break;
+    case 5: SLOT_EnterCommandB(); break;
+    case 6: SLOT_UpdateA(); break;
+    case 7: SLOT_EnterCwdB(); break;
+    case 8: SLOT_SelectionChanged(); break;
+    case 9: SLOT_EditBookmarks(); break;
+    case 10: SLOT_Quit(); break;
+    case 11: SLOT_About(); break;
+    case 12: SLOT_TransferA(); break;
+    case 13: SLOT_TransferB(); break;
+    case 14: languageChange(); break;
+    default:
+	return QMainWindow::qt_invoke( _id, _o );
+    }
+    return TRUE;
+}
+
+bool KasablancaMainWindow::qt_emit( int _id, QUObject* _o )
+{
+    return QMainWindow::qt_emit(_id,_o);
+}
+#ifndef QT_NO_PROPERTIES
+
+bool KasablancaMainWindow::qt_property( int id, int f, QVariant* v)
+{
+    return QMainWindow::qt_property( id, f, v);
+}
+
+bool KasablancaMainWindow::qt_static_property( QObject* , int , int , QVariant* ){ return FALSE; }
+#endif // QT_NO_PROPERTIES

@@ -1,0 +1,113 @@
+/****************************************************************************
+** KasablancaFileExistsDialog meta object code from reading C++ file 'Q_fileexistsdialog.h'
+**
+** Created: Mon Mar 22 15:51:27 2004
+**      by: The Qt MOC ($Id: Q_fileexistsdialog.moc,v 1.1 2004/03/22 18:58:42 mkulke Exp $)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#undef QT_NO_COMPAT
+#include "Q_fileexistsdialog.h"
+#include <qmetaobject.h>
+#include <qapplication.h>
+
+#include <private/qucomextra_p.h>
+#if !defined(Q_MOC_OUTPUT_REVISION) || (Q_MOC_OUTPUT_REVISION != 26)
+#error "This file was generated using the moc from 3.3.1. It"
+#error "cannot be used with the include files from this version of Qt."
+#error "(The moc has changed too much.)"
+#endif
+
+const char *KasablancaFileExistsDialog::className() const
+{
+    return "KasablancaFileExistsDialog";
+}
+
+QMetaObject *KasablancaFileExistsDialog::metaObj = 0;
+static QMetaObjectCleanUp cleanUp_KasablancaFileExistsDialog( "KasablancaFileExistsDialog", &KasablancaFileExistsDialog::staticMetaObject );
+
+#ifndef QT_NO_TRANSLATION
+QString KasablancaFileExistsDialog::tr( const char *s, const char *c )
+{
+    if ( qApp )
+	return qApp->translate( "KasablancaFileExistsDialog", s, c, QApplication::DefaultCodec );
+    else
+	return QString::fromLatin1( s );
+}
+#ifndef QT_NO_TRANSLATION_UTF8
+QString KasablancaFileExistsDialog::trUtf8( const char *s, const char *c )
+{
+    if ( qApp )
+	return qApp->translate( "KasablancaFileExistsDialog", s, c, QApplication::UnicodeUTF8 );
+    else
+	return QString::fromUtf8( s );
+}
+#endif // QT_NO_TRANSLATION_UTF8
+
+#endif // QT_NO_TRANSLATION
+
+QMetaObject* KasablancaFileExistsDialog::staticMetaObject()
+{
+    if ( metaObj )
+	return metaObj;
+    QMetaObject* parentObject = QDialog::staticMetaObject();
+    static const QUMethod slot_0 = {"Skip", 0, 0 };
+    static const QUMethod slot_1 = {"Overwrite", 0, 0 };
+    static const QUMethod slot_2 = {"Resume", 0, 0 };
+    static const QUMethod slot_3 = {"Rename", 0, 0 };
+    static const QUMethod slot_4 = {"languageChange", 0, 0 };
+    static const QMetaData slot_tbl[] = {
+	{ "Skip()", &slot_0, QMetaData::Public },
+	{ "Overwrite()", &slot_1, QMetaData::Public },
+	{ "Resume()", &slot_2, QMetaData::Public },
+	{ "Rename()", &slot_3, QMetaData::Public },
+	{ "languageChange()", &slot_4, QMetaData::Protected }
+    };
+    metaObj = QMetaObject::new_metaobject(
+	"KasablancaFileExistsDialog", parentObject,
+	slot_tbl, 5,
+	0, 0,
+#ifndef QT_NO_PROPERTIES
+	0, 0,
+	0, 0,
+#endif // QT_NO_PROPERTIES
+	0, 0 );
+    cleanUp_KasablancaFileExistsDialog.setMetaObject( metaObj );
+    return metaObj;
+}
+
+void* KasablancaFileExistsDialog::qt_cast( const char* clname )
+{
+    if ( !qstrcmp( clname, "KasablancaFileExistsDialog" ) )
+	return this;
+    return QDialog::qt_cast( clname );
+}
+
+bool KasablancaFileExistsDialog::qt_invoke( int _id, QUObject* _o )
+{
+    switch ( _id - staticMetaObject()->slotOffset() ) {
+    case 0: Skip(); break;
+    case 1: Overwrite(); break;
+    case 2: Resume(); break;
+    case 3: Rename(); break;
+    case 4: languageChange(); break;
+    default:
+	return QDialog::qt_invoke( _id, _o );
+    }
+    return TRUE;
+}
+
+bool KasablancaFileExistsDialog::qt_emit( int _id, QUObject* _o )
+{
+    return QDialog::qt_emit(_id,_o);
+}
+#ifndef QT_NO_PROPERTIES
+
+bool KasablancaFileExistsDialog::qt_property( int id, int f, QVariant* v)
+{
+    return QDialog::qt_property( id, f, v);
+}
+
+bool KasablancaFileExistsDialog::qt_static_property( QObject* , int , int , QVariant* ){ return FALSE; }
+#endif // QT_NO_PROPERTIES

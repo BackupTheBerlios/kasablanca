@@ -1,0 +1,21 @@
+v 0.3.1
+
+-repair spaces bug
+-recursive delete
+-hide passwords
+-repair quit
+-unselect first queue item
+
+v 0.4
+
+-update FormatFileList()
+-remember dirlistings
+-move tasks
+-auto-adjustment for the header
+-check for filesize variables
+
+v 0.5
+
+-add owner and rights files
+-fxp
+-choose port range

@@ -1,0 +1,385 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>KasablancaBookmarkDialog</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>KasablancaBookmarkDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>502</width>
+            <height>290</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Bookmarks</string>
+    </property>
+    <property name="sizeGripEnabled">
+        <bool>false</bool>
+    </property>
+    <property name="modal">
+        <bool>true</bool>
+    </property>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>textLabel1_2_2_2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>260</x>
+                <y>170</y>
+                <width>71</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&lt;p align="right"&gt;Encryption&lt;/p&gt;</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>textLabel1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>263</x>
+                <y>10</y>
+                <width>71</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&lt;p align="right"&gt;Name&lt;/p&gt;</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>textLabel1_2_2_3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>260</x>
+                <y>210</y>
+                <width>71</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&lt;p align="right"&gt;Mode&lt;/p&gt;</string>
+        </property>
+    </widget>
+    <widget class="QComboBox">
+        <item>
+            <property name="text">
+                <string>Unencrypted</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Level 1</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Level 2</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Level 3</string>
+            </property>
+        </item>
+        <property name="name">
+            <cstring>EncryptionComboBox</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>340</x>
+                <y>170</y>
+                <width>150</width>
+                <height>27</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QLineEdit">
+        <property name="name">
+            <cstring>UserEdit</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>340</x>
+                <y>90</y>
+                <width>150</width>
+                <height>27</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QComboBox">
+        <item>
+            <property name="text">
+                <string>Active Mode</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Passive Mode</string>
+            </property>
+        </item>
+        <property name="name">
+            <cstring>ModeComboBox</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>340</x>
+                <y>210</y>
+                <width>150</width>
+                <height>27</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>textLabel1_2_2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>260</x>
+                <y>130</y>
+                <width>71</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&lt;p align="right"&gt;Password&lt;/p&gt;</string>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>DoneButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>420</x>
+                <y>250</y>
+                <width>72</width>
+                <height>29</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Done</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>textLabel1_3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>260</x>
+                <y>90</y>
+                <width>71</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&lt;p align="right"&gt;Username&lt;/p&gt;</string>
+        </property>
+    </widget>
+    <widget class="QLineEdit">
+        <property name="name">
+            <cstring>PassEdit</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>340</x>
+                <y>130</y>
+                <width>150</width>
+                <height>27</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QLineEdit">
+        <property name="name">
+            <cstring>InfoEdit</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>340</x>
+                <y>50</y>
+                <width>150</width>
+                <height>27</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>textLabel1_2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>260</x>
+                <y>50</y>
+                <width>71</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&lt;p align="right"&gt;IP:Port&lt;/p&gt;</string>
+        </property>
+    </widget>
+    <widget class="QLineEdit">
+        <property name="name">
+            <cstring>NameEdit</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>340</x>
+                <y>10</y>
+                <width>150</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="sizePolicy">
+            <sizepolicy>
+                <hsizetype>0</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+            </sizepolicy>
+        </property>
+    </widget>
+    <spacer>
+        <property name="name">
+            <cstring>spacer3</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Horizontal</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="sizeHint">
+            <size>
+                <width>160</width>
+                <height>20</height>
+            </size>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>253</x>
+                <y>250</y>
+                <width>160</width>
+                <height>20</height>
+            </rect>
+        </property>
+    </spacer>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>ApplyButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>172</x>
+                <y>250</y>
+                <width>70</width>
+                <height>29</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Apply</string>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>RemoveButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>90</x>
+                <y>250</y>
+                <width>70</width>
+                <height>29</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Remove</string>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>NewButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>250</y>
+                <width>70</width>
+                <height>29</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>New</string>
+        </property>
+    </widget>
+    <widget class="QListBox">
+        <property name="name">
+            <cstring>BookmarkListBox</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>230</width>
+                <height>230</height>
+            </rect>
+        </property>
+        <property name="resizePolicy">
+            <enum>Manual</enum>
+        </property>
+        <property name="vScrollBarMode">
+            <enum>Auto</enum>
+        </property>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>BookmarkListBox</sender>
+        <signal>highlighted(int)</signal>
+        <receiver>KasablancaBookmarkDialog</receiver>
+        <slot>SLOT_EntrySelected(int)</slot>
+    </connection>
+    <connection>
+        <sender>ApplyButton</sender>
+        <signal>clicked()</signal>
+        <receiver>KasablancaBookmarkDialog</receiver>
+        <slot>SLOT_ApplyEntry()</slot>
+    </connection>
+    <connection>
+        <sender>NewButton</sender>
+        <signal>clicked()</signal>
+        <receiver>KasablancaBookmarkDialog</receiver>
+        <slot>SLOT_NewEntry()</slot>
+    </connection>
+    <connection>
+        <sender>RemoveButton</sender>
+        <signal>clicked()</signal>
+        <receiver>KasablancaBookmarkDialog</receiver>
+        <slot>SLOT_RemoveEntry()</slot>
+    </connection>
+    <connection>
+        <sender>DoneButton</sender>
+        <signal>clicked()</signal>
+        <receiver>KasablancaBookmarkDialog</receiver>
+        <slot>SLOT_Done()</slot>
+    </connection>
+</connections>
+<slots>
+    <slot>SLOT_EntrySelected(int i)</slot>
+    <slot>SLOT_ApplyEntry()</slot>
+    <slot>SLOT_NewEntry()</slot>
+    <slot>SLOT_RemoveEntry()</slot>
+    <slot>SLOT_Done()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
