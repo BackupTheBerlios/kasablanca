@@ -184,6 +184,7 @@ void BookmarkDialog::slotApply()
 	KbBookmarkItem *kbb;
 	
 	kbb = static_cast<KbBookmarkItem*>(mp_dialog->BookmarkListView->selectedItem());
+	if (!kbb) return;
 	siteinfo = kbb->GetSiteInfo();	
 	
 	if (mp_dialog->NameEdit->text() == "") mp_dialog->NameEdit->setText(i18n("Enter sitename"));

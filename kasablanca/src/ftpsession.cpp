@@ -1111,7 +1111,7 @@ void FtpSession::FilterHiddenFiles(bool b)
 	QListViewItemIterator it(mp_browser);
 	while (it.current()) 
 	{		
-		if (it.current()->text(0).startsWith(".") && (it.current() != mp_browser->firstChild()))
+		if ((it.current() != mp_browser->firstChild()) && (static_cast<KbItem*>(it.current())->File().startsWith(".")))
 		{
 			if (b) it.current()->setVisible(false);
 			else it.current()->setVisible(true);
