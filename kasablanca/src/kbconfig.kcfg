@@ -9,15 +9,19 @@
 	<group name="colors">
 		<entry name="LocalColor" type="Color">
 			<label>The color value for local messages on the logging window.</label>
+			<default>244,247,66</default>
 		</entry>
 		<entry name="SuccessColor" type="Color">
 			<label>The color value for successful remote messages on the logging window.</label>
+			<default>0,188,53</default>
 		</entry>
 		<entry name="BackgroundColor" type="Color">
 			<label>The color value for the background on the logging window.</label>
+			<default>0,90,128</default>
 		</entry>
 		<entry name="FailureColor" type="Color">
 			<label>The color value for failed remote messages on the logging window.</label>
+			<default>222,9,48</default>
 		</entry>
 	</group>
 </kcfg>
