@@ -1,10 +1,9 @@
 v 0.3.1
 
+-when renaming, check if file_alt is there too
 -repair spaces bug
 -recursive delete
--hide passwords
--repair quit
--unselect first queue item
+-add some context help
 
 v 0.4
 
