@@ -1,10 +1,10 @@
 Summary: A Kde Ftp Client
 Name: kasablanca
-Version: 0.4.0.2
+Version: 0.4.0.3
 Release: 1
 Copyright: GPL
 Group: Applications/Internet
-Source: http://download.berlios.de/kasablanca/kasablanca-0.4.0.1.tar.gz
+Source: http://download.berlios.de/kasablanca/kasablanca-0.4.0.3.tar.gz
 BuildRoot: /var/tmp/%{name}-buildroot
 Provides: kasablanca
 

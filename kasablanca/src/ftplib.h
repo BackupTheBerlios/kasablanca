@@ -43,18 +43,16 @@
 #ifndef FTPLIB_H
 #define FTPLIB_H
 
-/* FtpAccess() type codes */
-#define FTPLIB_DIR 1
-#define FTPLIB_DIR_VERBOSE 2
-#define FTPLIB_FILE_READ 3
-#define FTPLIB_FILE_WRITE 4
-#define FTPLIB_FILE_READ_APPEND 5
-#define FTPLIB_FILE_WRITE_APPEND 6
-#define FTPLIB_ASCII 'A'
-#define FTPLIB_IMAGE 'I' 
-
 #include <sys/time.h>
+#include <unistd.h>
+
+#ifdef NOLFS
+#define off64_t long
+#endif
+
+#ifndef NOSSL
 #include <openssl/ssl.h>
+#endif
 
 using namespace std;
 
@@ -66,16 +64,14 @@ typedef int (*FtpCallbackXfer)(off64_t xfered, void *arg);
 typedef int (*FtpCallbackIdle)(void *arg);
 typedef void (*FtpCallbackLog)(char *str, void* arg, bool out);
 
-struct netbuf {
+struct ftphandle {
 	char *cput,*cget;
 	int handle;
 	int cavail,cleft;
 	char *buf;
 	int dir;
-	netbuf *ctrl;
+	ftphandle *ctrl;
 	int cmode;
-	int tlsctrl;
-	int tlsdata;
 	struct timeval idletime;
 	FtpCallbackXfer xfercb;
 	FtpCallbackIdle idlecb;
@@ -85,27 +81,54 @@ struct netbuf {
 	off64_t cbbytes;
 	off64_t xfered1;
 	char response[256];
+#ifndef NOSSL
 	SSL* ssl;
 	SSL_CTX* ctx;
 	BIO* sbio;
+	int tlsctrl;
+	int tlsdata;
+#endif
 	off64_t offset;
 	bool correctpasv;
 };
   
 class ftplib {
 public:
-    enum ftp
+
+	enum accesstype
+	{
+		dir = 1,
+		dirverbose,
+		fileread,
+		filewrite,
+		filereadappend,
+		filewriteappend
+	}; 
+
+	enum transfermode
+	{
+		ascii = 'A',
+		image = 'I'
+	};
+
+	enum connmode
+	{
+		pasv = 1,
+		port
+	};
+
+	enum fxpmethod
+	{
+		defaultfxp = 0,
+        alternativefxp
+	};
+
+    enum dataencryption
     {
-        pasv = 1,
-        port = 2,
-        defaultconnmode = 1,
-        ascii = 'A',
-        image = 'I',
         unencrypted = 0,
-        secure = 1,
-        defaultfxp = 0,
-        alternativefxp = 1
+        secure
     };
+
 	ftplib();
 	~ftplib();
     char* LastResponse();
@@ -121,41 +144,53 @@ public:
     int Pwd(char *path, int max);
     int Nlst(const char *outputfile, const char *path);
     int Dir(const char *outputfile, const char *path);
-    int Size(const char *path, int *size, ftplib::ftp mode);
+    int Size(const char *path, int *size, transfermode mode);
     int ModDate(const char *path, char *dt, int max);
-    int Get(const char *outputfile, const char *path, ftplib::ftp mode, off64_t offset = 0);
-    int Put(const char *inputfile, const char *path, ftplib::ftp mode, off64_t offset= 0);
+    int Get(const char *outputfile, const char *path, transfermode mode, off64_t offset = 0);
+    int Put(const char *inputfile, const char *path, transfermode mode, off64_t offset = 0);
     int Rename(const char *src, const char *dst);
-    int Delete(const char *fnm);
-    int SetDataEncryption(ftplib::ftp flag);
+    int Delete(const char *path);
+#ifndef NOSSL    
+	int SetDataEncryption(dataencryption enc);
     int NegotiateEncryption();
+#endif
     int Quit();
     void SetCallbackIdleFunction(FtpCallbackIdle pointer);
     void SetCallbackLogFunction(FtpCallbackLog pointer);
-	 void SetCallbackXferFunction(FtpCallbackXfer pointer);
-	 void SetCallbackArg(void *arg);
+	void SetCallbackXferFunction(FtpCallbackXfer pointer);
+	void SetCallbackArg(void *arg);
     void SetCallbackBytes(off64_t bytes);
-	 void SetCorrectPasv(bool b) { mp_netbuf->correctpasv = b; };
+	void SetCorrectPasv(bool b) { mp_ftphandle->correctpasv = b; };
     void SetCallbackIdletime(int time);
-    void SetConnmode(ftplib::ftp mode);
-    static int Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method);
-    netbuf* mp_netbuf;
-    int FtpRead(void *buf, int max, netbuf *nData);
-    int FtpWrite(void *buf, int len, netbuf *nData);
-    int FtpAccess(const char *path, int typ, int mode, netbuf *nControl, netbuf **nData);
-    int FtpClose(netbuf *nData);
+    void SetConnmode(connmode mode);
+    static int Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, transfermode mode, fxpmethod method);
+    
+	ftphandle* RawOpen(const char *path, accesstype type, transfermode mode);
+	int RawClose(ftphandle* handle); 
+	int RawWrite(void* buf, int len, ftphandle* handle);
+	int RawRead(void* buf, int max, ftphandle* handle); 
+
 private:
-    int FtpXfer(const char *localfile, const char *path, netbuf *nControl, int typ, int mode);
-    int FtpOpenPasv(netbuf *nControl, netbuf **nData, int mode, int dir, char *cmd);
-    int FtpSendCmd(const char *cmd, char expresp, netbuf *nControl);
-    int FtpAcceptConnection(netbuf *nData, netbuf *nControl);
-    int FtpOpenPort(netbuf *nControl, netbuf **nData, int mode, int dir, char *cmd);
-    int socket_wait(netbuf *ctl);
-    int readline(char *buf,int max,netbuf *ctl);
-    int writeline(char *buf, int len, netbuf *nData);
-    int readresp(char c, netbuf *nControl);
-	 void ClearNetbuf();
-	 int CorrectPasvResponse(unsigned char *v);
+	
+	ftphandle* mp_ftphandle;
+
+    int FtpXfer(const char *localfile, const char *path, ftphandle *nControl, accesstype type, transfermode mode);
+    int FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mode, int dir, char *cmd);
+    int FtpSendCmd(const char *cmd, char expresp, ftphandle *nControl);
+    int FtpAcceptConnection(ftphandle *nData, ftphandle *nControl);
+    int FtpOpenPort(ftphandle *nControl, ftphandle **nData, transfermode mode, int dir, char *cmd);
+    int FtpRead(void *buf, int max, ftphandle *nData);
+    int FtpWrite(void *buf, int len, ftphandle *nData);
+    int FtpAccess(const char *path, accesstype type, transfermode mode, ftphandle *nControl, ftphandle **nData);
+    int FtpClose(ftphandle *nData);
+	
+	int socket_wait(ftphandle *ctl);
+    int readline(char *buf,int max,ftphandle *ctl);
+    int writeline(char *buf, int len, ftphandle *nData);
+    int readresp(char c, ftphandle *nControl);
+	
+	void ClearHandle();
+	int CorrectPasvResponse(unsigned char *v);
 };
 
 #endif

@@ -153,7 +153,7 @@ private:
 	bool CopyLocalFile(KbTransferItem* item);
 	bool ScandirLocal(KbDirInfo *dir, QString path);
 	void SortItems();
-	void MakeDirectory(QString dir);
+	void MakeTransferDirectory(QString dir);
 	void timerEvent(QTimerEvent*);
 signals:
 	void gui_update();

@@ -904,7 +904,7 @@ bool FtpSession::MakeLocalDirectory(QString path)
 	return result;
 }
 
-void FtpSession::MakeDirectory(QString dir)
+void FtpSession::MakeTransferDirectory(QString dir)
 {
 	bool result = mp_ftpthread->Transfer_Mkdir(dir);			
 	if (result) mp_ftpthread->start();
@@ -945,7 +945,12 @@ void FtpSession::ChangeDirectory(QString path)
 
 void FtpSession::SLOT_Transfer(bool success)
 {
-	if (success) mp_currenttransfer->IncrementStatus();
+	qWarning("SLOT_Transfer()");
+
+	if (success) 
+	{
+		mp_currenttransfer->IncrementStatus();
+	}
 	else mp_currenttransfer->Abort();
 }
 
@@ -1050,7 +1055,7 @@ void FtpSession::Transfer(KbTransferItem *item)
 	{
 		if (item->rtti() == KbTransferItem::dir)
 		{
-			if (item->DstSession()->Connected()) item->DstSession()->MakeDirectory(item->DstFileInfo()->fileName());
+			if (item->DstSession()->Connected()) item->DstSession()->MakeTransferDirectory(item->DstFileInfo()->fileName());
 			else
 			{
 				if (item->DstSession()->MakeLocalDirectory(item->DstFileInfo()->fileName()) == false)

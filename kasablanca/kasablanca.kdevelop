@@ -172,14 +172,14 @@
     <bzip>false</bzip>
     <archname/>
     <appname>kasablanca</appname>
-    <version>0.3.1</version>
+    <version>0.4.0.2</version>
     <release>1</release>
-    <vendor>Me</vendor>
+    <vendor>Magnus Kulke</vendor>
     <licence>GPL</licence>
     <summary>kde ftp klient</summary>
-    <group>Applications/System</group>
-    <packager>x</packager>
-    <description>y</description>
+    <group>Applications/Internet</group>
+    <packager>MagnusKulke</packager>
+    <description>lightwight kde ftp client which handles tls encryption and fxp</description>
     <changelog/>
     <devpackage>false</devpackage>
     <docspackage>false</docspackage>

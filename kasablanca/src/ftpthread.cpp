@@ -714,7 +714,7 @@ void FtpThread::Quit_thread()
 void FtpThread::Transfer_Fxp_thread()
 {
 	int result = 0;
-	ftplib::ftp method;
+	ftplib::fxpmethod method;
 	
 	QString src = m_stringlist.front();
 	m_stringlist.pop_front();
