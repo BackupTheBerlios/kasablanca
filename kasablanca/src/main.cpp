@@ -4,10 +4,10 @@
 
 #include "kasablanca.h"
 #include <kapplication.h>
+#include <dcopclient.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
-#include <qtextedit.h>
 
 static const char description[] =
     I18N_NOOP("A KDE Ftp Client");
@@ -26,35 +26,42 @@ int main(int argc, char **argv)
                      KAboutData::License_GPL, "(C) 2004 Magnus Kulke", 0, 0,
 							"sikor_sxe@radicalapproach.de");
     about.addAuthor( "Magnus Kulke", 0, "sikor_sxe@radicalapproach.de" );
+    about.addAuthor( "Big Biff", 0, "bigbiff@chunkyfilms.org" );
     KCmdLineArgs::init(argc, argv, &about);
-    KCmdLineArgs::addCmdLineOptions( options );
+    KCmdLineArgs::addCmdLineOptions(options);
     KApplication app;
-    Kasablanca *mainWin = 0;
 
+    // register ourselves as a dcop client
+    app.dcopClient()->registerAs(app.name(), false);
+
+    // see if we are starting with session management
     if (app.isRestored())
     {
-        //RESTORE(Kasablanca);
+        RESTORE(Kasablanca);
     }
     else
     {
         // no session.. just start up normally
         KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
-        /// @todo do something with the command line args here
-
-        mainWin = new Kasablanca();
-        app.setMainWidget( mainWin );
-
-		mainWin->m_tempdirname = QString::number((int) time(NULL) & 0xffff) + ".dir";
-		mainWin->m_version = version;
-		mainWin->setCaption("Kasablanca " + QString(version));
-		
-		mainWin->show();
-
-      args->clear();
+        if (args->count() == 0)
+        {
+            Kasablanca *widget = new Kasablanca;
+            widget->show();
+        }
+        else
+        {
+            int i = 0;
+            for (; i < args->count(); i++)
+            {
+                Kasablanca *widget = new Kasablanca;
+                widget->show();
+// TODO: Load the ftp url passed on the command line.
+//                widget->load(args->url(i));
+            }
+        }
+        args->clear();
     }
 
-    // mainWin has WDestructiveClose flag by default, so it will delete itself.
     return app.exec();
 }
 

@@ -1,6 +1,6 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KasablancaMainWindow</class>
-<widget class="QMainWindow">
+<widget class="QWidget">
     <property name="name">
         <cstring>KasablancaMainWindow</cstring>
     </property>
@@ -22,9 +22,6 @@
     </property>
     <property name="caption">
         <string>Kasablanca x</string>
-    </property>
-    <property name="rightJustification">
-        <bool>false</bool>
     </property>
     <grid>
         <property name="name">
@@ -378,93 +375,6 @@
         </widget>
     </grid>
 </widget>
-<menubar>
-    <property name="name">
-        <cstring>menubar</cstring>
-    </property>
-</menubar>
-<toolbars>
-</toolbars>
-<connections>
-    <connection>
-        <sender>CommandLineA</sender>
-        <signal>returnPressed()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_EnterCommandA()</slot>
-    </connection>
-    <connection>
-        <sender>CwdLineA</sender>
-        <signal>returnPressed()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_EnterCwdA()</slot>
-    </connection>
-    <connection>
-        <sender>CommandLineB</sender>
-        <signal>returnPressed()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_EnterCommandB()</slot>
-    </connection>
-    <connection>
-        <sender>BrowserB</sender>
-        <signal>selectionChanged()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_SelectionChanged()</slot>
-    </connection>
-    <connection>
-        <sender>BrowserA</sender>
-        <signal>selectionChanged()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_SelectionChanged()</slot>
-    </connection>
-    <connection>
-        <sender>CwdLineB</sender>
-        <signal>returnPressed()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_EnterCwdB()</slot>
-    </connection>
-    <connection>
-        <sender>TaskView</sender>
-        <signal>selectionChanged()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_SelectionChanged()</slot>
-    </connection>
-    <connection>
-        <sender>TransferButtonA</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_TransferA()</slot>
-    </connection>
-    <connection>
-        <sender>TransferButtonB</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_TransferB()</slot>
-    </connection>
-    <connection>
-        <sender>RefreshButtonB</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_RefreshBrowserB()</slot>
-    </connection>
-    <connection>
-        <sender>RefreshButtonA</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_RefreshBrowserA()</slot>
-    </connection>
-    <connection>
-        <sender>ConnectButtonA</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_ConnectButtonA()</slot>
-    </connection>
-    <connection>
-        <sender>ConnectButtonB</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_ConnectButtonB()</slot>
-    </connection>
-</connections>
 <tabstops>
     <tabstop>CwdLineA</tabstop>
     <tabstop>CwdLineB</tabstop>
@@ -475,22 +385,5 @@
     <tabstop>TaskView</tabstop>
     <tabstop>LogWindowA</tabstop>
 </tabstops>
-<slots>
-    <slot>SLOT_EnterCommandA()</slot>
-    <slot>SLOT_ConnectBookmark( int n )</slot>
-    <slot>SLOT_EnterCwdA()</slot>
-    <slot>SLOT_EnterCommandB()</slot>
-    <slot>SLOT_RefreshBrowserA()</slot>
-    <slot>SLOT_EnterCwdB()</slot>
-    <slot>SLOT_SelectionChanged()</slot>
-    <slot>SLOT_EditBookmarks()</slot>
-    <slot>SLOT_Close()</slot>
-    <slot>SLOT_About()</slot>
-    <slot>SLOT_TransferA()</slot>
-    <slot>SLOT_TransferB()</slot>
-    <slot>SLOT_RefreshBrowserB()</slot>
-    <slot>SLOT_ConnectButtonA()</slot>
-    <slot>SLOT_ConnectButtonB()</slot>
-</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
