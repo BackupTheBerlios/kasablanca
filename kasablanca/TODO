@@ -1,20 +1,21 @@
 v 0.3.1
 
 -when renaming, check if file_alt is there too
--repair spaces bug
+-repair spaces xfer bug, changes in kbftp probably, local files are sent to the client using the path to the file. if there are spaces in it it will fail.
 -recursive delete
--add some context help
+-slow down update cycle, transfer info should only be refreshed every 100msec or something.
+-heavy gui updates
 
 v 0.4
 
--update FormatFileList()
--remember dirlistings
--move tasks
+-update FormatFileList(), make it use qt stuff instead of c
+-remember dirlistings (caching)
+-move tasks in taskview
 -auto-adjustment for the header
--check for filesize variables
+-check if filesize variables are ok
 
 v 0.5
 
--add owner and rights files
+-add owner and rights files to browser view
 -fxp
 -choose port range
