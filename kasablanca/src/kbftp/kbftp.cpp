@@ -23,13 +23,14 @@ int main(int, char *)
 
 	while (input != "quit")
 	{
-		cin >> input;
+		std::getline(std::cin, input);
 
 		if (input == "connect")
 		{
 			string server;
 
-			cin >> server;
+			//cin >> server;
+			std::getline(std::cin, server);
 			cout << "kb.issue.connect" << endl;
 			if (ftp.Connect(server.c_str())) cout << "kb.success" << endl;
 			else
@@ -43,8 +44,10 @@ int main(int, char *)
 		{
 			string user, pass;
 
-			cin >> user;
-			cin >> pass;
+			std::getline(std::cin, user);
+			std::getline(std::cin, pass);
+			//cin >> user;
+			//cin >> pass;
 			cout << "kb.issue.login" << endl;
 			if (ftp.Login(user.c_str(), pass.c_str())) cout << "kb.success" << endl;
 			else
@@ -83,8 +86,9 @@ int main(int, char *)
 		{
 			string dir;
 
+			//std::getline(std::cin, dir);
 			std::getline(std::cin, dir);
-			dir.erase(0,1);
+			//dir.erase(0,1);
 			cout << "kb.issue.chdir" << endl;
 			if (ftp.Chdir(dir.c_str())) cout << "kb.success" << endl;
 			else cout << "kb.failure" << endl;
@@ -94,7 +98,6 @@ int main(int, char *)
 			string dir;
 
 			std::getline(std::cin, dir);
-			dir.erase(0,1);
 			cout << "kb.issue.rmdir" << endl;
 			if (ftp.Rmdir(dir.c_str())) cout << "kb.success" << endl;
 			else cout << "kb.failure" << endl;
@@ -103,7 +106,7 @@ int main(int, char *)
 		{
 			string dir;
 
-			cin >> dir;
+			std::getline(std::cin, dir);
 			cout << "kb.issue.mkdir" << endl;
 			if (ftp.Mkdir(dir.c_str())) cout << "kb.success" << endl;
 			else cout << "kb.failure" << endl;
@@ -112,7 +115,7 @@ int main(int, char *)
 		{
 			string file;
 
-			cin >> file;
+			std::getline(std::cin, file);
 			cout << "kb.issue.delete" << endl;
 			if (ftp.Delete(file.c_str())) cout << "kb.success" << endl;
 			else cout << "kb.failure" << endl;
@@ -121,8 +124,8 @@ int main(int, char *)
 		{
 			string oldfile, newfile;
 
-			cin >> oldfile;
-			cin >> newfile;
+			std::getline(std::cin, oldfile);
+			std::getline(std::cin, newfile);
 			cout << "kb.issue.rename" << endl;
 			if (ftp.Rename(oldfile.c_str(), newfile.c_str())) cout << "kb.success" << endl;
 			else cout << "kb.failure" << endl;
@@ -138,7 +141,6 @@ int main(int, char *)
 			string cmd;
 
 			std::getline(std::cin, cmd);
-			cmd.erase(0,1);
 			cout << "kb.issue.raw" << endl;
 			if (ftp.Raw(cmd.c_str())) cout << "kb.success" << endl;
 			else cout << "kb.failure" << endl;
@@ -147,7 +149,7 @@ int main(int, char *)
 		{
 			string file;
 
-			cin >> file;
+			std::getline(std::cin, file);
 			cout << "kb.issue.dir" << endl;
 			ftp.SetCallbackXferFunction(CallbackDir);
 			if (ftp.Dir(file.c_str(), ""))
@@ -166,7 +168,7 @@ int main(int, char *)
 		{
 			string flag;
 
-			cin >> flag;
+			std::getline(std::cin, flag);
 			cout << "kb.issue.setdataencryption" << endl;
 			if (flag == "on")
 			{
@@ -180,30 +182,22 @@ int main(int, char *)
 			}
 			else cout << "kb.failure" << endl;
 		}
-		else if (input == "setconnmode")
+		else if (input == "setpasv")
 		{
-			string flag;
-
-			cin >> flag;
-			cout << "kb.issue.setconnmode" << endl;
-			if (flag == "pasv")
-			{
-				ftp.SetConnmode(ftplib::pasv);
-				cout << "kb.success" << endl;
-			}
-			else if (flag == "port")
-			{
-				ftp.SetConnmode(ftplib::port);
-				cout << "kb.success" << endl;
-			}
-			else cout << "kb.failure" << endl;
+			ftp.SetConnmode(ftplib::pasv);
+		}
+		else if (input == "setport")
+		{
+			ftp.SetConnmode(ftplib::port);
 		}
 		else if (input == "get")
 		{
 			string file, path;
 
-			cin >> file;
-			cin >> path;
+			std::getline(std::cin, file);
+			std::getline(std::cin, path);
+			//cin >> file;
+			//cin >> path;
 			cout << "kb.issue.get" << endl;
 			ftp.SetCallbackXferFunction(CallbackXfer);
 			if (ftp.Get(file.c_str(), path.c_str(), ftplib::image)) cout << "kb.success" << endl;
@@ -213,15 +207,19 @@ int main(int, char *)
 		}
 		else if (input == "getresume")
 		{
-			string file, path;
-			unsigned int offset;
+			string file, path, offset;
 
-			cin >> file;
-			cin >> path;
-			cin >> offset;
+			//cin >> file;
+			///cin >> path;
+			//cin >> offset;
+
+			std::getline(std::cin, file);
+			std::getline(std::cin, path);
+			std::getline(std::cin, offset);
+
 			cout << "kb.issue.getresume" << endl;
 			ftp.SetCallbackXferFunction(CallbackXfer);
-			if (ftp.Get(file.c_str(), path.c_str(), ftplib::image, offset)) cout << "kb.success" << endl;
+			if (ftp.Get(file.c_str(), path.c_str(), ftplib::image, atoi(offset.c_str()))) cout << "kb.success" << endl;
 			else cout << "kb.failure" << endl;
 			cout << "kb.xfer.done" << endl;
 			ftp.SetCallbackXferFunction(NULL);
@@ -230,8 +228,9 @@ int main(int, char *)
 		{
 			string file, path;
 
-			cin >> file;
-			cin >> path;
+			std::getline(std::cin, file);
+			std::getline(std::cin, path);
+
 			cout << "kb.issue.put" << endl;
 			ftp.SetCallbackXferFunction(CallbackXfer);;
 			if (ftp.Put(file.c_str(), path.c_str(), ftplib::image)) cout << "kb.success" << endl;
@@ -241,61 +240,59 @@ int main(int, char *)
 		}
 		else if (input == "putresume")
 		{
-			string file, path;
-			unsigned int offset;
+			string file, path, offset;
 
-			cin >> file;
-			cin >> path;
-			cin >> offset;
+			std::getline(std::cin, file);
+			std::getline(std::cin, path);
+			std::getline(std::cin, offset);
+			
 			cout << "kb.issue.putresume" << endl;
 			ftp.SetCallbackXferFunction(CallbackXfer);
-			if (ftp.Put(file.c_str(), path.c_str(), ftplib::image, offset)) cout << "kb.success" << endl;
+			if (ftp.Put(file.c_str(), path.c_str(), ftplib::image, atoi(offset.c_str()))) cout << "kb.success" << endl;
 			else cout << "kb.failure" << endl;
 			cout << "kb.xfer.done" << endl;
 			ftp.SetCallbackXferFunction(NULL);
 		}
-		else if (input == "fxpinit")
+		else if (input == "fxpinitpasv")
 		{	
-			string flag;
 			unsigned int v[6];
 			
-			cin >> flag;
 			cout << "kb.issue.fxp.init" << endl;
-			if (flag == "pasv")
-			{
-				if (ftp.FxpInitPasv(v))
-				{	
-					cout << "kb.fxpinit.pasv." 
-						<< v[0] << "."
-						<< v[1] << "."
-						<< v[2] << "."
-						<< v[3] << "."
-						<< v[4] << "."
-						<< v[5] << endl;
-					cout << "kb.success" << endl;
-				}
-				else cout << "kb.failure.fxp.init" << endl;
+
+			if (ftp.FxpInitPasv(v))
+			{	
+				cout << "kb.fxpinit.pasv." 
+					<< v[0] << "."
+					<< v[1] << "."
+					<< v[2] << "."
+					<< v[3] << "."
+					<< v[4] << "."
+					<< v[5] << endl;
+				cout << "kb.success" << endl;
 			}
-			else if (flag == "port")
+			else cout << "kb.failure.fxp.init" << endl;
+		}
+		else if (input == "fxpinitport")
+		{	
+			unsigned int v[6];
+			string ipport;
+			
+			cout << "kb.issue.fxp.init" << endl;
+			
+			std::getline(std::cin, ipport);
+			sscanf(ipport.c_str(),"%u.%u.%u.%u.%u.%u",&v[0],&v[1],&v[2],&v[3],&v[4],&v[5]);
+			if (ftp.FxpInitPort(v))
 			{
-				string ipport;
-				
-				cin >> ipport;
-				sscanf(ipport.c_str(),"%u.%u.%u.%u.%u.%u",&v[0],&v[1],&v[2],&v[3],&v[4],&v[5]);
-				if (ftp.FxpInitPort(v))
-				{
-				 	cout << "kb.fxpinit.port" << endl;
-					cout << "kb.success" << endl;
-				}
-				else cout << "kb.failure.fxp.init" << endl;
+				cout << "kb.fxpinit.port" << endl;
+				cout << "kb.success" << endl;
 			}
-			else cout << "kb.failure" << endl;
+			else cout << "kb.failure.fxp.init" << endl;
 		}
 		else if (input == "fxpget")
 		{
 			string file;
 						
-			cin >> file;
+			std::getline(std::cin, file);
 			cout << "kb.issue.fxp.get" << endl;
 			
 			if (ftp.FxpGet(file.c_str())) 
@@ -309,7 +306,7 @@ int main(int, char *)
 		{
 			string file;
 						
-			cin >> file;
+			std::getline(std::cin, file);
 			cout << "kb.issue.fxp.put" << endl;
 			
 			if (ftp.FxpPut(file.c_str()))
