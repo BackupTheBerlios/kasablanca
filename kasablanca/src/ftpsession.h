@@ -16,11 +16,11 @@
 #include <qstring.h>
 #include <qdir.h>
 #include <qpixmap.h>
+#include <qobject.h>
+#include <qcolor.h>
 #include <list>
 
 #include "kbfileinfo.h"
-
-#include <qobject.h>
 
 using namespace std;
 
@@ -82,6 +82,7 @@ public:
 	void Abort();
 	FtpThread* Ftp() { return mp_ftpthread; };
 	siteinfo* SiteInfo() { return mp_siteinfo; };
+	void SetColors(QColor local, QColor success, QColor failure, QColor background);
 private:
 	FtpThread *mp_ftpthread;
 	EventHandler *mp_eventhandler;
@@ -94,6 +95,7 @@ private:
 	QLabel *mp_statusline, *mp_encryptionicon;
 	QString m_remoteworkingdir; 
 	QDir m_localworkingdir;
+	QColor m_colorsuccess, m_colorfailure, m_colorlocal;
 	bool m_connected, m_occupied, m_sortascending, m_startqueue;
 	list<logentries> m_loglist;
 	QPixmap m_iconencrypted, m_iconunencrypted;

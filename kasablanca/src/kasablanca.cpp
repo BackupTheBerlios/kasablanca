@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kaboutdialog.h>
 #include <kaction.h>
 #include <kapp.h>
 #include <kapplication.h>
@@ -24,46 +23,26 @@
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kicontheme.h>
-#include <kinputdialog.h>
 #include <kkeydialog.h>
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kmenubar.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
-#include <kprocio.h>
 #include <kstandarddirs.h>
 #include <kstatusbar.h>
 #include <kstdaction.h>
+#include <kconfigdialog.h>
 
-#include <qhbox.h>
-#include <qstatusbar.h>
 #include <qtextedit.h>
-#include <qsizepolicy.h>
 #include <qlineedit.h>
 #include <qcolor.h>
-#include <qpixmap.h>
 #include <qlistview.h>
-#include <qframe.h>
 #include <qpushbutton.h>
-#include <qlabel.h>
-#include <qevent.h>
-#include <qobject.h>
-#include <qdir.h>
-#include <qstringlist.h>
-#include <qpopupmenu.h>
-#include <qfileinfo.h>
 #include <qheader.h>
-#include <qdatetime.h>
-#include <qeventloop.h>
-#include <qdom.h>
-#include <qaction.h>
 #include <qtoolbutton.h>
-#include <qcursor.h>
-//#include <qmutex.h>
 
-#include <vector>
-
+#include "Q_colorspreferencesdialog.h"
+#include "Q_generalpreferencesdialog.h"
 #include "customconnectdialog.h"
 #include "fileexistsdialog.h"
 #include "bookmarks.h"
@@ -71,68 +50,42 @@
 #include "kbtransferdir.h"
 #include "kbtransferfile.h"
 #include "kbdirinfo.h"
-
 #include "ftpsession.h"
-
+#include "kbconfig.h"
 #include "kasablanca.h"
 
 using namespace std;
 
 Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new KasablancaMainWindow(this))
 {
-
-	/* new stuff */
 	mp_session_a = new FtpSession(this, "session a");
 	mp_session_b = new FtpSession(this, "session b");
 	mp_sessionlist = new list<FtpSession*>;
 	mp_sessionlist->push_back(mp_session_a);
 	mp_sessionlist->push_back(mp_session_b);
-	/* / new stuff */
 	
-    setAcceptDrops(true);
-    setCentralWidget(mp_view);
-    setupGUI();
-    setupActions();
-    setupStatusBar();
-    setupMenu();
-    statusBar()->show();
-    //toolBar()->show();
-    
-    //UpdateLocalDisplay(A);
-    //UpdateLocalDisplay(B);
-    //SetGuiStatus(disconnected, A);
-    //SetGuiStatus(disconnected, B);
+	setAcceptDrops(true);
+	setCentralWidget(mp_view);
+	setupGUI();
+	setupActions();
+	setupStatusBar();
+	setupMenu();
+	statusBar()->show();
+ 
+	setAutoSaveSettings();
+	
+	/* when the qmainwindow is closed the object gets deleted,
+	so the destructers of kbprocesses are called. */
 
-    setAutoSaveSettings();
-    
-    /* when the qmainwindow is closed the object gets deleted,
-    so the destructers of kbprocesses are called. */
-
-    setWFlags(WDestructiveClose);
-                    
-    /* if initbookmarks returns false, an error box appears */
-    
-    if (initBookmarks() != 1) KMessageBox::error(0, i18n("Could not open Kasablanca bookmark xml."));
-
-    //when developing you might want to change the following line to the kbftp path
-    //and disable the other two lines. */
-
-   // m_proc_a.addArgument("kbftp/kbftp");
-   // m_proc_b.addArgument("kbftp/kbftp");
-
-  	//if (locate("exe", "kbftp") == QString::null) KMessageBox::error(0,"kbftp binary is not in kde binary path.");
-   // else 
-   // {
-   //        m_proc_a.addArgument(locate("exe", "kbftp"));
-   //         m_proc_b.addArgument(locate("exe", "kbftp"));
-   // }
-
+	setWFlags(WDestructiveClose);
+						
+	/* if initbookmarks returns false, an error box appears */
+	
+	if (initBookmarks() != 1) KMessageBox::error(0, i18n("Could not open Kasablanca bookmark xml."));
     
 	connect(mp_view->BrowserB, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
 	connect(mp_view->BrowserA, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
 	connect(mp_view->TaskView, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
-	
-	/* new stuff */
 	
 	mp_session_a->SetLogWindow(mp_view->LogWindowA);
 	mp_session_a->SetBrowser(mp_view->BrowserA);
@@ -182,26 +135,39 @@ Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new Kasablanc
 	connect(mp_session_a, SIGNAL(gui_clearqueue(FtpSession*)), SLOT(SLOT_ClearQueue(FtpSession*)));
 	connect(mp_session_b, SIGNAL(gui_clearqueue(FtpSession*)), SLOT(SLOT_ClearQueue(FtpSession*)));
 	
-	
-	 mp_session_a->Disconnect();
-	 mp_session_b->Disconnect();
-	 
-	 /* /new stuff */
-	
+	mp_session_a->Disconnect();
+	mp_session_b->Disconnect();
+
+	applyConfig();
 }
 
 void Kasablanca::setupGUI() 
 {
-    mp_view->TaskView->setSorting(-1);
-    mp_view->BrowserA->setSorting(-1);
-    mp_view->BrowserB->setSorting(-1);
+	mp_view->TaskView->setSorting(-1);
+	mp_view->BrowserA->setSorting(-1);
+	mp_view->BrowserB->setSorting(-1);
 
-    mp_view->TransferButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("forward",KIcon::Toolbar));
-    mp_view->TransferButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("back",KIcon::Toolbar));
-    mp_view->RefreshButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
-    mp_view->RefreshButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
-    mp_view->ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
-    mp_view->ConnectButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
+	mp_view->TransferButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("forward",KIcon::Toolbar));
+	mp_view->TransferButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("back",KIcon::Toolbar));
+	mp_view->RefreshButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
+	mp_view->RefreshButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
+	mp_view->ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
+	mp_view->ConnectButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
+}
+
+void Kasablanca::applyConfig() 
+{ 	
+	m_skiplist.setPattern(KbConfig::skiplist());
+
+	for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != mp_sessionlist->end(); i++)
+	{
+		(*i)->SetColors(KbConfig::localColor(), KbConfig::successColor(), KbConfig::failureColor(), KbConfig::backgroundColor());
+	}
+} 
+
+void Kasablanca::saveSettings() 
+{ 
+	KbConfig::writeConfig(); 
 }
 
 void Kasablanca::setupActions()
@@ -213,7 +179,7 @@ void Kasablanca::setupActions()
 
 	KStdAction::keyBindings(this, SLOT(optionsConfigureKeys()), actionCollection());
 	//KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
-	//KStdAction::preferences(this, SLOT(optionsPreferences()), actionCollection());
+	KStdAction::preferences(this, SLOT(optionsPreferences()), actionCollection());
 
 	/*
 	// this doesn't do anything useful.  it's just here to illustrate
@@ -265,14 +231,17 @@ void Kasablanca::optionsConfigureToolbars()
 
 void Kasablanca::optionsPreferences()
 {
-    // popup a preference dialog
-/*
-    KasablancaPreferences dlg;
-    if (dlg.exec())
-    {
-        ;
-    }
-*/
+	if (KConfigDialog::showDialog("settings")) return; 
+ 
+	KConfigDialog* dialog = new KConfigDialog(0, "settings", KbConfig::self(), KDialogBase::IconList,
+		KDialogBase::Ok|KDialogBase::Apply|KDialogBase::Cancel);
+		
+	KasablancaGeneralPreferencesDialog *general = new KasablancaGeneralPreferencesDialog(0, i18n("General"));
+	KasablancaColorsPreferencesDialog *colors = new KasablancaColorsPreferencesDialog(0, i18n("Colors")); 
+	dialog->addPage(general, i18n("General"), "kasablanca");
+	dialog->addPage(colors, i18n("Colors"), "colors"); 
+	connect(dialog, SIGNAL(settingsChanged()), this, SLOT(applyConfig()));
+	dialog->show();
 }
 
 void Kasablanca::newToolbarConfig()
@@ -332,8 +301,6 @@ void Kasablanca::setupMenu()
 	m_rclickmenu_t.insertItem("Start Queue", Start);
 	m_rclickmenu_t.insertSeparator();
 	m_rclickmenu_t.insertItem("Skip Item(s)", Skip);
-   
-	/* new stuff */
 	
 	connect(&m_rclickmenu_a, SIGNAL(activated(int)), mp_session_a, SLOT(SLOT_ActionMenu(int)));
 	connect(&m_bookmarksmenu_a, SIGNAL(activated(int)), mp_session_a, SLOT(SLOT_ConnectMenu(int)));     
@@ -349,16 +316,11 @@ void Kasablanca::setupMenu()
 		mp_session_b, SLOT(SLOT_ItemRClicked(QListViewItem *, const QPoint &, int)));
 	connect(mp_view->BrowserB->header(), SIGNAL(clicked(int)), mp_session_b, SLOT(SLOT_HeaderClicked(int)));
 		
-	/* /new stuff */
-		
 	connect( mp_view->TaskView, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
 			SLOT (SLOT_ItemRightClickedT(QListViewItem *, const QPoint &, int )));
 
 	m_rclickmenu_t.connectItem(Start, this, SLOT(SLOT_ProcessQueue()));
 	m_rclickmenu_t.connectItem(Skip, this, SLOT(SLOT_SkipTasks()));
-	
-	//m_rclickmenu_t.setItemEnabled(Start, false);
-	//m_rclickmenu_t.setItemEnabled(Skip, false);	 
 }
 
 void Kasablanca::setupStatusBar()
@@ -429,24 +391,32 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 	after = NULL;	
 	for(list<KbFileInfo>::iterator fileIterator = filelist->begin(); fileIterator != filelist->end(); fileIterator++)
 	{
-		KbFileInfo *srcfi = new KbFileInfo(*fileIterator);
-		KbFileInfo *dstfi = new KbFileInfo(*fileIterator);
-		srcfi->SetDirPath(src->WorkingDir() + srcfi->dirPath());
-		dstfi->SetDirPath(dst->WorkingDir() + dstfi->dirPath());
-		if (parent) after = new KbTransferFile(parent, after, src, dst, srcfi, dstfi);
-		else new KbTransferFile(mp_view->TaskView, mp_view->TaskView->lastItem(), src, dst, srcfi, dstfi);
+		if (m_skiplist.search((*fileIterator).fileName()) < 0) 
+		{
+			KbFileInfo *srcfi = new KbFileInfo(*fileIterator);
+			KbFileInfo *dstfi = new KbFileInfo(*fileIterator);
+			srcfi->SetDirPath(src->WorkingDir() + srcfi->dirPath());
+			dstfi->SetDirPath(dst->WorkingDir() + dstfi->dirPath());
+			if (parent) after = new KbTransferFile(parent, after, src, dst, srcfi, dstfi);
+			else new KbTransferFile(mp_view->TaskView, mp_view->TaskView->lastItem(), src, dst, srcfi, dstfi);
+		}
+		else qWarning("INFO: entry ignored due to matched skiplist regexp");
 	}
 		
 	after = NULL;
 	for(list<KbDirInfo*>::iterator dirIterator = dirlist->begin(); dirIterator != dirlist->end(); dirIterator++)
 	{
-		KbFileInfo *srcfi = new KbFileInfo(*(*dirIterator));
-		KbFileInfo *dstfi = new KbFileInfo(*(*dirIterator));
-		srcfi->SetDirPath(src->WorkingDir() + srcfi->dirPath());
-		dstfi->SetDirPath(dst->WorkingDir() + dstfi->dirPath());
-		if (parent) after = new KbTransferDir(parent, after, src, dst, srcfi, dstfi);
-		else after = new KbTransferDir(mp_view->TaskView, mp_view->TaskView->lastItem(), src, dst, srcfi, dstfi);
-		QueueItemsRecurse(*dirIterator, src, dst, after);
+		if (m_skiplist.search((*dirIterator)->fileName()) < 0) 
+		{
+			KbFileInfo *srcfi = new KbFileInfo(*(*dirIterator));
+			KbFileInfo *dstfi = new KbFileInfo(*(*dirIterator));
+			srcfi->SetDirPath(src->WorkingDir() + srcfi->dirPath());
+			dstfi->SetDirPath(dst->WorkingDir() + dstfi->dirPath());
+			if (parent) after = new KbTransferDir(parent, after, src, dst, srcfi, dstfi);
+			else after = new KbTransferDir(mp_view->TaskView, mp_view->TaskView->lastItem(), src, dst, srcfi, dstfi);
+			QueueItemsRecurse(*dirIterator, src, dst, after);
+		}
+		else qWarning("INFO: entry ignored due to matched skiplist regexp");
 	}
 	delete dir;
 }
@@ -527,28 +497,6 @@ void Kasablanca::SLOT_SelectionChanged()
 	m_rclickmenu_b.setItemEnabled(Delete, (counter_b >= 1));
 }
 
-/*void Kasablanca::SLOT_NextTransfer(QListViewItem* item)
-{
-	FtpSession *src, *dst;
-	QListViewItem *parent, *next;
-	src = static_cast<KbTransferItem*>(item)->SrcSession();
-	dst = static_cast<KbTransferItem*>(item)->DstSession();
-	next = item->nextSibling();
-	parent = item->parent();
-	if (item->childCount() == 0) // if the item contains no subelements - delete it, if it doesn't - start with the next
-	{
-		static_cast<KbTransferItem*>(item)->Finish();
-		if (next) ProcessQueue(static_cast<KbTransferItem*>(next));
-		else if (parent) SLOT_NextTransfer(parent);
-		else 
-		{
-			src->SLOT_RefreshButton();
-			dst->SLOT_RefreshButton();
-		}			
-	}
-	else ProcessQueue(static_cast<KbTransferItem*>(item->firstChild()));	
-}*/
-
 void Kasablanca::SLOT_NextTransfer(QListViewItem* item)
 {
 	QListViewItem *next;
@@ -568,7 +516,7 @@ QListViewItem* Kasablanca::NextTransfer(QListViewItem* item)
 	if (item->childCount() == 0) // if the item contains no subelements - delete it, if it doesn't - start with the next
 	{
 		static_cast<KbTransferItem*>(item)->Finish();
-		if (next) retval = next; //ProcessQueue(static_cast<KbTransferItem*>(next));
+		if (next) retval = next; 
 		else if (parent) retval = NextTransfer(parent);
 		else 
 		{
@@ -576,12 +524,10 @@ QListViewItem* Kasablanca::NextTransfer(QListViewItem* item)
 			dst->SLOT_RefreshButton();
 		}			
 	}
-	else retval = item->firstChild(); //ProcessQueue(static_cast<KbTransferItem*>(item->firstChild()));		
+	else retval = item->firstChild();
 	
 	return retval;	
 }
-
-// called from menu
 
 void Kasablanca::SLOT_ProcessQueue()
 {

@@ -57,6 +57,10 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	m_startqueue = false;
 	m_sortascending = true;
 	mp_currenttransfer = NULL;
+	
+	m_colorsuccess = green;
+	m_colorfailure = red;
+	m_colorlocal = yellow;
 		
 	mp_eventhandler->SetFtpThread(mp_ftpthread); 
 	mp_ftpthread->SetEventReceiver(mp_eventhandler);
@@ -360,9 +364,17 @@ void FtpSession::SLOT_ConnectButton()
 	else if (!Connected()) mp_bookmarksmenu->exec(mp_connectbutton->mapToGlobal(QPoint(0,0)));
 }
 
+void FtpSession::SetColors(QColor local, QColor success, QColor failure, QColor background)
+{
+	m_colorlocal = local;
+	m_colorsuccess = success;
+	m_colorfailure = failure;
+	mp_logwindow->setPaletteBackgroundColor(background);	
+}
+
 void FtpSession::Abort()
 {
-	mp_logwindow->setColor(yellow);
+	mp_logwindow->setColor(m_colorlocal);
 	mp_logwindow->append(i18n("Aborted ftp operation"));
 	mp_ftpthread->terminate();
 	mp_ftpthread->wait(KB_THREAD_TIMEOUT);
@@ -550,13 +562,13 @@ void FtpSession::PrintLog(bool success)
 	{
 		if ((*i).second == true)
 		{
-			if (success) mp_logwindow->setColor(green);
-			else mp_logwindow->setColor(red);
+			if (success) mp_logwindow->setColor(m_colorsuccess);
+			else mp_logwindow->setColor(m_colorfailure);
 			mp_logwindow->append((*i).first);
 		}
 		else
 		{
-			mp_logwindow->setColor(yellow);
+			mp_logwindow->setColor(m_colorlocal);
 			mp_logwindow->append((*i).first);
 		}	
 	}	
@@ -624,7 +636,8 @@ void FtpSession::UpdateLocal(QString cwd)
 {
 	QFileInfoList filelist, dirlist;
 
-	if (cwd != "") m_localworkingdir.cd(cwd);
+	if (cwd != "") if (!m_localworkingdir.cd(cwd)) return;
+	if (!m_localworkingdir.exists()) return;
 		
 	mp_browser->sortColumn();
 	m_localworkingdir.setSorting(QDir::Name);

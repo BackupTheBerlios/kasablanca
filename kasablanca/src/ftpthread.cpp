@@ -62,6 +62,9 @@ FtpThread::~FtpThread()
 
 void FtpThread::InitInternals()
 {
+	m_stringlist.clear();
+	m_intlist.clear();
+	m_ulonglist.clear();
 	m_pwd = "";
 	m_dataencrypted = false;
 }

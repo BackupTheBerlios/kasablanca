@@ -20,7 +20,7 @@ KDE_ICON = kasablanca
 bin_PROGRAMS = kasablanca
 
 # the application source, library search path, and link libraries
-kasablanca_SOURCES = main.cpp kasablanca.cpp bookmarkdialog.cpp customconnectdialog.cpp fileexistsdialog.cpp kbitem.cpp siteinfo.cpp Q_bookmarkdialog.ui Q_customconnectdialog.ui Q_fileexistsdialog.ui Q_mainwindow.ui bookmarks.cpp eventhandler.cpp ftpthread.cpp ftplib.cpp ftpsession.cpp kbfileinfo.cpp kbdirinfo.cpp kbdir.cpp kbfile.cpp kbtransferitem.cpp kbtransferdir.cpp kbtransferfile.cpp
+kasablanca_SOURCES = main.cpp kasablanca.cpp bookmarkdialog.cpp customconnectdialog.cpp fileexistsdialog.cpp kbitem.cpp siteinfo.cpp Q_bookmarkdialog.ui Q_customconnectdialog.ui Q_fileexistsdialog.ui Q_mainwindow.ui bookmarks.cpp eventhandler.cpp ftpthread.cpp ftplib.cpp ftpsession.cpp kbfileinfo.cpp kbdirinfo.cpp kbdir.cpp kbfile.cpp kbtransferitem.cpp kbtransferdir.cpp kbtransferfile.cpp kbconfig.kcfgc Q_colorspreferencesdialog.ui Q_generalpreferencesdialog.ui
 kasablanca_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 kasablanca_LDADD = -lssl $(LIB_KDEUI)
 
@@ -32,4 +32,6 @@ shelldesktop_DATA = kasablanca.desktop
 shellrcdir = $(kde_datadir)/kasablanca
 shellrc_DATA = kasablancaui.rc about.png
 
+# this is the config xml
+kde_kcfg_DATA=kbconfig.kcfg
 

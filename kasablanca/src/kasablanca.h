@@ -39,6 +39,7 @@ class FtpSession;
 #include <qdir.h>
 #include <qlistview.h>
 #include <qmenubar.h>
+#include <qregexp.h>
 
 #include <vector>
 
@@ -87,6 +88,7 @@ private slots:
     void optionsConfigureToolbars();
     void optionsPreferences();
     void newToolbarConfig();
+	 void applyConfig();
 
 private:
 	 void QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* dst, QListViewItem* parent = NULL);
@@ -95,12 +97,14 @@ private:
     void setupMenu();
     void setupGUI();
     void setupActions();
+	 void saveSettings();
 	 void ProcessQueue(KbTransferItem* item);
 	 QListViewItem* NextTransfer(QListViewItem* item);
 	 
     KasablancaMainWindow *mp_view;
     Bookmarks bookmarks;
     QPopupMenu m_bookmarksmenu_a, m_bookmarksmenu_b;
+	 QRegExp m_skiplist;
     QPopupMenu m_rclickmenu_a, m_rclickmenu_b, m_rclickmenu_t;
     QLabel *mp_statusline_a, *mp_statusline_b, *mp_encryptionicon_a, *mp_encryptionicon_b;
     QPixmap m_iconencrypted, m_iconunencrypted;

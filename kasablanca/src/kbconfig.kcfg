@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd"> 
+<kcfg> <kcfgfile name="kasablancarc"/> 
+	<group name="general"> 
+		<entry name="Skiplist" type="String"> 
+			<label>A RegExp which describes the items to skip at transfer.</label>  
+		</entry> 
+	</group>  
+	<group name="colors">
+		<entry name="LocalColor" type="Color">
+			<label>The color value for local messages on the logging window.</label>
+		</entry>
+		<entry name="SuccessColor" type="Color">
+			<label>The color value for successful remote messages on the logging window.</label>
+		</entry>
+		<entry name="BackgroundColor" type="Color">
+			<label>The color value for the background on the logging window.</label>
+		</entry>
+		<entry name="FailureColor" type="Color">
+			<label>The color value for failed remote messages on the logging window.</label>
+		</entry>
+	</group>
+</kcfg>
