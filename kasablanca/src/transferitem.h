@@ -37,10 +37,10 @@ public:
     };
 	enum transfertype
     {
-        download = 1001,
-        upload,
-        fxp,
-		  remove
+		  download_a_to_b = 1001,
+		  download_b_to_a,
+		  upload_a_to_b,
+		  upload_b_to_a
     };
 	transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
 	transferitem(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);

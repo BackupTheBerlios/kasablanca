@@ -14,8 +14,8 @@
 kbprocess::kbprocess(QObject *parent, const char *name)
  : QProcess(parent, name)
 {
+	connect(this, SIGNAL(readyReadStdout()), this, SLOT(SLOT_ReadReadyStdout()));
 }
-
 
 kbprocess::~kbprocess()
 {
@@ -28,5 +28,10 @@ bool kbprocess::writeStdin(QString s)
 	if (!isRunning()) return false;
 	writeToStdin(s + '\n');
 	return true;
+}
+
+void kbprocess::SLOT_ReadReadyStdout()
+{
+	emit readyToRead(this);
 }
 #include "kbprocess.moc"

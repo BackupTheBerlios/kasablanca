@@ -26,8 +26,10 @@ transferitem::transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInf
 	m_filocal = filocal;
 	m_firemote = firemote;
 
-	if (type == transferitem::download) setText(0, "download " + firemote.fileName());
-	if (type == transferitem::upload) setText(0, "upload " + firemote.fileName());
+	if (type == transferitem::download_a_to_b) setText(0, "download " + firemote.fileName() + " >>");
+	if (type == transferitem::download_b_to_a) setText(0, "download " + firemote.fileName() + " <<");
+	if (type == transferitem::upload_a_to_b) setText(0, "upload " + firemote.fileName() + " >>");
+	if (type == transferitem::upload_b_to_a) setText(0, "upload " + firemote.fileName() + " <<");
 }
 
 transferitem::transferitem(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
@@ -37,8 +39,10 @@ transferitem::transferitem(QListView* taskview, QListViewItem* after, QFileInfo 
 	m_filocal = filocal;
 	m_firemote = firemote;
 
-	if (type == transferitem::download) setText(0, "download " + firemote.fileName());
-	if (type == transferitem::upload) setText(0, "upload " + firemote.fileName());
+	if (type == transferitem::download_a_to_b) setText(0, "download " + firemote.fileName() + " >>");
+	if (type == transferitem::download_b_to_a) setText(0, "download " + firemote.fileName() + " <<");
+	if (type == transferitem::upload_a_to_b) setText(0, "upload " + firemote.fileName() + " >>");
+	if (type == transferitem::upload_b_to_a) setText(0, "upload " + firemote.fileName() + " <<");
 }
 
 transferitem::~transferitem()

@@ -25,6 +25,10 @@ public:
    kbprocess(QObject *parent = 0, const char *name = 0);
    ~kbprocess();
 	bool writeStdin(QString s);
+public slots:
+	void SLOT_ReadReadyStdout();
+signals:
+   void readyToRead(kbprocess* p);
 };
 
 #endif

@@ -34,6 +34,7 @@ public:
     siteinfo * mp_site; 
 public slots:
     void accept();
+	 void SLOT_AnonymousToggled();
 };
 
 #endif

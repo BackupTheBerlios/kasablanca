@@ -20,6 +20,7 @@
 #include <qlineedit.h>
 #include <qradiobutton.h>
 #include <qcombobox.h>
+#include <qcheckbox.h>
  
 #include "customconnectdialog.h"
 
@@ -35,10 +36,24 @@ void CustomConnectDialog::accept()
 {
     mp_site->SetName("Custom Site");
     mp_site->SetInfo(HostLineEdit->text()+":"+PortLineEdit->text());
-    mp_site->SetUser(UserLineEdit->text().latin1());
-    mp_site->SetPass(PassLineEdit->text().latin1());
-    mp_site->SetTls(EncryptionComboBox->currentItem());
+    if (AnonymousCheckBox->isOn())
+	 {
+		mp_site->SetUser("anonymous");
+    	mp_site->SetPass("some@email.org"); 
+	 }
+	 else
+	 {
+	 	mp_site->SetUser(UserLineEdit->text().latin1());
+    	mp_site->SetPass(PassLineEdit->text().latin1());
+    }
+	 mp_site->SetTls(EncryptionComboBox->currentItem());
     mp_site->SetPasv(ModeComboBox->currentItem() ^ 1);
     
     done(QDialog::Accepted);
+}
+
+void CustomConnectDialog::SLOT_AnonymousToggled()
+{
+	UserLineEdit->setEnabled(!AnonymousCheckBox->isOn());
+	PassLineEdit->setEnabled(!AnonymousCheckBox->isOn());
 }

@@ -22,21 +22,22 @@
 #include <config.h>
 #endif
 
-#include "diritem.h"
-#include "fileitem.h"
-#include <kapp.h>
-#include <qwidget.h>
-#include <qmenubar.h>
+class diritem;
+class fileitem;
+class QWidget;
+class QCloseEvent;
+
 #include <kprocess.h>
-#include <vector>
-#include "Q_mainwindow.h"
-#include "siteinfo.h"
-#include "remotefileinfo.h"
-#include "kbprocess.h"
-#include <kprocio.h>
 #include <klistview.h>
 #include <qlistview.h>
 #include <qdir.h>
+#include <vector>
+#include <qmenubar.h>
+#include "transferitem.h"
+#include "siteinfo.h"
+#include "kbprocess.h"
+#include "remotefileinfo.h"
+#include "Q_mainwindow.h"
 
 /** Kasablanca is the base class of the project */
 
@@ -44,6 +45,17 @@ class Kasablanca : public KasablancaMainWindow
 {
 	Q_OBJECT
 public:
+	enum RightClickMenu
+	{
+		Transfer = 1001,
+		Queue,
+		Delete,
+		Rename,
+		Mkdir,
+		Start,
+		Skip
+	};
+	
 	enum QueueState
 	{
 		done = 0,
@@ -52,6 +64,7 @@ public:
 		scanremote,
 		scanlocal
 	};
+	
 	enum State
 	{
 		disconnected = 0,
@@ -64,6 +77,12 @@ public:
 		download = 0,
 		upload,
 		fxp
+	};
+	
+	enum Browser
+	{
+		A = 0,
+		B
 	};
 
 	Kasablanca(QWidget* parent=0, const char *name=0);
@@ -78,7 +97,6 @@ public:
 public slots:
 	void SLOT_MkdirA();
 	void SLOT_MkdirB();
-
 	void SLOT_EnterCommandA();
 	void SLOT_EnterCommandB();
 	void SLOT_EnterCwdA();
@@ -102,16 +120,16 @@ public slots:
 	void SLOT_SelectionChanged();
 	void SLOT_StartQueue();
 	void SLOT_SkipTasks();
-	void SLOT_UpdateA();
-	void SLOT_UpdateB();
-	void SLOT_KbftpReadReady();
+	void SLOT_KbftpReadReady(kbprocess* p);
 	void SLOT_About();
 	void SLOT_RenameA();
 	void SLOT_RenameB();
-	void SLOT_Quit();
 	void SLOT_DeleteA();
 	void SLOT_DeleteB();
+	void SLOT_RefreshBrowserA();
+	void SLOT_RefreshBrowserB();
 	void SLOT_ProcessExited(KProcess *proc);
+	void SLOT_Close();
 
 private:
 
@@ -119,31 +137,27 @@ private:
 	int m_xferallsize;
 	int m_xferresumesize;
 	void Xfer();
-	void InsertMarkedItems(TransferMethod m, QListViewItem* begin = NULL);
-	void UpdateLocalDisplay();
+	void InsertMarkedItems(transferitem::transfertype t, QListViewItem* begin = NULL);
+	void UpdateLocalDisplay(Browser x);
 	int ParseBookmarks();
-	void SetGuiStatus(State);
-   void UpdateRemote();
-   void UpdateRemoteDisplay(QString dirfile);
-	void ConnectCustom();
-	void ConnectBookmark(int n);
+	void SetGuiStatus(State s, Browser b);
+	void UpdateRemote(Browser b);
+	void UpdateRemoteDisplay(QString dirfile, Browser b);
+	void ConnectCustom(Browser b);
+	void ConnectBookmark(int n, Browser b);
 	
+	void closeEvent(QCloseEvent * e);
 	
-	kbprocess m_proc;
-	State m_status;
-	QDir m_currentlocaldir;
-	QString m_currentremotedir_a;
-	QPopupMenu m_bookmarksmenu_a;
-	QPopupMenu m_bookmarksmenu_b;
-	QPopupMenu m_rclickmenu_a;
-	QPopupMenu m_rclickmenu_b;
-	QPopupMenu m_rclickmenu_t;
-	QHeader* mp_header_a;
-	QHeader* mp_header_b;
-	bool m_sortascending_b;
-	bool m_sortascending_a;
-	siteinfo m_site_a;
-	QString m_log;
+	kbprocess m_proc_a, m_proc_b;
+	State m_status_a, m_status_b;
+	QDir m_currentlocaldir_a, m_currentlocaldir_b;
+	QString m_currentremotedir_a, m_currentremotedir_b;
+	QPopupMenu m_bookmarksmenu_a, m_bookmarksmenu_b;
+	QPopupMenu m_rclickmenu_a, m_rclickmenu_b, m_rclickmenu_t;
+	QHeader *mp_header_a, *mp_header_b;
+	bool m_sortascending_b, m_sortascending_a;
+	siteinfo m_site_a, m_site_b;
+	QString m_log_a, m_log_b;
 	vector<siteinfo> m_bookmarks;
 	QTime m_timer;
 	QueueState m_qstate;
