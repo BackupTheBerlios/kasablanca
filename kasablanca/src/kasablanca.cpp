@@ -295,7 +295,7 @@ void Kasablanca::SLOT_RefreshBrowserB()
 void Kasablanca::SetGuiStatus(State s, Browser b)
 {
 	QListView* browser;
-	QToolButton* transferbutton, *connectbutton, *connectbutton_other, *refreshbutton;
+	QToolButton* transferbutton, *connectbutton, /**connectbutton_other,*/ *refreshbutton;
 	QLineEdit* commandline, *cwdline;
 	QPopupMenu* bookmarksmenu, *rclickmenu;
 	
@@ -307,7 +307,7 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 		browser = BrowserA;
 		transferbutton = TransferButtonA;
 		connectbutton = ConnectButtonA;
-		connectbutton_other = ConnectButtonB;
+		//connectbutton_other = ConnectButtonB;
 		refreshbutton = RefreshButtonA;
 		commandline = CommandLineA;
 		cwdline = CwdLineA;
@@ -320,7 +320,7 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 		browser = BrowserB;
 		transferbutton = TransferButtonB;
 		connectbutton = ConnectButtonB;
-		connectbutton_other = ConnectButtonA;
+		//connectbutton_other = ConnectButtonA;
 		refreshbutton = RefreshButtonB;
 		commandline = CommandLineB;
 		cwdline = CwdLineB;
@@ -335,7 +335,7 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			browser->setEnabled(true);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
-			connectbutton_other->setEnabled(true);
+			//connectbutton_other->setEnabled(true);
 			connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
 			refreshbutton->setEnabled(true);
 			commandline->setEnabled(true);
@@ -352,7 +352,7 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			browser->setEnabled(true);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
-			connectbutton_other->setEnabled(true);
+			//connectbutton_other->setEnabled(true);
 			connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
 			refreshbutton->setEnabled(true);
 			commandline->setEnabled(true);
@@ -369,7 +369,7 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			browser->setEnabled(false);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
-			connectbutton_other->setEnabled(false);
+			//connectbutton_other->setEnabled(false);
 			connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
 			refreshbutton->setEnabled(false);
 			commandline->setEnabled(false);
@@ -474,16 +474,25 @@ void Kasablanca::SLOT_EnterCwdA()
 
 void Kasablanca::SLOT_ConnectButtonA()
 {
+	if (m_qstate_b != done) 
+	{
+		int x;
+		x = KMessageBox::warningYesNo(this,"Cancel transfer?");
+		if (x == KMessageBox::Yes) SLOT_ConnectButtonB();
+		else return;
+	}
+	
+	while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
+	 
 	if (m_status_a == disconnected)
 	{
-		m_bookmarksmenu_a.exec(QCursor::pos());
+		m_bookmarksmenu_a.exec(pos() + ConnectButtonA->pos());
 	}
 	else if (m_status_a == occupied)
 	{
+		m_qstate_a = done;
 		m_proc_a.tryTerminate();
-		m_proc_a.kill();
-		
-		while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
+		m_proc_a.kill();	
 		UpdateLocalDisplay(A);
 		SetGuiStatus(disconnected, A);
 		LogWindowA->setColor(red);
@@ -503,18 +512,26 @@ void Kasablanca::SLOT_ConnectA(int i)
 
 void Kasablanca::SLOT_ConnectButtonB()
 {
+	if (m_qstate_a != done) 
+	{
+		int x;
+		x = KMessageBox::warningYesNo(this,"Cancel transfer?");
+		if (x == KMessageBox::Yes) SLOT_ConnectButtonA();
+		else return;
+	}
+
+	while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
+
 	if (m_status_b == disconnected)
 	{
-		m_bookmarksmenu_b.exec(QCursor::pos());
+		m_bookmarksmenu_b.exec(pos() + ConnectButtonB->pos());
 	}
 	else if (m_status_b == occupied)
 	{
+		m_qstate_b = done;
 		m_proc_b.tryTerminate();
 		m_proc_b.kill();
-		
-		while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
 		UpdateLocalDisplay(B);
-				
 		SetGuiStatus(disconnected, B);
 		LogWindowB->setColor(red);
 		LogWindowB->append("killed ftp connection");
@@ -1433,7 +1450,7 @@ void Kasablanca::Xfer()
 			}
 			if (skip)
 			{
-				delete file;
+				EndXfer();
 				Xfer();
 			}
 			else
@@ -1527,7 +1544,7 @@ void Kasablanca::Xfer()
 
 			if (skip)
 			{
-				delete file;
+				EndXfer();
 				Xfer();
 			}
 			else
@@ -2093,6 +2110,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				
 				if (s == "kb.issue.get")
 				{
+					*qstate = xfer;
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
 					m_xferresumesize = 0;
 					m_xfered = 0;
@@ -2101,6 +2119,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				}
 				else if (s == "kb.issue.getresume")
 				{
+					*qstate = xfer;
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
 					m_xferresumesize = static_cast<transferitem*>(TaskView->firstChild())->m_filocal.size();
 					m_xfered = 0;
@@ -2109,6 +2128,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				}
 				else if (s == "kb.issue.put")
 				{
+					*qstate = xfer;
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_filocal.size();
 					m_xferresumesize = 0;
 					m_xfered = 0;
@@ -2117,6 +2137,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				}
 				else if (s == "kb.issue.putresume")
 				{
+					*qstate = xfer;
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_filocal.size();
 					m_xferresumesize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
 					m_xfered = 0;
@@ -2151,7 +2172,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					else  
 					{
 						m_fxpstate = stopped;
-						delete TaskView->firstChild();
+						EndXfer();
 					}
 					Xfer();	
 				}
@@ -2242,9 +2263,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 			{
 				if (s.left(12) == "kb.xfer.done")
 				{
-					/* delete current queue item */
-
-					delete TaskView->firstChild();
+					EndXfer();
 					Xfer();
 				}
 				else
@@ -2265,11 +2284,13 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 			}
 			else if (s.left(9) == "kb.fxpget")
 			{
+				*qstate = xfer;
 				m_fxpstate = get;
 				Xfer();
 			}
 			else if (s.left(9) == "kb.fxpput")
 			{
+				*qstate = xfer;
 				m_fxpstate = put;
 				Xfer();
 			}
@@ -2286,14 +2307,14 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					SetGuiStatus(connected, B);
 					
 					m_fxpstate = stopped;
-					delete TaskView->firstChild();
+					EndXfer();
 					Xfer();
 				}
 			}
 			else if (s == "kb.abor")
 			{
 				m_fxpstate = stopped;
-				delete TaskView->firstChild();
+				EndXfer();
 				Xfer();	
 			}
 			else if (s == "kb.quit")
@@ -2418,4 +2439,11 @@ void Kasablanca::timerEvent(QTimerEvent*)
 		QString::number(m_xfered / m_time.elapsed()) +
 		" kb/s]"
 	);
+}
+
+void Kasablanca::EndXfer()
+{
+	if (TaskView->firstChild()) delete TaskView->firstChild();
+	m_qstate_a = done;
+	m_qstate_b = done;
 }

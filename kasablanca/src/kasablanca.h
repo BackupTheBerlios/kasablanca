@@ -74,7 +74,8 @@ public:
 		proceed,
 		scanremote,
 		scanlocal,
-		scanfxp
+		scanfxp,
+		xfer
 	};
 
 	enum State
@@ -160,6 +161,7 @@ private:
 	void UpdateRemoteDisplay(QString dirfile, Browser b);
 	void ConnectCustom(Browser b);
 	void ConnectBookmark(int n, Browser b);
+	void EndXfer();
 	
 	void timerEvent(QTimerEvent* e);
 	void closeEvent(QCloseEvent * e);
