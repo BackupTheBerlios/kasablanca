@@ -900,9 +900,8 @@ void FtpThread::Scandir_thread()
 {
 	bool result = true;
 
-	list<KbDirInfo*>::iterator dirIterator;
-	
-	for(dirIterator = mp_scandir->Dirlist()->begin(); dirIterator != mp_scandir->Dirlist()->end(); dirIterator++)
+	list<KbDirInfo*>::iterator end_dir = mp_scandir->Dirlist()->end();
+	for(list<KbDirInfo*>::iterator dirIterator = mp_scandir->Dirlist()->begin(); dirIterator != end_dir; dirIterator++)
 	{
 		result = Scandir_recurse(*dirIterator, (*dirIterator)->dirPath() + (*dirIterator)->fileName());
 	}
@@ -1238,14 +1237,14 @@ bool FtpThread::Scandir_recurse(KbDirInfo *dir, QString path)
 	
 	QFile::remove(dirname);
 	
-	list<KbFileInfo>::iterator fiIterator;
-	
-	for(fiIterator = filelist.begin(); fiIterator != filelist.end(); fiIterator++)
+	list<KbFileInfo>::iterator end_file = filelist.end();	
+	for(list<KbFileInfo>::iterator fiIterator = filelist.begin(); fiIterator != end_file; fiIterator++)
 	{
 		dir->AddFile(*fiIterator);
 	}
 	
-	for(fiIterator = dirlist.begin(); fiIterator != dirlist.end(); fiIterator++)
+	list<KbFileInfo>::iterator end_dir = dirlist.end();
+	for(list<KbFileInfo>::iterator fiIterator = dirlist.begin(); fiIterator != end_dir; fiIterator++)
 	{
 		KbDirInfo* newdir = dir->AddDirectory(*fiIterator);
 		if (!Scandir_recurse(newdir, path + '/' + newdir->fileName())) return false;
@@ -1309,9 +1308,8 @@ bool FtpThread::Delete_recurse(QString name)
 	
 	QFile::remove(dirname);
 	
-	list<KbFileInfo>::iterator fiIterator;
-	
-	for(fiIterator = filelist.begin(); fiIterator != filelist.end(); fiIterator++)
+	list<KbFileInfo>::iterator end_file = filelist.end();
+	for(list<KbFileInfo>::iterator fiIterator = filelist.begin(); fiIterator != end_file; fiIterator++)
 	{
 		result = mp_ftp->Delete((*fiIterator).fileName().latin1());
 		if (!result) 
@@ -1322,7 +1320,8 @@ bool FtpThread::Delete_recurse(QString name)
 		else Event(EventHandler::misc_success);
 	}
 	
-	for(fiIterator = dirlist.begin(); fiIterator != dirlist.end(); fiIterator++)
+	list<KbFileInfo>::iterator end_dir = dirlist.end();
+	for(list<KbFileInfo>::iterator fiIterator = dirlist.begin(); fiIterator != end_dir; fiIterator++)
 	{
 		if (!Delete_recurse((*fiIterator).fileName())) return false;
 	}

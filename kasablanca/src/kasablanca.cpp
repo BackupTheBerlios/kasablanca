@@ -168,7 +168,8 @@ void Kasablanca::applyConfig()
 	m_onqueuefinishedenabled = KbConfig::onQueueFinishedIsEnabled();
 	m_onqueuefinished = KbConfig::onQueueFinished();
 	
-	for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != mp_sessionlist->end(); i++)
+	list<FtpSession*>::iterator end_session = mp_sessionlist->end();
+	for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != end_session; i++)
 	{
 		(*i)->SetColors(KbConfig::localColor(), KbConfig::successColor(), KbConfig::failureColor(), KbConfig::backgroundColor());
 		(*i)->SetOnFileExistsDefault(def);
@@ -399,7 +400,8 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 	dirlist = dir->Dirlist();
 		
 	after = NULL;	
-	for(list<KbFileInfo>::iterator fileIterator = filelist->begin(); fileIterator != filelist->end(); fileIterator++)
+	list<KbFileInfo>::iterator end_file = filelist->end();
+	for(list<KbFileInfo>::iterator fileIterator = filelist->begin(); fileIterator != end_file; fileIterator++)
 	{
 		if ((m_skiplist.search((*fileIterator).fileName()) < 0) || (!m_skiplistenabled))
 		{
@@ -414,7 +416,8 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 	}
 		
 	after = NULL;
-	for(list<KbDirInfo*>::iterator dirIterator = dirlist->begin(); dirIterator != dirlist->end(); dirIterator++)
+	list<KbDirInfo*>::iterator end_dir = dirlist->end();
+	for(list<KbDirInfo*>::iterator dirIterator = dirlist->begin(); dirIterator != end_dir; dirIterator++)
 	{
 		if ((m_skiplist.search((*dirIterator)->fileName()) < 0) || (!m_skiplistenabled)) 
 		{

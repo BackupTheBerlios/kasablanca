@@ -441,15 +441,16 @@ void FtpSession::QueueItems()
 	}
 	else
 	{
-		list<KbDirInfo*>::iterator dirIterator;
-		for(dirIterator = dir->Dirlist()->begin(); dirIterator != dir->Dirlist()->end(); dirIterator++)
+		list<KbDirInfo*>::iterator end_dir = dir->Dirlist()->end();
+		for(list<KbDirInfo*>::iterator i = dir->Dirlist()->begin(); i != end_dir; i++)
 		{
-			ScandirLocal(*dirIterator, '/' + (*dirIterator)->fileName());
+			ScandirLocal(*i, '/' + (*i)->fileName());
 		}
 		/* temporary hack, as there are only 2 ftpsessions available yet */
 	
 		FtpSession* dst;
-		for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != mp_sessionlist->end(); i++) if (*i != this) dst = *i;
+		list<FtpSession*>::iterator end_session = mp_sessionlist->end();
+		for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != end_session; i++) if (*i != this) dst = *i;
 		
 		/* /temporary hack */
 		
@@ -475,7 +476,8 @@ void FtpSession::SLOT_Scandir(bool success, KbDirInfo* dir)
 		/* temporary hack, as there are only 2 ftpsessions available yet */
 	
 		FtpSession* dst;
-		for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != mp_sessionlist->end(); i++) if (*i != this) dst = *i;
+		list<FtpSession*>::iterator end_dir = mp_sessionlist->end();
+		for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != end_dir; i++) if (*i != this) dst = *i;
 		
 		/* /temporary hack */
 		
@@ -530,9 +532,12 @@ void FtpSession::SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInf
 		QListViewItem* dirup = new QListViewItem(mp_browser, "..");
 		dirup->setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));
 		dirup->setSelectable(false);	
-		list<KbFileInfo>::iterator i;
-		for (i = dirlist.begin(); i != dirlist.end(); i++) new KbDir(*i, mp_browser, mp_browser->lastItem());	
-		for (i = filelist.begin(); i != filelist.end(); i++) new KbFile(*i, mp_browser, mp_browser->lastItem());	
+		list<KbFileInfo>::iterator end_dir = dirlist.end();
+		list<KbFileInfo>::iterator end_file = filelist.end();
+		for (list<KbFileInfo>::iterator i = dirlist.begin(); i != end_dir; i++) 
+			new KbDir(*i, mp_browser, mp_browser->lastItem());	
+		for (list<KbFileInfo>::iterator i = filelist.begin(); i != end_file; i++) 
+			new KbFile(*i, mp_browser, mp_browser->lastItem());	
 		emit gui_update();
 	}
 }
@@ -724,9 +729,7 @@ bool FtpSession::ScandirLocal(KbDirInfo *dir, QString path)
 	dirlist = *m_localworkingdir.entryInfoList();
 	
 	list<KbFileInfo> kfilist;
-	list<KbFileInfo>::iterator kfiit;
 	
-		
 	QFileInfoListIterator dit(dirlist);
 	dit.atFirst();
 	while (dit.current())
@@ -738,7 +741,9 @@ bool FtpSession::ScandirLocal(KbDirInfo *dir, QString path)
 		++dit;
 	}
 	
-	for(kfiit = kfilist.begin(); kfiit != kfilist.end(); kfiit++)
+	list<KbFileInfo>::iterator end_kfi = kfilist.end();
+	
+	for(list<KbFileInfo>::iterator kfiit = kfilist.begin(); kfiit != end_kfi; kfiit++)
 	{	
 		KbDirInfo* newdir = dir->AddDirectory(*kfiit);
 		if (newdir) if (!ScandirLocal(newdir, path + '/' + newdir->fileName())) return false;

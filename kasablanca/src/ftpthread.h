@@ -63,8 +63,6 @@ public:
 	bool Authtls();
 	bool Pasv(bool flag);
 	bool EncryptData(bool flag);
-	//bool Get(QString src, QString dst, unsigned long resume = 0);
-	//bool Put(QString src, QString dst, unsigned long resume = 0);
 	bool Transfer_Fxp(QString src, QString dst, FtpThread* dstftp, int srctls, int dsttls, unsigned long resume = 0);
 	bool Mkdir(QString path);
 	bool Rename(QString src, QString dst);
@@ -124,7 +122,6 @@ private:
 	void Authtls_thread();
 	void Dataencoff_thread();
 	void Dataencon_thread();
-	//void Put_thread();
 	void Mkdir_thread();
 	void Rename_thread();
 	void Raw_thread();
