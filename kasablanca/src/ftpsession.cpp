@@ -515,6 +515,14 @@ void FtpSession::SLOT_Pwd(bool success, QString pwd)
 	if (success) 
 	{
 		m_remoteworkingdir = pwd;
+		
+		/* strip trailing "/", thanks allanonl for pointing out */
+	
+		if(pwd.endsWith("/") && pwd.length() > 1) 
+		{
+			qWarning("INFO: stripping trailing /");
+			m_remoteworkingdir.truncate(pwd.length() - 1);
+		}
 		mp_cwdline->setText(pwd);
 	}
 }
