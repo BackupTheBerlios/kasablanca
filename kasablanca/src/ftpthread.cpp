@@ -1094,161 +1094,6 @@ void FtpThread::Event(EventHandler::EventType type, void *data)
 
 bool FtpThread::FormatFilelist(const char *filename, QString current, filist *dirtable, filist *filetable)
 {
-	/*
-	int i, blocks, space, month_int = 1, loc;
-	unsigned int fileloc, datebegin, sizebegin = 0;
-	QString buffer, filestring;
-	
-	FILE* dirfile;
-
-	char file[1024];
-
-	char month[][5] = {
-		"... ", "Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ",
-		"Sep ", "Oct ", "Nov ", "Dec "
-	};
-
-	dirfile = fopen(filename, "r");
-	if (dirfile == NULL)
-	{
-		qWarning("ERROR: failed open dirfile");
-		return false;
-	}
-
-	while (fgets(file, 1024, dirfile) != NULL)
-	{
-		*(strchr(file,'\n')) = '\0';
-		buffer = file;
-
-		for (i = 1; i < 13; i++)
-		{
-			loc = buffer.find(month[i], 0);
-			if (loc != -1)
-			{
-				month_int = i;
-				break;
-			}
-		}
-		if( loc == -1 )
-		{
-			qWarning("INFO: no month entry found");
-			loc = buffer.length();
-		}
-
-		datebegin = loc;
-
-		space = 1;
-		blocks = 0;
-		fileloc = 0;
-		while (loc < (int) buffer.length())
-		{
-				if (space)
-				{
-					// look for a space
-					if (buffer[loc] == ' ')
-					{
-						blocks++;
-						space = !space;
-					}
-				}
-				else
-				{
-					// look for a non-space
-					if (buffer[loc] != ' ')
-					{
-						if (blocks > 2)
-						{
-							fileloc = loc;
-							break;
-						}
-						space = !space;
-					}
-				}
-				loc += 1;
-		}
-		if (blocks != 3)
-		{
-			qWarning("INFO: ignoring invalid line in dirlist");
-		}
-		else
-		{
-			QString date(buffer.section(datebegin, loc - datebegin - 1).latin1());
-
-			int day_int = date.section( ' ', 1, 1 ).toInt();
-			int year_int = date.section( ' ', -1, -1 ).toInt();
-
-			if (day_int == 0) day_int = date.section( ' ', 1, 2 ).toInt();
-
-			if (year_int == 0)
-			{
-				year_int = QDate::currentDate().year();
-				if (month_int > QDate::currentDate().month()) year_int--;
-			}
-
-			unsigned int date_int = year_int * 10000 + month_int * 100 + day_int;
-
-			space = 0;
-			blocks = 0;
-			loc = datebegin;
-			while (loc > 0)
-			{
-				if (space)
-				{
-					if (buffer[loc] == ' ')
-					{
-						blocks++;
-						space = !space;
-					}
-				}
-				else
-				{
-					if (buffer[loc] != ' ')
-					{
-						if (blocks > 1)
-						{
-							sizebegin = loc + 1;
-							break;
-						}
-						space = !space;
-					}
-				}
-				loc--;
-			}
-
-			//off_t size = atol(buffer.section( sizebegin, datebegin - sizebegin).latin1());
-			off_t size = buffer.section(sizebegin, datebegin - sizebegin).toLongLong();
-			
-			filestring = "";
-			qWarning("buffer: %s", buffer.latin1());
-			buffer = buffer.simplifyWhiteSpace();
-			qWarning("simplified: %s", buffer.latin1());
-			qWarning("section: %s", buffer.section(" ", 2, 2).latin1());
-			filestring.append(buffer.section(fileloc, buffer.length() - fileloc));
-			if ((filestring != ".") && (filestring != ".."))
-			{
-				if ((*file == 'd') || (*file == 'D'))
-				{
-					KbFileInfo* di = new KbFileInfo(current, filestring, size, date, date_int);
-					//KbFileInfo di(current, filestring.latin1(), size, date.latin1(), date_int);
-					qWarning("%s dir found", filestring.latin1());
-					dirtable->push_back(di);
-				}
-				else if ((*file == 'l') || (*file == 'L'))
-				{
-					qWarning("INFO: links to files not supported yet");
-				}
-				else
-				{
-					KbFileInfo* fi = new KbFileInfo(current, filestring, size, date, date_int); 
-					qWarning("%s file found", filestring.latin1());
-					filetable->push_back(fi);
-				}
-			}
-		}
-	}
-	fclose(dirfile);
-	qWarning("%d files and %d dirs found", filetable->size(), dirtable->size());
-	return true;*/
 	int i, blocks, space, month_int = 1;
 	unsigned int loc, fileloc, datebegin, sizebegin = 0;
 	string buffer, filestring;
@@ -1330,17 +1175,29 @@ bool FtpThread::FormatFilelist(const char *filename, QString current, filist *di
 
 			int day_int = date.section( ' ', 1, 1 ).toInt();
 			int year_int = date.section( ' ', -1, -1 ).toInt();
-
+			int hour_int = 0;
+			int minute_int = 0;
+			
 			if (day_int == 0) day_int = date.section( ' ', 1, 2 ).toInt();
 
 			if (year_int == 0)
 			{
 				year_int = QDate::currentDate().year();
 				if (month_int > QDate::currentDate().month()) year_int--;
+				QTime mytime = QTime::fromString(date.section( ' ', -1, -1 ));
+				hour_int = mytime.hour();
+				minute_int = mytime.minute();
 			}
 
-			unsigned int date_int = year_int * 10000 + month_int * 100 + day_int;
-
+			unsigned int date_int = 
+				(minute_int) |
+				(hour_int << 6 ) |
+				(day_int << 11) |
+				(month_int << 16) |
+				(year_int << 20);
+			
+			// 6 bits for minutes, 5 bits for hours, 5 bits for days, 4 bits for months, 11 bits for years -> 31 bits (should be sufficient)
+			
 			space = 0;
 			blocks = 0;
 			loc = datebegin;

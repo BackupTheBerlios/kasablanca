@@ -143,7 +143,7 @@ private:
 	void QueueItems();
 	void RefreshBrowser();
 	void UpdateLocal(QString cwd = "");
-	bool RmdirLocal(QString dir);
+	//bool RmdirLocal(QString dir);
 	void GetFile(KbTransferItem *item, filecheck fc);
 	void PutFile(KbTransferItem *item, filecheck fc);
 	void FxpFile(KbTransferItem *item, filecheck fc);

@@ -214,7 +214,12 @@ void FtpSession::SLOT_ActionMenu(int i)
 						}
 						else
 						{
-							if (item->rtti() == KbItem::dir) RmdirLocal(item->File());
+							if (item->rtti() == KbItem::dir) 
+							{
+								QString dir = "rm -rf " + m_localworkingdir.absFilePath(item->File());
+								system(dir.latin1()); 
+							}
+							//RmdirLocal(item->File());
 							else if (item->rtti() == KbItem::file) m_localworkingdir.remove(item->File());
 						}
 					}
@@ -779,7 +784,7 @@ void FtpSession::UpdateLocal(QString cwd)
 	if (KbConfig::hideHiddenFilesIsEnabled()) FilterHiddenFiles(true);
 }
 
-bool FtpSession::RmdirLocal(QString dir)
+/*bool FtpSession::RmdirLocal(QString dir)
 {
 	QStringList filelist, dirlist;
 	QString olddir;
@@ -806,7 +811,7 @@ bool FtpSession::RmdirLocal(QString dir)
 	if (!m_localworkingdir.rmdir(dir)) return false;
 	
 	return true;
-}
+}*/
 
 bool FtpSession::ScandirLocal(KbDirInfo *dir, QString path)
 {

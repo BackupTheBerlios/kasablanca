@@ -1,5 +1,9 @@
 [v 0.4.0.2]
 
+-changed: changed the local dir deletion functionality for a
+ profane call to "rm".
+-added: hour and minute is now taken into respect when
+ sorting by date
 -fixed: finally files bigger than 2gb should be supported on
  machines which support LFS
 -fixed: crash when transfering files on a timed-out server
@@ -11,7 +15,7 @@
 
 [v 0.4.0.1]
 
--changed: reduced cpu quite a bit again
+-changed: reduced cpu usage quite a bit again
 -added: status tooltip for systray icon
 -fixed: correct-pasv bug
 -fixed: evil flaw in local delete method, added option to move 
