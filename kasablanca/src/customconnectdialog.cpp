@@ -27,8 +27,9 @@
 #include "customconnectdialog.h"
 
 CustomConnectDialog::CustomConnectDialog(QWidget *parent, const char *name ) : KDialogBase(parent, name, 
-	true, i18n( "Custom Site" ), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true)
+	true, i18n( "Custom Site" ), KDialogBase::Ok | KDialogBase::Cancel | KDialogBase::Help, KDialogBase::Ok, true)
 {
+	setHelp("ftphelp");
 	mp_dialog = new KasablancaCustomConnectDialog(this);
 	setMainWidget(mp_dialog);
 	

@@ -37,11 +37,17 @@
 
 BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
 : KDialogBase(parent, name, true, i18n( "Bookmarks" ),
-              KDialogBase::Ok | KDialogBase::Cancel | KDialogBase::Apply | KDialogBase::User1 | KDialogBase::User2,
+              KDialogBase::Ok | 
+				  KDialogBase::Help | 
+				  KDialogBase::Cancel | 
+				  KDialogBase::Apply | 
+				  KDialogBase::User1 | 
+				  KDialogBase::User2,
               KDialogBase::Ok, true , KGuiItem(i18n("New")), KGuiItem(i18n("Remove")))
 {
 	mp_dialog = new KasablancaBookmarkDialog(this);
 	setMainWidget(mp_dialog);
+	setHelp("ftphelp");
 	
 	m_bookmarklist = KbSiteInfo::ParseBookmarks();
 	mp_dialog->BookmarkListView->header()->hide();

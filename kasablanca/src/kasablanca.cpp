@@ -167,7 +167,7 @@ void Kasablanca::setupGUI()
 
 void Kasablanca::applyConfig() 
 { 	
-	FtpSession::filecheck def;
+	FtpSession::filecheck def = FtpSession::off;
 	if (!KbConfig::onFileExistsIsEnabled()) def = FtpSession::off;
 	else if(KbConfig::onFileExistsOverwrite()) def = FtpSession::clear;
 	else if(KbConfig::onFileExistsResume()) def = FtpSession::resume;
@@ -262,7 +262,9 @@ void Kasablanca::optionsPreferences()
 	if (KConfigDialog::showDialog("settings")) return; 
  
 	KConfigDialog* dialog = new KConfigDialog(0, "settings", KbConfig::self(), KDialogBase::IconList,
-		KDialogBase::Ok|KDialogBase::Apply|KDialogBase::Cancel);
+		KDialogBase::Ok | KDialogBase::Apply | KDialogBase::Cancel | KDialogBase::Help);
+	
+	dialog->setHelp("globalhelp");
 		
 	KasablancaGeneralPreferencesDialog *general = new KasablancaGeneralPreferencesDialog(0, i18n("General"));
 	KasablancaColorsPreferencesDialog *colors = new KasablancaColorsPreferencesDialog(0, i18n("Colors")); 
