@@ -79,6 +79,7 @@ public:
 	QString WorkingDir();
  	void Transfer(KbTransferItem *item);
 	int CheckFile(KbTransferItem *item);
+	void Abort();
 	FtpThread* Ftp() { return mp_ftpthread; };
 	siteinfo* SiteInfo() { return mp_siteinfo; };
 private:

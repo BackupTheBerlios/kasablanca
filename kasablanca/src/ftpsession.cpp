@@ -328,18 +328,21 @@ void FtpSession::SLOT_ConnectButton()
 	/* this button is also an abort button */
 
 	if (Occupied()) 
-	{
-		if (mp_currenttransfer) qWarning("WARNING: aborting transfers not yet implemented");	
-		else if (Connected())
+	{					
+		if (mp_currenttransfer) 
 		{
-			mp_logwindow->setColor(yellow);
-			mp_logwindow->append(i18n("Aborted ftp operation"));
-			mp_ftpthread->terminate();
-			mp_ftpthread->wait(KB_THREAD_TIMEOUT);
-			mp_ftpthread->ClearQueue();
-			Disconnect();
-			Free();
+			int answer = KMessageBox::warningYesNo(0, "Cancel transfer?");
+			if (answer == KMessageBox::Yes)
+			{
+				FtpSession *srcsession = mp_currenttransfer->SrcSession();
+				FtpSession *dstsession = mp_currenttransfer->DstSession();
+			
+				mp_currenttransfer->Finish();
+				if (srcsession->Connected()) srcsession->Abort();
+				if (dstsession->Connected()) dstsession->Abort();
+			}
 		}
+		else if (Connected()) Abort();
 	}
 	
 	/* when connected issue disconnect */
@@ -357,6 +360,16 @@ void FtpSession::SLOT_ConnectButton()
 	else if (!Connected()) mp_bookmarksmenu->exec(mp_connectbutton->mapToGlobal(QPoint(0,0)));
 }
 
+void FtpSession::Abort()
+{
+	mp_logwindow->setColor(yellow);
+	mp_logwindow->append(i18n("Aborted ftp operation"));
+	mp_ftpthread->terminate();
+	mp_ftpthread->wait(KB_THREAD_TIMEOUT);
+	mp_ftpthread->ClearQueue();
+	Disconnect();
+	Free();
+}
 void FtpSession::SLOT_CwdLine()
 {
 	if (Occupied()) 
