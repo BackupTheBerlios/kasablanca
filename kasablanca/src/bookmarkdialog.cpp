@@ -17,14 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "bookmarkdialog.h"
-#include "siteinfo.h"
-#include "bookmarks.h"
-
 #include <qdom.h>
 #include <qfile.h>
 #include <qdir.h>
 #include <qcheckbox.h>
+#include <qheader.h>
+#include <qtabwidget.h>
 
 #include <kcombobox.h>
 #include <kcompletion.h>
@@ -32,48 +30,45 @@
 #include <klineedit.h>
 #include <kmessagebox.h>
 #include <kpushbutton.h>
+#include <klistview.h>
+
+#include "bookmarkdialog.h"
+#include "kbbookmarkitem.h"
 
 BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
 : KDialogBase(parent, name, true, i18n( "Bookmarks" ),
-              KDialogBase::Ok | KDialogBase::Cancel,
-              KDialogBase::Ok, true)
+              KDialogBase::Ok | KDialogBase::Cancel | KDialogBase::Apply | KDialogBase::User1 | KDialogBase::User2,
+              KDialogBase::Ok, true , KGuiItem(i18n("New")), KGuiItem(i18n("Remove")))
 {
-    ui_ = new KasablancaBookmarkDialog(this);
-    setMainWidget(ui_);
-    m_bookmarks = bookmarks.getBookmarks();
-    
-    for (int i = 0; i < static_cast<int>(m_bookmarks.size()); i++)
-    {
-        ui_->BookmarkListBox->insertItem(m_bookmarks.at(i).GetName(),i);
-    }
-    
-    if (m_bookmarks.empty())
-    {
-        EnableInput(false);
-    }
-    else
-    {
-        EnableInput(true);
-        ui_->BookmarkListBox->setSelected(0, true);
-        RefreshEntry(m_bookmarks.at(0));
-    }
-
-    ui_->ApplyButton->setEnabled(false);
-
-    // Connect all the slots
-    connect(ui_->BookmarkListBox, SIGNAL(highlighted(int)), SLOT(SLOT_EntrySelected(int)));
-    connect(ui_->ApplyButton, SIGNAL(clicked()), SLOT(SLOT_ApplyEntry()));
-    connect(ui_->NewButton, SIGNAL(clicked()), SLOT(SLOT_NewEntry()));
-    connect(ui_->RemoveButton, SIGNAL(clicked()), SLOT(SLOT_RemoveEntry()));
+	mp_dialog = new KasablancaBookmarkDialog(this);
+	setMainWidget(mp_dialog);
+	
+	m_bookmarklist = KbSiteInfo::ParseBookmarks();
+	mp_dialog->BookmarkListView->header()->hide();
+	mp_dialog->BookmarkListView->setSorting(-1);
+	
+	KbBookmarkItem *after = NULL;
+	
+	list<KbSiteInfo>::iterator end_bookmarks = m_bookmarklist.end();
+	for (list<KbSiteInfo>::iterator i = m_bookmarklist.begin(); i != end_bookmarks; i++)
+		after = new KbBookmarkItem(mp_dialog->BookmarkListView, after, &(*i));
 	 
-	 connect(ui_->NameEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
-	 connect(ui_->InfoEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
-	 connect(ui_->UserEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
-	 connect(ui_->PassEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
-	 connect(ui_->DefaultDirectoryEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
-	 connect(ui_->EncryptionComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
-	 connect(ui_->ModeComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&))); 
-	 connect(ui_->AlternativeFxpCheckBox, SIGNAL(clicked()), SLOT(SLOT_StateChanged()));
+	 connect(mp_dialog->NameEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(mp_dialog->InfoEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(mp_dialog->UserEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(mp_dialog->PassEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(mp_dialog->DefaultDirectoryEdit, SIGNAL(activated(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(mp_dialog->EncryptionComboBox, SIGNAL(activated(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
+	 connect(mp_dialog->ModeComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&))); 
+	 connect(mp_dialog->AlternativeFxpCheckBox, SIGNAL(clicked()), SLOT(SLOT_StateChanged()));
+	 connect(mp_dialog->CorrectPasvCheckBox, SIGNAL(clicked()), SLOT(SLOT_StateChanged()));
+	 
+	 connect(mp_dialog->BookmarkListView, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
+	 
+	 m_inputchanged = false;
+	 
+	 enableButton(KDialogBase::Apply, false);
+	 enableButton(KDialogBase::User2, false);
 }
 
 BookmarkDialog::~BookmarkDialog()
@@ -82,177 +77,131 @@ BookmarkDialog::~BookmarkDialog()
 
 #include "bookmarkdialog.moc"
 
-void BookmarkDialog::SLOT_EntrySelected(int n)
+void BookmarkDialog::SLOT_SelectionChanged()
 {
-    //ui_->ApplyButton->setEnabled(true);
-    RefreshEntry(m_bookmarks.at(n));
-}
-
-void BookmarkDialog::slotOk()
-{
-	SLOT_ApplyEntry();
-	bookmarks.setBookmarks(m_bookmarks);
-	accept();
-}
-
-void BookmarkDialog::SLOT_ApplyEntry()
-{
-    // should not be available on empty list
-
-    int n = ui_->BookmarkListBox->currentItem();
-    
-    if(n < 0)
-    {
-        bookmarks.setBookmarks(m_bookmarks);
-        ui_->ApplyButton->setEnabled(false);
-        
-        return;
-    }
-
-    if (!ApplyEntry(&m_bookmarks.at(n))) KMessageBox::error(0,i18n("entry form not complete!"));
-    else
-    {
-        ui_->BookmarkListBox->clear();
-        for (int i = 0; i < static_cast<int>(m_bookmarks.size()); i++)
-        {
-            ui_->BookmarkListBox->insertItem(m_bookmarks.at(i).GetName(),i);
-        }
-        
-        ui_->BookmarkListBox->setSelected(n, true);
-    }
-
-	 //bookmarks.WriteBookmarks();
-    ui_->ApplyButton->setEnabled(false);
-}
-
-void BookmarkDialog::SLOT_NewEntry()
-{
-    int n = m_bookmarks.size();
-
-    EnableInput(true);
-    //ui_->ApplyButton->setEnabled(true);
-
-    siteinfo newsite;
-    newsite.SetName("New Site");
-    newsite.SetInfo("newftp:21");
-    newsite.SetUser("anonymous");
-    newsite.SetPass("me@my");
-    newsite.SetPasv(1);
-    newsite.SetTls(0);
-	 newsite.SetAlternativeFxp(0);
-	 newsite.SetDefaultDirectory("");
-    m_bookmarks.push_back(newsite);
-
-    ui_->BookmarkListBox->insertItem("New Site");
-    ui_->BookmarkListBox->setSelected(n, true);
-    RefreshEntry(newsite);
-}
-
-void BookmarkDialog::SLOT_RemoveEntry()
-{
-    int n = ui_->BookmarkListBox->currentItem();
-    
-    vector<siteinfo>::iterator deleteIterator;
-    deleteIterator = m_bookmarks.begin();
-    for (int i = 0; i < n; i++) deleteIterator++;
-    m_bookmarks.erase(deleteIterator);
-
-    ui_->BookmarkListBox->clear();
-    
-    for (int i = 0; i < static_cast<int>(m_bookmarks.size()); i++)
-    {
-        ui_->BookmarkListBox->insertItem(m_bookmarks.at(i).GetName(),i);
-    }
-    
-    if (m_bookmarks.empty())
-    {
-        clearInput();
-        EnableInput(false);
-    }
-    else
-    {
-        EnableInput(true);
-        ui_->BookmarkListBox->setSelected(0, true);
-        RefreshEntry(m_bookmarks.at(0));
-    }
-
-    ui_->ApplyButton->setEnabled(true);
-}
-
-void BookmarkDialog::RefreshEntry(siteinfo site)
-{
-    ui_->NameEdit->setText(site.GetName());
-    ui_->UserEdit->setText(site.GetUser());
-    ui_->PassEdit->setText(site.GetPass());
-    ui_->InfoEdit->setText(site.GetInfo());
-    ui_->EncryptionComboBox->setCurrentItem(site.GetTls());
-    ui_->ModeComboBox->setCurrentItem(site.GetPasv());
-	 ui_->AlternativeFxpCheckBox->setChecked(site.GetAlternativeFxp());
-	 ui_->DefaultDirectoryEdit->setText(site.GetDefaultDirectory());
+	KbBookmarkItem *kbb;
+	KbSiteInfo *s;
+	kbb = static_cast<KbBookmarkItem*>(mp_dialog->BookmarkListView->selectedItem());
+	if (!kbb)
+	{
+		EnableInput(false);
+		return;
+	}
+	
+	s = kbb->GetSiteInfo();
+	EnableInput(true);
+	RefreshEntry(s);
 }
 
 void BookmarkDialog::EnableInput(bool b)
 {
-    ui_->NameEdit->setEnabled(b);
-    ui_->UserEdit->setEnabled(b);
-    ui_->PassEdit->setEnabled(b);
-    ui_->InfoEdit->setEnabled(b);
-    ui_->EncryptionComboBox->setEnabled(b);
-    ui_->ModeComboBox->setEnabled(b);
-    ui_->RemoveButton->setEnabled(b);
-	 ui_->AlternativeFxpCheckBox->setEnabled(b);
-	 ui_->DefaultDirectoryEdit->setEnabled(b);
+    mp_dialog->NameEdit->setEnabled(b);
+    mp_dialog->UserEdit->setEnabled(b);
+    mp_dialog->PassEdit->setEnabled(b);
+    mp_dialog->InfoEdit->setEnabled(b);
+    mp_dialog->EncryptionComboBox->setEnabled(b);
+    mp_dialog->ModeComboBox->setEnabled(b);
+	 mp_dialog->AlternativeFxpCheckBox->setEnabled(b);
+	 mp_dialog->CorrectPasvCheckBox->setEnabled(b);
+	 mp_dialog->DefaultDirectoryEdit->setEnabled(b);
+	 enableButton(KDialogBase::User2, b);
 }
 
-void BookmarkDialog::clearInput()
+void BookmarkDialog::slotOk()
 {
-    ui_->NameEdit->clear();
-    ui_->UserEdit->clear();
-    ui_->PassEdit->clear();
-    ui_->InfoEdit->clear();
-    ui_->EncryptionComboBox->clear();
-    ui_->ModeComboBox->clear();
-	 ui_->AlternativeFxpCheckBox->setChecked(false);
-	 ui_->DefaultDirectoryEdit->clear();
+	list<KbSiteInfo> newbookmarklist;
+	
+	slotApply();
+	
+   QListViewItemIterator it(mp_dialog->BookmarkListView);
+   while (it.current()) 
+	{
+		newbookmarklist.push_back(*(static_cast<KbBookmarkItem*>(it.current())->GetSiteInfo()));
+   	++it;
+	}
+	
+	KbSiteInfo::WriteBookmarks(newbookmarklist);
+	accept();
+}
+
+void BookmarkDialog::slotUser1()
+{
+	KbBookmarkItem* newentry;
+	
+	KbSiteInfo newsite;
+	newsite.SetName("New Site");
+	newsite.SetInfo("newftp:21");
+	newsite.SetUser("anonymous");
+	newsite.SetPass("bla@bla.com");
+	newsite.SetPasv(1);
+	newsite.SetTls(0);
+	newsite.SetAlternativeFxp(0);
+	newsite.SetCorrectPasv(0);
+	newsite.SetDefaultDirectory("");
+		
+	m_bookmarklist.push_back(newsite);
+	
+	newentry = new KbBookmarkItem(mp_dialog->BookmarkListView, mp_dialog->BookmarkListView->lastItem(), &m_bookmarklist.back());
+	mp_dialog->BookmarkListView->setSelected(newentry, true);
+}
+
+void BookmarkDialog::slotUser2()
+{
+	delete mp_dialog->BookmarkListView->selectedItem();
+}
+
+void BookmarkDialog::RefreshEntry(KbSiteInfo* site)
+{
+	mp_dialog->NameEdit->setText(site->GetName());
+	mp_dialog->UserEdit->setText(site->GetUser());
+	mp_dialog->PassEdit->setText(site->GetPass());
+	mp_dialog->InfoEdit->setText(site->GetInfo());
+	mp_dialog->EncryptionComboBox->setCurrentItem(site->GetTls());
+	mp_dialog->ModeComboBox->setCurrentItem(site->GetPasv());
+	mp_dialog->AlternativeFxpCheckBox->setChecked(site->GetAlternativeFxp());
+	mp_dialog->CorrectPasvCheckBox->setChecked(site->GetCorrectPasv());
+	mp_dialog->DefaultDirectoryEdit->setText(site->GetDefaultDirectory());
+	
+	m_inputchanged = false;
+	enableButton(KDialogBase::Apply, false);	
 }
 
 void BookmarkDialog::SLOT_StateChanged()
 {
-	ui_->ApplyButton->setEnabled(true);
+	m_inputchanged = true;
+	enableButton(KDialogBase::Apply, true);
 }
 
 void BookmarkDialog::SLOT_TextChanged(const QString&)
 {
-	ui_->ApplyButton->setEnabled(true);
+	m_inputchanged = true;
+	enableButton(KDialogBase::Apply, true);
 }
 
-int BookmarkDialog::ApplyEntry(siteinfo * site)
+void BookmarkDialog::slotApply()
 {
-    siteinfo entry;
-    entry.SetName(ui_->NameEdit->text().latin1());
-    entry.SetUser(ui_->UserEdit->text().latin1());
-    entry.SetPass(ui_->PassEdit->text().latin1());
-    entry.SetInfo(ui_->InfoEdit->text().latin1());
-    entry.SetTls(ui_->EncryptionComboBox->currentItem());
-    entry.SetPasv(ui_->ModeComboBox->currentItem());
-	 if (ui_->AlternativeFxpCheckBox->isChecked()) entry.SetAlternativeFxp(1);
-	 else entry.SetAlternativeFxp(0);
-	 entry.SetDefaultDirectory(ui_->DefaultDirectoryEdit->text().latin1());
+	KbSiteInfo *siteinfo;
+	KbBookmarkItem *kbb;
+	
+	kbb = static_cast<KbBookmarkItem*>(mp_dialog->BookmarkListView->selectedItem());
+	siteinfo = kbb->GetSiteInfo();	
+	
+	if (mp_dialog->NameEdit->text() == "") mp_dialog->NameEdit->setText(i18n("Enter sitename"));
+	if (mp_dialog->UserEdit->text() == "") mp_dialog->UserEdit->setText(i18n("Enter username"));
+	if (mp_dialog->InfoEdit->text() == "") mp_dialog->InfoEdit->setText(i18n("Enter hostname"));
+	
+	siteinfo->SetName(mp_dialog->NameEdit->text());
+	siteinfo->SetUser(mp_dialog->UserEdit->text());
+   siteinfo->SetPass(mp_dialog->PassEdit->text());
+   siteinfo->SetInfo(mp_dialog->InfoEdit->text());
+   siteinfo->SetTls(mp_dialog->EncryptionComboBox->currentItem());
+   siteinfo->SetPasv(mp_dialog->ModeComboBox->currentItem());
+	siteinfo->SetAlternativeFxp(mp_dialog->AlternativeFxpCheckBox->isOn());
+	siteinfo->SetCorrectPasv(mp_dialog->CorrectPasvCheckBox->isOn());
+	siteinfo->SetDefaultDirectory(mp_dialog->DefaultDirectoryEdit->text());
 
-    if (entry.CheckContent())
-    {
-		site->SetName(ui_->NameEdit->text().latin1());
-		site->SetUser(ui_->UserEdit->text().latin1());
-		site->SetPass(ui_->PassEdit->text().latin1());
-		site->SetInfo(ui_->InfoEdit->text().latin1());
-		site->SetTls(ui_->EncryptionComboBox->currentItem());
-		site->SetPasv(ui_->ModeComboBox->currentItem());
-		if (ui_->AlternativeFxpCheckBox->isChecked()) site->SetAlternativeFxp(1);
-		else site->SetAlternativeFxp(0);
-		site->SetDefaultDirectory(ui_->DefaultDirectoryEdit->text().latin1());  
-		
-		qWarning("set: %d", site->GetAlternativeFxp());
-		return 1;
-    }
-    else return 0;
+	kbb->setText(0, mp_dialog->NameEdit->text());
+	
+	m_inputchanged = false;
+	enableButton(KDialogBase::Apply, false);	
 }

@@ -35,7 +35,6 @@ KbTaskView::KbTaskView(QWidget *parent, const char *name)
 	//	this, SLOT(SLOT_DoubleClicked(QListViewItem*, const QPoint&, int)));
 }
 
-
 KbTaskView::~KbTaskView()
 {
 }

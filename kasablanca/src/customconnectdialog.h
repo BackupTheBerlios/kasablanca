@@ -18,26 +18,30 @@
 #ifndef CUSTOMCONNECTDIALOG_H
 #define CUSTOMCONNECTDIALOG_H
 
-#include <qwidget.h>
 #include "Q_customconnectdialog.h"
-#include "siteinfo.h"
+
+#include <kdialogbase.h>
+
+class KbSiteInfo;
 
 /**
   *@author mkulke
   */
 
-class CustomConnectDialog : public KasablancaCustomConnectDialog  {
+class CustomConnectDialog : public KDialogBase  
+{
    Q_OBJECT
 public:
     CustomConnectDialog(QWidget *parent=0, const char *name=0);
     ~CustomConnectDialog();
-    siteinfo * mp_site; 
+    KbSiteInfo *mp_site; 
 public slots:
-    void accept();
-    void SLOT_AnonymousToggled();
+    void slotOk();
+    void SLOT_AnonymousToggled(bool on);
 private:
     QString m_user;
     QString m_pass;
+	 KasablancaCustomConnectDialog *mp_dialog;
 };
 
 #endif

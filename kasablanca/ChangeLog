@@ -1,5 +1,11 @@
 [v 0.4 pre4]
 
+-added bookmark current site option
+-priority list functionality implemented
+-bookmarks can be re-arranged now
+-correct pasv replies can be set for single sites now
+-added advanced settings to custom sites
+-rewrote bookmark implementation
 -representation of sitenames in statusbar
 
 [v 0.4 pre3]

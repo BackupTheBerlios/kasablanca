@@ -65,6 +65,7 @@ public:
 		dst_ready,
 		done
 	};	 
+	
 protected:
 	FtpSession *mp_srcsession, *mp_dstsession;
 	KbFileInfo *mp_src, *mp_dst;

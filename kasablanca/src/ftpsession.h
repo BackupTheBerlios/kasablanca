@@ -30,7 +30,7 @@ class QMutex;
 class QTextEdit;
 class QToolButton;
 class QListView;
-class siteinfo;
+class KbSiteInfo;
 class QPopupMenu;
 class QLineEdit;
 class QLabel;
@@ -71,7 +71,6 @@ public:
 	void SetRclickMenu(QPopupMenu *rclickmenu) { mp_rclickmenu = rclickmenu; };
 	void SetSessionList(list<FtpSession*> *sessionlist) { mp_sessionlist = sessionlist; };
 	void SetCurrentTransfer(KbTransferItem* currenttransfer) { mp_currenttransfer = currenttransfer; };
-	void SetCorrectPasv(bool correctpasv);
 	bool Connected() { return m_connected; };
 	void Disconnect();
 	void Connect();
@@ -83,7 +82,7 @@ public:
 	int CheckFile(KbTransferItem *item);
 	void Abort();
 	FtpThread* Ftp() { return mp_ftpthread; };
-	siteinfo* SiteInfo() { return mp_siteinfo; };
+	KbSiteInfo* SiteInfo() { return mp_siteinfo; };
 	void SetColors(QColor local, QColor success, QColor failure, QColor background);
 	void SetFont(QFont font);
 	void SetOnFileExistsDefault(filecheck onfileexistsdefault) {m_onfileexistsdefault = onfileexistsdefault; };
@@ -91,7 +90,7 @@ public:
 private:
 	FtpThread *mp_ftpthread;
 	EventHandler *mp_eventhandler;
-	siteinfo *mp_siteinfo;
+	KbSiteInfo *mp_siteinfo;
 	QTextEdit *mp_logwindow;
 	QToolButton *mp_connectbutton, *mp_refreshbutton, *mp_transferbutton;
 	QLineEdit *mp_cwdline, *mp_cmdline;

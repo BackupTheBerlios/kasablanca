@@ -16,47 +16,58 @@
  ***************************************************************************/
  
 #include <klocale.h>
-#include "siteinfo.h"
+
 #include <qstring.h>
 #include <qlineedit.h>
 #include <qradiobutton.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
  
+#include "kbsiteinfo.h"
 #include "customconnectdialog.h"
 
-CustomConnectDialog::CustomConnectDialog(QWidget *parent, const char *name ) : KasablancaCustomConnectDialog(parent,name)
+CustomConnectDialog::CustomConnectDialog(QWidget *parent, const char *name ) : KDialogBase(parent, name, 
+	true, i18n( "Custom Site" ), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true)
 {
-
+	mp_dialog = new KasablancaCustomConnectDialog(this);
+	setMainWidget(mp_dialog);
+	
+	connect(mp_dialog->AnonymousCheckBox, SIGNAL(toggled(bool)), SLOT(SLOT_AnonymousToggled(bool)));
 }
 
-CustomConnectDialog::~CustomConnectDialog(){
+CustomConnectDialog::~CustomConnectDialog()
+{
 }
 
-void CustomConnectDialog::accept()
+void CustomConnectDialog::slotOk()
 {
-    mp_site->SetName(i18n("Custom Site"));
-    mp_site->SetInfo(InfoEdit->text());
-    mp_site->SetUser(UserLineEdit->text().latin1());
-    mp_site->SetPass(PassLineEdit->text().latin1());
-    mp_site->SetTls(EncryptionComboBox->currentItem());
-    mp_site->SetPasv(ModeComboBox->currentItem() ^ 1);
-    
-    done(QDialog::Accepted);
+	mp_site->SetName(i18n("Custom Site"));
+	mp_site->SetInfo(mp_dialog->InfoEdit->text());
+	mp_site->SetUser(mp_dialog->UserLineEdit->text());
+	mp_site->SetPass(mp_dialog->PassLineEdit->text());
+	mp_site->SetTls(mp_dialog->EncryptionComboBox->currentItem());
+	mp_site->SetPasv(mp_dialog->ModeComboBox->currentItem() ^ 1);
+	mp_site->SetDefaultDirectory(mp_dialog->DefaultDirectoryEdit->text());
+	mp_site->SetAlternativeFxp(mp_dialog->AlternativeFxpCheckBox->isOn());
+	mp_site->SetCorrectPasv(mp_dialog->CorrectPasvCheckBox->isOn());
+	
+	accept();
 }
 
-void CustomConnectDialog::SLOT_AnonymousToggled()
+void CustomConnectDialog::SLOT_AnonymousToggled(bool on)
 {
-    UserLineEdit->setEnabled(!AnonymousCheckBox->isOn());
-    PassLineEdit->setEnabled(!AnonymousCheckBox->isOn());
-
-    if(AnonymousCheckBox->isOn()) {
-        m_user = UserLineEdit->text().latin1();
-        m_pass = PassLineEdit->text().latin1();
-        UserLineEdit->setText("anonymous");
-        PassLineEdit->setText("some@email.org");
-    } else {
-        UserLineEdit->setText(m_user);
-        PassLineEdit->setText(m_pass);
-    }
+	mp_dialog->UserLineEdit->setEnabled(!on);
+	mp_dialog->PassLineEdit->setEnabled(!on);
+	
+	if(on) {
+		m_user = mp_dialog->UserLineEdit->text();
+		m_pass = mp_dialog->PassLineEdit->text();
+		mp_dialog->UserLineEdit->setText("anonymous");
+		mp_dialog->PassLineEdit->setText("some@email.org");
+	} 
+	else 
+	{
+		mp_dialog->UserLineEdit->setText(m_user);
+		mp_dialog->PassLineEdit->setText(m_pass);
+	}
 }

@@ -29,6 +29,7 @@ public:
    ~KbDirInfo();
 	KbDirInfo* AddDirectory(KbFileInfo info);
 	void AddFile(KbFileInfo);
+	static bool PrioritySort(const KbDirInfo *f1, const KbDirInfo *f2);
 private:
 	list<KbFileInfo> m_filelist;
 	list<KbDirInfo*> m_dirlist;

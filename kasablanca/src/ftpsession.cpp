@@ -35,7 +35,7 @@
 #include "customconnectdialog.h"
 #include "ftpthread.h"
 #include "eventhandler.h"
-#include "siteinfo.h"
+#include "kbsiteinfo.h"
 #include "ftpsession.h"
 #include "kasablanca.h"
 #include "kbdir.h"
@@ -51,7 +51,7 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 
 	mp_ftpthread = new FtpThread();
 	mp_eventhandler = new EventHandler(this, "event handler");
-	mp_siteinfo = new siteinfo();
+	mp_siteinfo = new KbSiteInfo();
 	
 	m_connected = false;
 	m_occupied = false;
@@ -245,6 +245,19 @@ void FtpSession::SLOT_ActionMenu(int i)
 		m_startqueue = true;
 		QueueItems();
 	}
+	else if (i == Kasablanca::Bookmark) 
+	{
+		KbSiteInfo newsite = *mp_siteinfo;
+		bool b;
+		QString name = KInputDialog::getText(i18n("Enter bookmark name"), i18n("Enter bookmark name:"), "", &b);
+		if (!b) return;
+		if (name == "") name = "New site";
+		newsite.SetName(name);
+		newsite.SetDefaultDirectory(m_remoteworkingdir);
+		static_cast<Kasablanca*>(parent())->m_bookmarks.push_back(newsite);
+		KbSiteInfo::WriteBookmarks(static_cast<Kasablanca*>(parent())->m_bookmarks);
+		static_cast<Kasablanca*>(parent())->InitBookmarks();
+	}
 }
 
 void FtpSession::SLOT_ConnectMenu(int i)
@@ -255,7 +268,7 @@ void FtpSession::SLOT_ConnectMenu(int i)
     	mp_siteinfo->Clear();
     	dlg.mp_site = mp_siteinfo;
     	if (dlg.exec() == QDialog::Rejected) return; 	
-    	else if (!mp_siteinfo->CheckContent()) 
+    	else if (!mp_siteinfo->IsLegit()) 
 		{
 			KMessageBox::error(0,i18n("That site information is not legit."));
 			return;
@@ -264,8 +277,10 @@ void FtpSession::SLOT_ConnectMenu(int i)
 	}
 	else 
 	{
-		mp_siteinfo = &static_cast<Kasablanca*>(parent())->m_bookmarks.at(i - 1);
-		qWarning("INFO: connecting to bookmark entry named: %s", mp_siteinfo->GetName());
+		list<KbSiteInfo>::iterator it = static_cast<Kasablanca*>(parent())->m_bookmarks.begin();
+		for (int x = 0; x < i - 1; x++) it++;
+		mp_siteinfo = &(*it);
+		qWarning("INFO: connecting to bookmark entry named: %s", mp_siteinfo->GetName().latin1());
 	}
 	Connect();
 	Occupy();
@@ -274,6 +289,8 @@ void FtpSession::SLOT_ConnectMenu(int i)
 	if (mp_siteinfo->GetTls() > 0) mp_ftpthread->Authtls();
 	if (mp_siteinfo->GetPasv() > 0) mp_ftpthread->Pasv(true);
 	else mp_ftpthread->Pasv(false);
+	if (mp_siteinfo->GetCorrectPasv()) mp_ftpthread->Ftp()->SetCorrectPasv(true);
+	else mp_ftpthread->Ftp()->SetCorrectPasv(false);
 	mp_ftpthread->Login(mp_siteinfo->GetUser(), mp_siteinfo->GetPass());
 	if (QString(mp_siteinfo->GetDefaultDirectory()) != "") mp_ftpthread->Chdir(mp_siteinfo->GetDefaultDirectory());
 	RefreshBrowser();
@@ -598,6 +615,7 @@ void FtpSession::PrintLog(bool)
 
 void FtpSession::Connect()
 {
+	mp_rclickmenu->setItemEnabled(Kasablanca::Bookmark, true);
 	mp_bookmarksmenu->setEnabled(false);
 	mp_connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
 	mp_statusline->setText(i18n("Occupied"));
@@ -608,6 +626,7 @@ void FtpSession::Connect()
 void FtpSession::Disconnect()
 {
 	UpdateLocal();
+	mp_rclickmenu->setItemEnabled(Kasablanca::Bookmark, false);
 	mp_bookmarksmenu->setEnabled(true);
 	mp_connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
 	mp_statusline->setText(i18n("Disconnected"));
@@ -1075,11 +1094,6 @@ void FtpSession::PutFile(KbTransferItem *item, filecheck fc)
 void FtpSession::timerEvent(QTimerEvent*)
 {
 	if (mp_currenttransfer) mp_currenttransfer->ShowProgress();
-}
-
-void FtpSession::SetCorrectPasv(bool correctpasv) 
-{ 
-	mp_ftpthread->Ftp()->SetCorrectPasv(correctpasv); 
 }
 
 void FtpSession::EnableCmdLine(bool b) 

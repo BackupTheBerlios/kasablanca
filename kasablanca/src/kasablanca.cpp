@@ -48,7 +48,6 @@
 #include "Q_userinterfacepreferencesdialog.h"
 #include "customconnectdialog.h"
 #include "fileexistsdialog.h"
-#include "bookmarks.h"
 #include "bookmarkdialog.h"
 #include "kbtransferdir.h"
 #include "kbtransferfile.h"
@@ -62,7 +61,6 @@ using namespace std;
 
 Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new KasablancaMainWindow(this))
 {
-
 	//first, load the system tray icon
 	mp_systemtray = new KSystemTray(this);
 	mp_systemtray->setPixmap( KSystemTray::loadIcon( "kasablanca" ) );
@@ -91,7 +89,9 @@ Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new Kasablanc
 						
 	/* if initbookmarks returns false, an error box appears */
 	
-	if (initBookmarks() != 1) KMessageBox::error(0, i18n("Could not open Kasablanca bookmark xml."));
+	InitBookmarks();
+	
+	//if (!InitBookmarks() != 1) KMessageBox::error(0, i18n("Could not open Kasablanca bookmark xml."));
     
 	connect(mp_view->BrowserB, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
 	connect(mp_view->BrowserA, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
@@ -167,14 +167,12 @@ void Kasablanca::setupGUI()
 
 void Kasablanca::applyConfig() 
 { 	
-	bool correctpasv;
 	FtpSession::filecheck def;
 	if (!KbConfig::onFileExistsIsEnabled()) def = FtpSession::off;
 	else if(KbConfig::onFileExistsOverwrite()) def = FtpSession::clear;
 	else if(KbConfig::onFileExistsResume()) def = FtpSession::resume;
 	else if(KbConfig::onFileExistsSkip()) def = FtpSession::skip;
 	
-	correctpasv = KbConfig::correctPasvResponsesIsEnabled();	
 	m_skiplist.setPattern(KbConfig::skiplist());
 	m_skiplistenabled = KbConfig::skiplistIsEnabled();
 	m_onqueuefinishedenabled = KbConfig::onQueueFinishedIsEnabled();
@@ -185,7 +183,6 @@ void Kasablanca::applyConfig()
 	{
 		(*i)->SetColors(KbConfig::localColor(), KbConfig::successColor(), KbConfig::failureColor(), KbConfig::backgroundColor());
 		(*i)->SetOnFileExistsDefault(def);
-		(*i)->SetCorrectPasv(correctpasv);
 		(*i)->EnableCmdLine(KbConfig::commandLineIsEnabled());
 		(*i)->SetFont( KbConfig::logwindowFont() );
 	}
@@ -315,20 +312,22 @@ void Kasablanca::setupMenu()
 	}	
 	 
 	m_rclickmenu_a.insertItem(i18n("Transfer"), Transfer);
-	m_rclickmenu_a.insertItem(i18n("Put in Queue"), Queue);
+	m_rclickmenu_a.insertItem(i18n("Put in queue"), Queue);
 	m_rclickmenu_a.insertSeparator();
 	m_rclickmenu_a.insertItem(i18n("Delete"), Delete);
 	m_rclickmenu_a.insertItem(i18n("Rename"), Rename);
-	m_rclickmenu_a.insertSeparator();
 	m_rclickmenu_a.insertItem(i18n("Mkdir"), Mkdir);
+	m_rclickmenu_a.insertSeparator();
+	m_rclickmenu_a.insertItem(i18n("Bookmark site"), Bookmark);
 		
 	m_rclickmenu_b.insertItem(i18n("Transfer"), Transfer);
-	m_rclickmenu_b.insertItem(i18n("Put in Queue"), Queue);
+	m_rclickmenu_b.insertItem(i18n("Put in queue"), Queue);
 	m_rclickmenu_b.insertSeparator();
 	m_rclickmenu_b.insertItem(i18n("Delete"), Delete);
 	m_rclickmenu_b.insertItem(i18n("Rename"), Rename);
-	m_rclickmenu_b.insertSeparator();
 	m_rclickmenu_b.insertItem(i18n("Mkdir"), Mkdir);
+	m_rclickmenu_b.insertSeparator();
+	m_rclickmenu_b.insertItem(i18n("Bookmark site"), Bookmark);
 
 	m_rclickmenu_t.insertItem(i18n("Start Queue"), Start);
 	m_rclickmenu_t.insertSeparator();
@@ -378,27 +377,29 @@ Kasablanca::~Kasablanca()
 {
 }	
 
-int Kasablanca::initBookmarks()
+void Kasablanca::InitBookmarks()
 {
-    m_bookmarks.clear();
-    m_bookmarks = bookmarks.getBookmarks();
-    
-    m_bookmarksmenu_a.clear();
-    m_bookmarksmenu_b.clear();
-    
-    m_bookmarksmenu_a.insertItem(i18n("Custom"),0);
-    m_bookmarksmenu_b.insertItem(i18n("Custom"),0);
-    
-    m_bookmarksmenu_a.insertSeparator();
-    m_bookmarksmenu_b.insertSeparator();
+	int count;
+	m_bookmarks.clear();
+	m_bookmarks = KbSiteInfo::ParseBookmarks();
+	
+	m_bookmarksmenu_a.clear();
+	m_bookmarksmenu_b.clear();
+	
+	m_bookmarksmenu_a.insertItem(i18n("Custom"),0);
+	m_bookmarksmenu_b.insertItem(i18n("Custom"),0);
+	count = 1;
+	
+	m_bookmarksmenu_a.insertSeparator();
+	m_bookmarksmenu_b.insertSeparator();
 
-    for (int i = 0; i < static_cast<int>(m_bookmarks.size()); i++)
-    {
-        m_bookmarksmenu_a.insertItem(m_bookmarks.at(i).GetName(),i + 1);
-        m_bookmarksmenu_b.insertItem(m_bookmarks.at(i).GetName(),i + 1);
-    }
-
-   return 1;
+	list<KbSiteInfo>::iterator end_bookmarks = m_bookmarks.end();
+	for (list<KbSiteInfo>::iterator i = m_bookmarks.begin(); i != end_bookmarks; i++)
+	{
+		m_bookmarksmenu_a.insertItem((*i).GetName(),count);
+		m_bookmarksmenu_b.insertItem((*i).GetName(),count);
+		count++;
+	}
 }
 
 void Kasablanca::SLOT_QueueItems(KbDirInfo *dir, FtpSession* src, FtpSession* dst, bool startqueue)
@@ -420,6 +421,12 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 	filelist = dir->Filelist();
 	dirlist = dir->Dirlist();
 				
+	if (KbConfig::prioritylistIsEnabled()) 
+	{	
+		dirlist->sort(KbDirInfo::PrioritySort);
+		filelist->sort(KbFileInfo::PrioritySort);
+	}
+		
 	after = NULL;	
 	list<KbFileInfo>::iterator end_file = filelist->end();
 	for(list<KbFileInfo>::iterator fileIterator = filelist->begin(); fileIterator != end_file; fileIterator++)
@@ -461,7 +468,7 @@ void Kasablanca::SLOT_EditBookmarks()
     
     if (dlg.exec() == QDialog::Accepted)
     {
-        initBookmarks();
+        InitBookmarks();
     }
 }
 

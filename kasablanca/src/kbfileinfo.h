@@ -23,7 +23,7 @@ class KbFileInfo : public QFileInfo
 {
 public:
 
-	KbFileInfo();
+	//KbFileInfo();
 	KbFileInfo(QFileInfo qfi);
 	KbFileInfo(const KbFileInfo & kfi);
 	KbFileInfo(QString workingdir);
@@ -35,6 +35,7 @@ public:
 	uint DateInt() { return m_date_int; };
 	void SetDirPath(QString path); 
 	void SetSize(uint size) { m_size = size; };
+	static bool PrioritySort(const KbFileInfo &f1, const KbFileInfo &f2);
 private:
    uint m_size;
 	uint m_date_int;

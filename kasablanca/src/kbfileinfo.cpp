@@ -10,20 +10,31 @@
 //
 //
 
+#include <qregexp.h>
 #include <qdir.h>
+
+#include "kbconfig.h"
 #include "kbitem.h"
 
 #include "kbfileinfo.h"
 
-KbFileInfo::KbFileInfo() : QFileInfo()
+/*KbFileInfo::KbFileInfo() : QFileInfo()
 {
 
-}
+}*/
 
 KbFileInfo::KbFileInfo(QString workingdir) : QFileInfo(QDir(workingdir), ".")
 {
 
 }
+
+bool KbFileInfo::PrioritySort(const KbFileInfo &f1, const KbFileInfo &f2)
+{
+	QRegExp m_prioritylist(KbConfig::prioritylist());
+
+	if ((m_prioritylist.search(f1.fileName()) >= 0) > (m_prioritylist.search(f2.fileName()) >= 0)) return true;
+	else return false;
+};
 
 KbFileInfo::KbFileInfo(QFileInfo qfi) : QFileInfo(qfi)
 {

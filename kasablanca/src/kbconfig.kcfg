@@ -5,7 +5,13 @@
 		<entry name="Skiplist" type="String"> 
 			<label>A RegExp which describes the items to skip at transfer.</label>  
 		</entry>
+		<entry name="Prioritylist" type="String"> 
+			<label>A RegExp which describes the items to transfer first.</label>  
+		</entry>
 		<entry name="SkiplistIsEnabled" type="Bool">
+			<default>false</default>
+		</entry>
+		<entry name="PrioritylistIsEnabled" type="Bool">
 			<default>false</default>
 		</entry>
 		<entry name="OnQueueFinished" type="String"/>
@@ -22,9 +28,6 @@
 			<default>false</default>
 		</entry>
 		<entry name="OnFileExistsIsEnabled" type="Bool">
-			<default>false</default>
-		</entry>
-		<entry name="CorrectPasvResponsesIsEnabled" type="Bool">
 			<default>false</default>
 		</entry>
 		<entry name="SystrayIsEnabled" type="Bool">

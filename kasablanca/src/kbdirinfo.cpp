@@ -10,8 +10,11 @@
 //
 //
 
+#include <qregexp.h>
+
 #include <list>
 
+#include "kbconfig.h"
 #include "kbdirinfo.h"
 
 using namespace std;
@@ -26,6 +29,14 @@ KbDirInfo::KbDirInfo(QString path) : KbFileInfo(path)
 
 KbDirInfo::~KbDirInfo()
 {
+}
+
+bool KbDirInfo::PrioritySort(const KbDirInfo *f1, const KbDirInfo *f2)
+{
+	QRegExp m_prioritylist(KbConfig::prioritylist());
+
+	if ((m_prioritylist.search(f1->fileName()) >= 0) > (m_prioritylist.search(f2->fileName()) >= 0)) return true;
+	else return false;
 }
 
 KbDirInfo* KbDirInfo::AddDirectory(KbFileInfo info)

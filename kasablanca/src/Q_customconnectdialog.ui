@@ -1,6 +1,6 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KasablancaCustomConnectDialog</class>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>KasablancaCustomConnectDialog</cstring>
     </property>
@@ -8,29 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>361</width>
-            <height>264</height>
+            <width>370</width>
+            <height>214</height>
         </rect>
     </property>
-    <property name="sizePolicy">
-        <sizepolicy>
-            <hsizetype>5</hsizetype>
-            <vsizetype>5</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </property>
-    <property name="maximumSize">
-        <size>
-            <width>32767</width>
-            <height>32767</height>
-        </size>
-    </property>
     <property name="caption">
-        <string>Custom Connect</string>
-    </property>
-    <property name="sizeGripEnabled">
-        <bool>true</bool>
+        <string>Custom Site</string>
     </property>
     <grid>
         <property name="name">
@@ -39,293 +22,290 @@
         <property name="margin">
             <number>2</number>
         </property>
-        <widget class="QLabel" row="3" column="0">
+        <widget class="QTabWidget" row="0" column="0">
             <property name="name">
-                <cstring>textLabel1</cstring>
+                <cstring>Custom</cstring>
             </property>
-            <property name="text">
-                <string>Encryption</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignRight</set>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="1">
-            <property name="name">
-                <cstring>InfoEdit</cstring>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>This information points to the the ftp server. HOST can either be a standard ip adress like "192.168.2.1" or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="2" column="1">
-            <property name="name">
-                <cstring>PassLineEdit</cstring>
-            </property>
-            <property name="echoMode">
-                <enum>Password</enum>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>The user's password. Anonymous ftp servers ussually don't use passwords or accept passwords in the form of "user@emailaddress.com".</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="1" column="1">
-            <property name="name">
-                <cstring>UserLineEdit</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>The ftp Login Username. On open ftp servers you usually login using "anonymous".</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>textLabel2</cstring>
-            </property>
-            <property name="text">
-                <string>Host:Port</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignRight</set>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>textLabel3</cstring>
-            </property>
-            <property name="text">
-                <string>Username</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignRight</set>
-            </property>
-        </widget>
-        <widget class="QLabel" row="2" column="0">
-            <property name="name">
-                <cstring>textLabel4</cstring>
-            </property>
-            <property name="text">
-                <string>Password</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignRight</set>
-            </property>
-        </widget>
-        <widget class="QLabel" row="4" column="0">
-            <property name="name">
-                <cstring>textLabel1_2</cstring>
-            </property>
-            <property name="text">
-                <string>Mode</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignRight</set>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="6" column="0">
-            <property name="name">
-                <cstring>buttonCancel</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>&amp;Cancel</string>
-            </property>
-            <property name="accel">
-                <string></string>
-            </property>
-            <property name="autoDefault">
-                <bool>true</bool>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Cancel the connection attempt.</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="0" column="3" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>AnonymousCheckBox</cstring>
-            </property>
-            <property name="text">
-                <string>Anonymous</string>
-            </property>
-        </widget>
-        <spacer row="0" column="2">
-            <property name="name">
-                <cstring>spacer4</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>16</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QComboBox" row="3" column="1" rowspan="1" colspan="4">
-            <item>
-                <property name="text">
-                    <string>Unencrypted</string>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
                 </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Level 1</string>
+                <attribute name="title">
+                    <string>General</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>2</number>
+                    </property>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel4</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Password:</string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignVCenter|AlignLeft</set>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>UserLineEdit</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The ftp Login Username. On open ftp servers you usually login using "anonymous".</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="2" column="1">
+                        <property name="name">
+                            <cstring>PassLineEdit</cstring>
+                        </property>
+                        <property name="echoMode">
+                            <enum>Password</enum>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The user's password. Anonymous ftp servers ussually don't use passwords or accept passwords in the form of "user@emailaddress.com".</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="0" column="1">
+                        <property name="name">
+                            <cstring>InfoEdit</cstring>
+                        </property>
+                        <property name="text">
+                            <string></string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignAuto</set>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This information points to the the ftp server. HOST can either be a standard ip adress like "192.168.2.1" or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="4" column="1" rowspan="1" colspan="2">
+                        <item>
+                            <property name="text">
+                                <string>Passive Mode</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>Active Mode</string>
+                            </property>
+                        </item>
+                        <property name="name">
+                            <cstring>ModeComboBox</cstring>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The mode you are using for data transfer. This is quite important in case you're behind a firewall or a router. In these cases you depend on the passive mode, which makes the client connects to the ftp server for data transfer. Passive mode is the standard method today, while active mode is the old way to do data transfers, the client listens for the server to connect in active mode.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Username:</string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignVCenter</set>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="3" column="1" rowspan="1" colspan="2">
+                        <item>
+                            <property name="text">
+                                <string>Unencrypted</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>Level 1</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>Level 2</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>Level 3</string>
+                            </property>
+                        </item>
+                        <property name="name">
+                            <cstring>EncryptionComboBox</cstring>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>There are 4 encryption levels available. Unencrypted leaves all traffic clear and without encryption. Most ftp servers allow only this mode. Level 1 encryption means that the traffic on the control connection is encrypted while data transfer remains clear. Level 2 is basically the same with the exception of directory information which is transfered on the data channel, but is encrypted too. Eventually Level 3 encrypts everything all communication and all data traffic.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Host:Port:</string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignVCenter</set>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Encryption:</string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignVCenter|AlignRight</set>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Mode:</string>
+                        </property>
+                        <property name="alignment">
+                            <set>WordBreak|AlignVCenter</set>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="1" column="2">
+                        <property name="name">
+                            <cstring>AnonymousCheckBox</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Anonymous</string>
+                        </property>
+                    </widget>
+                    <spacer row="5" column="1">
+                        <property name="name">
+                            <cstring>spacer12</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>16</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
                 </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Level 2</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Level 3</string>
-                </property>
-            </item>
-            <property name="name">
-                <cstring>EncryptionComboBox</cstring>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>There are 4 encryption levels available. Unencrypted leaves all traffic clear and without encryption. Most ftp servers allow only this mode. Level 1 encryption means that the traffic on the control connection is encrypted while data transfer remains clear. Level 2 is basically the same with the exception of directory information which is transfered on the data channel, but is encrypted too. Eventually Level 3 encrypts everything all communication and all data traffic.</string>
-            </property>
+                <attribute name="title">
+                    <string>Advanced</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>2</number>
+                    </property>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Alternative fxp:</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="1" column="3">
+                        <property name="name">
+                            <cstring>AlternativeFxpCheckBox</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Enabled</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>DefaultDirectoryEdit</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>textLabel1_2_2_2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Correct pasv responses:</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="2" column="3">
+                        <property name="name">
+                            <cstring>CorrectPasvCheckBox</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Enabled</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel3_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Default directory:</string>
+                        </property>
+                    </widget>
+                    <spacer row="3" column="1">
+                        <property name="name">
+                            <cstring>spacer16</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="1" column="2" rowspan="2" colspan="1">
+                        <property name="name">
+                            <cstring>spacer17</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
         </widget>
-        <widget class="QComboBox" row="4" column="1" rowspan="1" colspan="4">
-            <item>
-                <property name="text">
-                    <string>Passive Mode</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Active Mode</string>
-                </property>
-            </item>
-            <property name="name">
-                <cstring>ModeComboBox</cstring>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>The mode you are using for data transfer. This is quite important in case you're behind a firewall or a router. In these cases you depend on the passive mode, which makes the client connects to the ftp server for data transfer. Passive mode is the standard method today, while active mode is the old way to do data transfers, the client listens for the server to connect in active mode.</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="6" column="4">
-            <property name="name">
-                <cstring>buttonOk</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>&amp;OK</string>
-            </property>
-            <property name="accel">
-                <string></string>
-            </property>
-            <property name="autoDefault">
-                <bool>true</bool>
-            </property>
-            <property name="default">
-                <bool>true</bool>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Accept the entrys and try connecting to the ftp server.</string>
-            </property>
-        </widget>
-        <widget class="Line" row="5" column="0" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>line5</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-        </widget>
-        <spacer row="6" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>190</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
     </grid>
 </widget>
-<connections>
-    <connection>
-        <sender>buttonOk</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaCustomConnectDialog</receiver>
-        <slot>accept()</slot>
-    </connection>
-    <connection>
-        <sender>buttonCancel</sender>
-        <signal>clicked()</signal>
-        <receiver>KasablancaCustomConnectDialog</receiver>
-        <slot>reject()</slot>
-    </connection>
-    <connection>
-        <sender>AnonymousCheckBox</sender>
-        <signal>stateChanged(int)</signal>
-        <receiver>KasablancaCustomConnectDialog</receiver>
-        <slot>SLOT_AnonymousToggled()</slot>
-    </connection>
-</connections>
-<tabstops>
-    <tabstop>InfoEdit</tabstop>
-    <tabstop>UserLineEdit</tabstop>
-    <tabstop>PassLineEdit</tabstop>
-    <tabstop>EncryptionComboBox</tabstop>
-    <tabstop>ModeComboBox</tabstop>
-    <tabstop>AnonymousCheckBox</tabstop>
-    <tabstop>buttonCancel</tabstop>
-    <tabstop>buttonOk</tabstop>
-</tabstops>
-<slots>
-    <slot>SLOT_AnonymousToggled()</slot>
-</slots>
-<layoutdefaults spacing="3" margin="11"/>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>
