@@ -43,6 +43,16 @@
 #ifndef FTPLIB_H
 #define FTPLIB_H
 
+#if defined(_WIN32)
+
+#if BUILDING_DLL
+# define DLLIMPORT __declspec (dllexport)
+#else /* Not BUILDING_DLL */
+# define DLLIMPORT __declspec (dllimport)
+#endif /* Not BUILDING_DLL */
+
+#endif
+
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -91,8 +101,12 @@ struct ftphandle {
 	off64_t offset;
 	bool correctpasv;
 };
-  
+
+#if defined(_WIN32)  
+class DLLIMPORT ftplib {
+#else
 class ftplib {
+#endif
 public:
 
 	enum accesstype
