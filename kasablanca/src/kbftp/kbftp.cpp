@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
 			std::getline(std::cin, dir);
 			dir.erase(0,1);
-			cout << "kb.issue.dir" << endl;
+			cout << "kb.issue.rmdir" << endl;
 			if (ftp.Rmdir(dir.c_str())) cout << "kb.success" << endl;
 			else cout << "kb.failure" << endl;
 		}
