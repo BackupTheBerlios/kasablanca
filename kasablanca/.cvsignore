@@ -1,6 +1,5 @@
 Makefile
 Makefile.in
-Makefile.am
 configure
 config.log
 config.h
