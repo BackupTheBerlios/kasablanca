@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2004 by Magnus Kulke                                    *
- *   sikor_sxe@radicalapproach.de                                          *
+ *   mkulke@magnusmachine                                                  *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,33 +17,23 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "kbdirectory.h"
+#ifndef TRANSFERDIR_H
+#define TRANSFERDIR_H
 
-#include <list>
+#include <kbtransferitem.h>
 
-using namespace std;
-
-kbdirectory::kbdirectory(QString dirname, QObject *parent, const char *name)
- : QObject(parent, name)
+/**
+@author Magnus Kulke
+*/
+class KbTransferDir : public KbTransferItem
 {
-	m_name = dirname;
-}
+public:
+	KbTransferDir(QListView *taskview, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst);
+	KbTransferDir(QListViewItem *root, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst);
+    ~KbTransferDir();
+	int rtti() const;
+	void Info();
 
-kbdirectory::~kbdirectory()
-{
-	qWarning("deleted: %s", m_name.latin1());
-}
+};
 
-kbdirectory* kbdirectory::AddDirectory(QString name)
-{
-	kbdirectory* dir = new kbdirectory(name, this);
-	m_dirlist.push_back(dir);
-	return dir;
-}
-
-void kbdirectory::AddFile(QString name)
-{
-	m_filelist.push_back(name);
-}
-
-#include "kbdirectory.moc"
+#endif

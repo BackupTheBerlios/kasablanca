@@ -17,24 +17,35 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TRANSFERFILE_H
-#define TRANSFERFILE_H
 
-#include <transferitem.h>
+#include "kbtransferfile.h"
 
-/**
-@author Magnus Kulke
-*/
-class transferfile : public transferitem
+KbTransferFile::KbTransferFile(QListView *taskview, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst) : KbTransferItem(taskview, after, srcsession, dstsession, src, dst)
 {
-public:
-	//transferfile(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
-	transferfile(QListView *taskview, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst);
-	transferfile(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
-	transferfile(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type);
-    ~transferfile();
-	int rtti() const;
-	void Transfer();
-};
+	setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
+}
 
-#endif
+KbTransferFile::KbTransferFile(QListViewItem *root, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst) : KbTransferItem(root, after, srcsession, dstsession, src, dst)
+{
+	setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
+}
+
+KbTransferFile::~KbTransferFile()
+{
+}
+
+int KbTransferFile::rtti() const
+{
+    return KbTransferItem::file;
+}
+
+void KbTransferFile::Info()
+{
+	qWarning("INFO: transfer file from %s to %s", mp_srcsession->name(), mp_dstsession->name());
+	qWarning("INFO: mp_src->fileName() = %s", mp_src->fileName().latin1());
+	qWarning("INFO: mp_dst->fileName() = %s", mp_dst->fileName().latin1());
+	qWarning("INFO: mp_src->dirPath() = %s", mp_src->dirPath(true).latin1());
+	qWarning("INFO: mp_dst->dirPath() = %s", mp_dst->dirPath(true).latin1());
+}
+
+

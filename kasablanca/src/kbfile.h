@@ -1,7 +1,7 @@
 /***************************************************************************
-                          remotefileinfo.cpp  -  description
+                          kbfile.h  -  description
                              -------------------
-    begin                : Mi Dez 3 2003
+    begin                : Die Sep 23 2003
     copyright            : (C) 2003 by mkulke
     email                : sikor_sxe@radicalapproach.de
  ***************************************************************************/
@@ -15,33 +15,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "remotefileinfo.h"
-#include "qdir.h"
+#ifndef FILEITEM_H
+#define FILEITEM_H
 
-RemoteFileInfo::RemoteFileInfo()
-{
-}
+#include <qlistview.h>
+#include "kbitem.h"
 
-RemoteFileInfo::RemoteFileInfo(const QString & d, const QString & fileName, uint size, QString date, uint date_int) : QFileInfo(QDir(d), fileName)
-{
-	m_date_int = date_int;
-    m_date = date;
-    m_size = size;
-}
-RemoteFileInfo::~RemoteFileInfo(){
-}
+class KbFileInfo;
 
-uint RemoteFileInfo::size()
-{
-    return m_size;
-}
+/**
+  *@author mkulke
+  */
 
-QString RemoteFileInfo::date()
-{
-    return m_date;
-}
+class KbFile : public KbItem  {
+public:
+	KbFile(KbFileInfo kfi, QListView * parent, QListViewItem * after);
+	KbFile(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int);
+	~KbFile();
+	int rtti() const;
+};
 
-uint RemoteFileInfo::date_int()
-{
-	return m_date_int;
-}
+#endif

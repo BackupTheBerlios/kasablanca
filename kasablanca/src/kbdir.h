@@ -1,7 +1,7 @@
 /***************************************************************************
-                          remotefileinfo.h  -  description
+                          kbdir.h  -  description
                              -------------------
-    begin                : Mi Dez 3 2003
+    begin                : Sam Sep 20 2003
     copyright            : (C) 2003 by mkulke
     email                : sikor_sxe@radicalapproach.de
  ***************************************************************************/
@@ -15,27 +15,22 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef REMOTEFILEINFO_H
-#define REMOTEFILEINFO_H
+#ifndef DIRITEM_H
+#define DIRITEM_H
 
-#include <qfileinfo.h>
+#include "kbitem.h"
+#include <qlistview.h>
 
 /**
   *@author mkulke
   */
 
-class RemoteFileInfo : public QFileInfo  {
+class KbDir : public KbItem  {
 public:
-    RemoteFileInfo(); 
-    RemoteFileInfo(const QString & d, const QString & fileName, uint size, QString date, uint date_int);
-    ~RemoteFileInfo();
-    uint size();
-    QString date();
-	uint date_int();
-private:
-   uint m_size;
-	uint m_date_int;
-	QString m_date;
+	KbDir(KbFileInfo kfi, QListView * parent, QListViewItem * after);
+	KbDir(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int);
+	~KbDir();
+	int rtti() const;
 };
 
 #endif
