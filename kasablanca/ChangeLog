@@ -1,5 +1,7 @@
 [v 0.4.0.1]
 
+-remember sorting preference when changing directories
+-report when ftp servers do not support encryption
 -fixed crash when trying to remove active item from queue.
 -fixed compilation with gcc 2.95
 

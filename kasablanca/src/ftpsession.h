@@ -102,6 +102,7 @@ private:
 	QDir m_localworkingdir;
 	QColor m_colorsuccess, m_colorfailure, m_colorlocal;
 	QFont m_logwindowfont;
+	int m_sortpref;
 	bool m_connected, m_occupied, m_sortascending, m_startqueue;
 	list<logentries> m_loglist;
 	QPixmap m_iconencrypted, m_iconunencrypted;
@@ -123,7 +124,7 @@ public slots:
 	void SLOT_Login(bool success);
 	void SLOT_Pwd(bool success, QString pwd);
 	void SLOT_Misc(bool success);
-	void SLOT_Get(bool success);
+	void SLOT_AuthTls(bool success);
 	void SLOT_EncryptData(bool success, bool enabled);
 	void SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInfo> filelist);
 	void SLOT_ConnectButton();
@@ -150,6 +151,7 @@ private:
 	bool MakeLocalDirectory(QString path);
 	bool CopyLocalFile(KbTransferItem* item);
 	bool ScandirLocal(KbDirInfo *dir, QString path);
+	void SortItems();
 	void MakeDirectory(QString dir);
 	void timerEvent(QTimerEvent*);
 signals:

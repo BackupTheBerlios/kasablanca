@@ -59,6 +59,7 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	m_startqueue = false;
 	m_sortascending = true;
 	mp_currenttransfer = NULL;
+	m_sortpref = 0;
 	
 	m_colorsuccess = green;
 	m_colorfailure = red;
@@ -77,10 +78,11 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_quit(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_chdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_raw(bool)), SLOT(SLOT_Misc(bool)));
-	connect(mp_eventhandler, SIGNAL(ftp_get(bool)), SLOT(SLOT_Get(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_get(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_put(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_fxp(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_rm(bool)), SLOT(SLOT_Misc(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_authtls(bool)), SLOT(SLOT_AuthTls(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_misc(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_mkdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_rename(bool)), SLOT(SLOT_Misc(bool)));
@@ -115,15 +117,8 @@ void FtpSession::SLOT_Xfered(unsigned long xfered, bool encrypted)
 void FtpSession::SLOT_HeaderClicked(int section)
 {
 	m_sortascending = m_sortascending ^ true;
-
-	QListViewItem* x = mp_browser->firstChild();
-	mp_browser->takeItem(x);
-
-	mp_browser->setSorting(section, m_sortascending);
-	mp_browser->sort();
-	mp_browser->setSorting(-1);
-
-	mp_browser->insertItem(x);
+	m_sortpref = section;
+	SortItems();
 }
 
 void FtpSession::SLOT_ActionMenu(int i)
@@ -401,7 +396,7 @@ void FtpSession::SetColors(QColor local, QColor success, QColor failure, QColor 
 
 void FtpSession::SetFont(QFont font)
 {
-       mp_logwindow->setFont(font);
+	mp_logwindow->setFont(font);
 }
 
 void FtpSession::Abort()
@@ -534,8 +529,13 @@ void FtpSession::SLOT_EncryptData(bool success, bool)
 	PrintLog(success);	
 }
 
-void FtpSession::SLOT_Get(bool success)
+void FtpSession::SLOT_AuthTls(bool success)
 {
+	if (!success) 
+	{
+		Disconnect();
+		m_loglist.push_back(make_pair(i18n("server does not support encryption"), false));
+	}
 	PrintLog(success);
 }
 	
@@ -565,12 +565,15 @@ void FtpSession::SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInf
 		QListViewItem* dirup = new QListViewItem(mp_browser, "..");
 		dirup->setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));
 		dirup->setSelectable(false);	
-		list<KbFileInfo>::iterator end_dir = dirlist.end();
-		list<KbFileInfo>::iterator end_file = filelist.end();
+		
+		list<KbFileInfo>::iterator end_dir = dirlist.end();		
 		for (list<KbFileInfo>::iterator i = dirlist.begin(); i != end_dir; i++)
-			new KbDir(*i, mp_browser, mp_browser->lastItem());	
+			new KbDir(*i, mp_browser, mp_browser->lastItem());			
+		list<KbFileInfo>::iterator end_file = filelist.end();	
 		for (list<KbFileInfo>::iterator i = filelist.begin(); i != end_file; i++)
 			new KbFile(*i, mp_browser, mp_browser->lastItem());	
+			
+		SortItems();
 		if (KbConfig::hideHiddenFilesIsEnabled()) FilterHiddenFiles(true);
 		emit gui_update();
 	}
@@ -592,6 +595,19 @@ void FtpSession::SLOT_Pwd(bool success, QString pwd)
 		}
 		mp_cwdline->setText(pwd);
 	}
+}
+
+
+void FtpSession::SortItems()
+{
+	QListViewItem* x = mp_browser->firstChild();
+	mp_browser->takeItem(x);
+
+	mp_browser->setSorting(m_sortpref, m_sortascending);
+	mp_browser->sort();
+	mp_browser->setSorting(-1);
+
+	mp_browser->insertItem(x);	
 }
 
 void FtpSession::PrintLog(bool)
@@ -725,6 +741,7 @@ void FtpSession::UpdateLocal(QString cwd)
 	
 	mp_cwdline->setText(m_localworkingdir.absPath());
 	
+	SortItems();
 	if (KbConfig::hideHiddenFilesIsEnabled()) FilterHiddenFiles(true);
 }
 

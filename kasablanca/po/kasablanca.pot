@@ -1,14 +1,8 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-13 21:45+0200\n"
+"POT-Creation-Date: 2004-07-17 17:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,75 +42,79 @@ msgstr ""
 msgid "Custom Site"
 msgstr ""
 
-#: ftpsession.cpp:139
+#: ftpsession.cpp:140
 msgid "Enter directory name"
 msgstr ""
 
-#: ftpsession.cpp:139
+#: ftpsession.cpp:140
 msgid "Enter directory name:"
 msgstr ""
 
-#: ftpsession.cpp:165 ftpsession.cpp:185
+#: ftpsession.cpp:166 ftpsession.cpp:186
 msgid "Delete this item?"
 msgstr ""
 
-#: ftpsession.cpp:208 ftpsession.cpp:230
+#: ftpsession.cpp:209 ftpsession.cpp:231
 msgid "Enter new name"
 msgstr ""
 
-#: ftpsession.cpp:208 ftpsession.cpp:230
+#: ftpsession.cpp:209 ftpsession.cpp:231
 msgid "Enter new name:"
 msgstr ""
 
-#: ftpsession.cpp:253
+#: ftpsession.cpp:254
 msgid "Enter bookmark name"
 msgstr ""
 
-#: ftpsession.cpp:253
+#: ftpsession.cpp:254
 msgid "Enter bookmark name:"
 msgstr ""
 
-#: ftpsession.cpp:274
+#: ftpsession.cpp:275
 msgid "That site information is not legit."
 msgstr ""
 
-#: ftpsession.cpp:365
+#: ftpsession.cpp:366
 msgid "Cancel transfer?"
 msgstr ""
 
-#: ftpsession.cpp:410
+#: ftpsession.cpp:411
 msgid "Aborted ftp operation"
 msgstr ""
 
-#: ftpsession.cpp:526
+#: ftpsession.cpp:527
 msgid "connection failed"
 msgstr ""
 
-#: ftpsession.cpp:625
+#: ftpsession.cpp:543
+msgid "server does not support encryption"
+msgstr ""
+
+#: ftpsession.cpp:631
 msgid "Occupied"
 msgstr ""
 
-#: ftpsession.cpp:636 ftpsession.cpp:674
+#: ftpsession.cpp:642 ftpsession.cpp:680
 msgid "Disconnected"
 msgstr ""
 
-#: ftpsession.cpp:652 ftpsession.cpp:653 ftpsession.cpp:655
+#: ftpsession.cpp:658 ftpsession.cpp:659 ftpsession.cpp:661
 msgid " is occupied"
 msgstr ""
 
-#: ftpsession.cpp:671 ftpsession.cpp:672
+#: ftpsession.cpp:677 ftpsession.cpp:678
 msgid "Connected to "
 msgstr ""
 
-#: ftpsession.cpp:935
+#: ftpsession.cpp:941
 msgid "Enter New Name"
 msgstr ""
 
-#: ftpsession.cpp:935
+#: ftpsession.cpp:941
 msgid "Enter New Name:"
 msgstr ""
 
-#: ftpsession.cpp:935
+#: ftpsession.cpp:941
 msgid "_alt"
 msgstr ""
 
