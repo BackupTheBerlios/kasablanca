@@ -13,6 +13,7 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
+#include <kprocess.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
 #include <qtextedit.h>
@@ -23,6 +24,7 @@
 #include <qlistview.h>
 #include <qlabel.h>
 #include <qpixmap.h>
+#include <qheader.h>
 
 #include "customconnectdialog.h"
 #include "ftpthread.h"
@@ -40,9 +42,10 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	mp_ftpthread = new FtpThread();
 	mp_eventhandler = new EventHandler(this, "event handler");
 	mp_siteinfo = new siteinfo();
-
+	
 	m_connected = false;
 	m_occupied = false;
+	m_sortascending = true;
 		
 	mp_eventhandler->SetFtpThread(mp_ftpthread); 
 	mp_ftpthread->SetEventReceiver(mp_eventhandler);
@@ -58,6 +61,7 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_raw(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_misc(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_mkdir(bool)), SLOT(SLOT_Misc(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_rename(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_pwd(bool, QString)), SLOT(SLOT_Pwd(bool, QString)));
 	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)), 
 		SLOT(SLOT_Dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)));
@@ -76,43 +80,124 @@ void FtpSession::SLOT_Log(QString log, bool out)
 	else m_loglist.push_back(make_pair(log, false));
 }
 
+void FtpSession::SLOT_HeaderClicked(int section)
+{
+	m_sortascending = m_sortascending ^ true;
+
+	QListViewItem* x = mp_browser->firstChild();
+	mp_browser->takeItem(x);
+
+	mp_browser->setSorting(section, m_sortascending);
+	mp_browser->sort();
+	mp_browser->setSorting(-1);
+
+	mp_browser->insertItem(x);
+}
+
 void FtpSession::SLOT_ActionMenu(int i)
 {
+	if (Occupied()) 
+	{	
+		qWarning("ERROR: triggered action while occupied");
+		return;
+	}
 	if (i == Kasablanca::Mkdir)
 	{
 		bool b;
-		QString name = KInputDialog::getText("Enter Directory Name:", "Enter Directory Name:", "", &b);
+		QString name = KInputDialog::getText(i18n("Enter directory name"), i18n("Enter directory name:"), "", &b);
 		if (!b) return;
-		if (Occupied()) 
-		{	
-			qWarning("ERROR: mkdir action while occupied");
-			return;
-		}
-		else if (Connected())
+		if (Connected())
 		{
 			Occupy();
 			mp_ftpthread->Mkdir(name);
 			RefreshBrowser();
 			mp_ftpthread->start();
 		}
-		else qWarning("WARNING: local mkdir not yet implemented");
+		else 
+		{
+			m_localworkingdir.mkdir(name);
+			UpdateLocal();
+		}
 	}
 	else if (i == Kasablanca::Delete)
-	{
-		Occupy();
-		QListViewItemIterator it(mp_browser);
-		while (it.current())
+	{	
+		if (Connected())
 		{
-			if (it.current()->isSelected())
+			Occupy();
+			QListViewItemIterator it(mp_browser);
+			while (it.current())
 			{
-				QListViewItem* item = it.current();
-				if (item->rtti() == kbitem::dir) mp_ftpthread->Rmdir(static_cast<diritem*>(item)->m_file);
-				else if (item->rtti() == kbitem::file) mp_ftpthread->Rm(static_cast<fileitem*>(item)->m_file);
+				if (it.current()->isSelected())
+				{
+					kbitem* item = static_cast<kbitem*>(it.current());
+					int warning = KMessageBox::warningContinueCancel(0, i18n("Delete this item?"), item->m_file);
+					if (warning == KMessageBox::Continue)
+					{
+						if (item->rtti() == kbitem::dir) mp_ftpthread->Rmdir(item->m_file);
+						else if (item->rtti() == kbitem::file) mp_ftpthread->Rm(item->m_file);
+					}
+				}
+				it++;
 			}
-			it++;
+			RefreshBrowser();
+			mp_ftpthread->start();
 		}
-		RefreshBrowser();
-		mp_ftpthread->start();
+		else 
+		{
+			QListViewItemIterator it(mp_browser);
+			while (it.current())
+			{
+				if (it.current()->isSelected())
+				{
+					kbitem* item = static_cast<kbitem*>(it.current());
+					int warning = KMessageBox::warningContinueCancel(0, i18n("Delete this item?"), item->m_file);
+					if (warning == KMessageBox::Continue)
+					{
+						if (item->rtti() == kbitem::dir) RmdirLocal(item->m_file);
+						else if (item->rtti() == kbitem::file) m_localworkingdir.remove(item->m_file);
+					}
+				}
+				it++;
+			}
+			UpdateLocal();
+		}
+	}
+	else if (i == Kasablanca::Rename)
+	{
+		if (Connected())
+		{
+			Occupy();
+			QListViewItemIterator it(mp_browser);
+			while (it.current())
+			{
+				if (it.current()->isSelected()) 
+				{	
+					bool b;
+					kbitem* item = static_cast<kbitem*>(it.current());
+					QString name = KInputDialog::getText(i18n("Enter new name"), i18n("Enter new name:"), item->m_file, &b);
+					if (b) mp_ftpthread->Rename(item->m_file, name);
+				}
+				it++;
+			}
+			RefreshBrowser();
+			mp_ftpthread->start();
+		}
+		else 
+		{
+			QListViewItemIterator it(mp_browser);
+			while (it.current())
+			{
+				if (it.current()->isSelected()) 
+				{	
+					bool b;
+					kbitem* item = static_cast<kbitem*>(it.current());
+					QString name = KInputDialog::getText(i18n("Enter new name"), i18n("Enter new name:"), item->m_file, &b);
+					if (b) m_localworkingdir.rename(item->text(0), name);
+				}
+				it++;
+			}
+			UpdateLocal();
+		}
 	}
 }
 
@@ -168,11 +253,7 @@ void FtpSession::SLOT_ItemClicked(QListViewItem * item)
 		RefreshBrowser();
 		mp_ftpthread->start();
 	}
-	else 
-	{
-		while (QListViewItem* tmpviewitem = mp_browser->firstChild()) delete tmpviewitem;
-		qWarning("WARNING: local browsing not yet implemented");
-	}
+	else UpdateLocal(item->text(0));
 }
 
 void FtpSession::SLOT_ItemRClicked(QListViewItem *, const QPoint & point, int)
@@ -194,7 +275,14 @@ void FtpSession::SLOT_CmdLine()
 		mp_cmdline->setText("");
 		mp_ftpthread->start();
 	}
-	else qWarning("WARNING: local commands not yet implemented");
+	else
+	{
+		KProcess* p = new KProcess();
+ 		p->setWorkingDirectory(m_localworkingdir.absPath());
+		*p << QStringList::split(" ", mp_cmdline->text());
+		connect(p, SIGNAL(processExited(KProcess*)), SLOT(SLOT_LocalProcessExited(KProcess*)));
+		if (p->start() == TRUE) mp_cmdline->setText("");
+	}
 }
 
 void FtpSession::SLOT_ConnectButton()
@@ -241,7 +329,7 @@ void FtpSession::SLOT_CwdLine()
 		RefreshBrowser();
 		mp_ftpthread->start();
 	}
-	else qWarning("WARNING: local browsing not yet implemented"); 		
+	else UpdateLocal(mp_cwdline->text());		
 }
 
 void FtpSession::SLOT_RefreshButton()
@@ -257,11 +345,7 @@ void FtpSession::SLOT_RefreshButton()
 		RefreshBrowser();
 		mp_ftpthread->start();
 	}
-	else 
-	{
-		while (QListViewItem* tmpviewitem = mp_browser->firstChild()) delete tmpviewitem;
-		qWarning("WARNING: local browsing not yet implemented");
-	}
+	else UpdateLocal();
 }
 
 void FtpSession::SLOT_Connect(bool success)
@@ -362,6 +446,7 @@ void FtpSession::Connect()
 
 void FtpSession::Disconnect()
 {
+	UpdateLocal();
 	mp_bookmarksmenu->setEnabled(true);
 	mp_connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
 	mp_statusline->setText(i18n("Disconnected"));
@@ -400,4 +485,77 @@ void FtpSession::RefreshBrowser()
 	mp_ftpthread->Dir();
 }
 
+void FtpSession::UpdateLocal(QString cwd)
+{
+	const QFileInfoList *filelist, *dirlist;
+
+	if (cwd != "") m_localworkingdir.cd(cwd);
+		
+	mp_browser->sortColumn();
+	m_localworkingdir.setSorting(QDir::Name);
+	
+	while (QListViewItem* tmpviewitem = mp_browser->firstChild()) delete tmpviewitem;
+
+	QListViewItem* dirup = new QListViewItem(mp_browser, "..");
+	dirup->setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));
+	dirup->setSelectable(false);
+
+	m_localworkingdir.setFilter(QDir::Dirs | QDir::Hidden);
+	dirlist = m_localworkingdir.entryInfoList();
+	
+	QFileInfoListIterator dit( *dirlist );
+	QFileInfo * dirinfo;
+	while( (dirinfo=dit.current()) != 0 )
+	{
+		++dit;
+		if ( (dirinfo->fileName() != QString(".")) && (dirinfo->fileName() != QString("..")) )
+		{
+			diritem * di = new diritem(mp_browser, mp_browser->lastItem(), dirinfo->fileName(),
+			m_localworkingdir.absPath(), dirinfo->lastModified().toString("MMM dd yyyy"), dirinfo->size(),
+				dirinfo->lastModified().date().year() * 10000
+				+ dirinfo->lastModified().date().month() * 100
+				+ dirinfo->lastModified().date().day());
+			di->setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));
+		}
+	}
+
+	m_localworkingdir.setFilter(QDir::Files | QDir::Hidden);
+	filelist = m_localworkingdir.entryInfoList();
+
+	QFileInfoListIterator fit( *filelist );
+	QFileInfo * fileinfo;
+	while( (fileinfo=fit.current()) != 0 )
+	{
+		++fit;
+		fileitem * fi = new fileitem(mp_browser, mp_browser->lastItem(), fileinfo->fileName(),
+			m_localworkingdir.absPath(), fileinfo->lastModified().toString("MMM dd yyyy"), fileinfo->size(),
+			fileinfo->lastModified().date().year() * 10000
+			+ fileinfo->lastModified().date().month() * 100
+			+ fileinfo->lastModified().date().day());
+		fi->setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
+	}
+	
+	mp_cwdline->setText(m_localworkingdir.absPath());
+}
+
+void FtpSession::RmdirLocal(QString dir)
+{
+	QStringList filelist, dirlist;
+	QString olddir;
+	
+	olddir = m_localworkingdir.path();
+	m_localworkingdir.cd(dir);
+	
+	filelist = m_localworkingdir.entryList("*", QDir::Files | QDir::Hidden); 
+	for (QStringList::Iterator it = filelist.begin(); it != filelist.end(); ++it) m_localworkingdir.remove(*it);
+	
+	dirlist = m_localworkingdir.entryList("*", QDir::Dirs | QDir::Hidden);
+	for (QStringList::Iterator it = dirlist.begin(); it != dirlist.end(); ++it) 
+	{
+		if ((*it != ".") && (*it != "..")) RmdirLocal(*it);
+	}
+	
+	m_localworkingdir.cd(olddir);
+	m_localworkingdir.rmdir(dir);
+}
 #include "ftpsession.moc"

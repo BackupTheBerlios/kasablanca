@@ -15,6 +15,7 @@
 #define KB_THREAD_TIMEOUT 1000
 
 #include <qstring.h>
+#include <qdir.h>
 #include <list>
 
 #include "remotefileinfo.h"
@@ -35,6 +36,8 @@ class QLineEdit;
 class QLabel;
 class QPixmap;
 class QPoint;
+class KProcess;
+class QHeader;
 
 typedef pair<QString, bool> logentries;
 
@@ -75,15 +78,19 @@ private:
 	QPopupMenu* mp_bookmarksmenu, *mp_rclickmenu;
 	QListView *mp_browser;
 	QLabel *mp_statusline, *mp_encryptionicon;
-	QString m_remoteworkingdir;
-	bool m_connected, m_occupied;
+	QString m_remoteworkingdir; 
+	QDir m_localworkingdir;
+	bool m_connected, m_occupied, m_sortascending;
 	list<logentries> m_loglist;
 	QPixmap m_iconencrypted, m_iconunencrypted;
+	QHeader *mp_header;
 	
 public slots:
 	void SLOT_Log(QString log, bool out);
 	void SLOT_ActionMenu(int i);
 	void SLOT_ConnectMenu(int i);
+	void SLOT_HeaderClicked(int section);
+	void SLOT_LocalProcessExited(KProcess* proc) { delete proc; };
 	void SLOT_ItemClicked(QListViewItem*);
 	void SLOT_ItemRClicked(QListViewItem * item, const QPoint & point, int col);
 	void SLOT_Connect(bool success);
@@ -104,7 +111,8 @@ public slots:
 private:
 	void PrintLog(bool success);
 	void RefreshBrowser();
-		
+	void UpdateLocal(QString cwd = "");
+	void RmdirLocal(QString dir);
 };
 
 #endif

@@ -111,33 +111,14 @@ public:
     Kasablanca();
     ~Kasablanca();
 
-    int FormatFilelist(const char *filename, QString current, vector<RemoteFileInfo> *filetable,
-            vector<RemoteFileInfo> *dirtable);
-
     QString m_tempdirname;
     QString m_version;
 	 vector<siteinfo> m_bookmarks;
 
 public slots:
-    void SLOT_MkdirA();
-    void SLOT_MkdirB();
-    void SLOT_EnterCommandA();
-    void SLOT_EnterCommandB();
-    void SLOT_EnterCwdA();
-    void SLOT_EnterCwdB();
-    void SLOT_ConnectA(int i);
-    void SLOT_ConnectB(int i);
-    void SLOT_ConnectButtonA();
-    void SLOT_ConnectButtonB();
     void SLOT_EditBookmarks();
-    void SLOT_ItemClickedA(QListViewItem * item);
-    void SLOT_ItemClickedB(QListViewItem * item);
-    void SLOT_ItemRightClickedA(QListViewItem * item, const QPoint & point, int col );
-    void SLOT_ItemRightClickedB(QListViewItem * item, const QPoint & point, int col );
     void SLOT_ItemRightClickedT(QListViewItem * item, const QPoint & point, int col );
     void SLOT_TransferA();
-    void SLOT_HeaderBClicked(int section);
-    void SLOT_HeaderAClicked(int section);
     void SLOT_TransferB();
     void SLOT_QueueA();
     void SLOT_QueueB();
@@ -145,13 +126,6 @@ public slots:
     void SLOT_StartQueue();
     void SLOT_SkipTasks();
     void SLOT_KbftpReadReady(kbprocess* p);
-    void SLOT_RenameA();
-    void SLOT_RenameB();
-    void SLOT_DeleteA();
-    void SLOT_DeleteB();
-    void SLOT_RefreshBrowserA();
-    void SLOT_RefreshBrowserB();
-    void SLOT_ProcessExited(KProcess *proc);
 
 private slots:
     void optionsShowToolbar();
@@ -170,13 +144,7 @@ private:
     int m_xfered;
     void Xfer();
     void InsertMarkedItems(transferitem::transfertype t, QListViewItem* begin = NULL);
-    void UpdateLocalDisplay(Browser x);
     int initBookmarks();
-    void SetGuiStatus(State s, Browser b);
-    void UpdateRemote(Browser b);
-    void UpdateRemoteDisplay(QString dirfile, Browser b);
-    void ConnectCustom(Browser b);
-    void ConnectBookmark(int n, Browser b);
     void EndXfer();
     void setupStatusBar();
     void setupMenu();
@@ -206,15 +174,7 @@ private:
 	 
 	 /* new stuff */
 	 
-	 FtpSession* mp_session_a;
-	 
-	 /*FtpThread* mp_ftpthread_a;
-	 FtpThread* mp_ftpthread_b;
-	 EventHandler* mp_eventhandler_a;
-	 EventHandler* mp_eventhandler_b;
-	 siteinfo mp_siteinfo_a;
-	 siteinfo mp_siteinfo_b;
-	 QMutex* mp_mutex;*/	 
+	 FtpSession *mp_session_a, *mp_session_b;
 };
 
 #endif

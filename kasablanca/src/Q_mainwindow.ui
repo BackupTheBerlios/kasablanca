@@ -35,7 +35,7 @@
                 <cstring>ConnectButtonA</cstring>
             </property>
             <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
             </property>
             <property name="text">
                 <string></string>
@@ -85,7 +85,7 @@
                 <cstring>ConnectButtonB</cstring>
             </property>
             <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
             </property>
             <property name="text">
                 <string></string>
