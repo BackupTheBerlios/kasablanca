@@ -23,6 +23,7 @@ Q_OBJECT
 public:
     KbTaskView(QWidget *parent = 0, const char *name = 0);
     ~KbTaskView();
+	 QListViewItem* LastChild();
 public slots:
 	void SLOT_DoubleClicked(QListViewItem* item, const QPoint& p, int c);
 	//virtual bool acceptDrag(QDropEvent* event) const;

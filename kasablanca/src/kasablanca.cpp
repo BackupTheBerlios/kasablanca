@@ -419,7 +419,7 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 {
 	list<KbFileInfo>* filelist;
 	list<KbDirInfo*>* dirlist;
-	QListViewItem *after; 	
+	QListViewItem *after, *lastchild; 	
 	
 	filelist = dir->Filelist();
 	dirlist = dir->Dirlist();
@@ -429,7 +429,9 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 		dirlist->sort(KbDirInfo::PrioritySort);
 		filelist->sort(KbFileInfo::PrioritySort);
 	}
-		
+	
+	lastchild = mp_view->TaskView->LastChild();
+	
 	after = NULL;	
 	list<KbFileInfo>::iterator end_file = filelist->end();
 	for(list<KbFileInfo>::iterator fileIterator = filelist->begin(); fileIterator != end_file; fileIterator++)
@@ -441,7 +443,7 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 			srcfi->SetDirPath(src->WorkingDir() + srcfi->dirPath());
 			dstfi->SetDirPath(dst->WorkingDir() + dstfi->dirPath());
 			if (parent) after = new KbTransferFile(parent, after, src, dst, srcfi, dstfi);
-			else new KbTransferFile(mp_view->TaskView, mp_view->TaskView->lastItem(), src, dst, srcfi, dstfi);
+			else new KbTransferFile(mp_view->TaskView, lastchild /*mp_view->TaskView->lastItem()*/, src, dst, srcfi, dstfi);
 		}
 		else qWarning("INFO: entry ignored due to matched skiplist regexp");
 	}
@@ -457,7 +459,7 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 			srcfi->SetDirPath(src->WorkingDir() + srcfi->dirPath());
 			dstfi->SetDirPath(dst->WorkingDir() + dstfi->dirPath());
 			if (parent) after = new KbTransferDir(parent, after, src, dst, srcfi, dstfi);
-			else after = new KbTransferDir(mp_view->TaskView, mp_view->TaskView->lastItem(), src, dst, srcfi, dstfi);
+			else after = new KbTransferDir(mp_view->TaskView, lastchild /*mp_view->TaskView->lastItem()*/, src, dst, srcfi, dstfi);
 			QueueItemsRecurse(*dirIterator, src, dst, after);
 		}
 		else qWarning("INFO: entry ignored due to matched skiplist regexp");

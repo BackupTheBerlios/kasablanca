@@ -1,5 +1,6 @@
 [v 0.4.0.1]
 
+-items are queued at the end of the queue list now
 -remember sorting preference when changing directories
 -report when ftp servers do not support encryption
 -fixed crash when trying to remove active item from queue.

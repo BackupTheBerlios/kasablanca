@@ -39,6 +39,18 @@ KbTaskView::~KbTaskView()
 {
 }
 
+QListViewItem* KbTaskView::LastChild()
+{
+	QListViewItem* last = NULL;
+	QListViewItem* it = lastItem();
+	while (it)
+	{
+		last = it;
+		it = it->parent();
+	}
+	return last;
+}
+
 void KbTaskView::SLOT_DoubleClicked(QListViewItem* item, const QPoint&, int)
 {
 	KbTransferItem *kti = static_cast<KbTransferItem*>(item);
