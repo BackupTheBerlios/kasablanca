@@ -1,6 +1,5 @@
 [v 0.4 pre3]
 
--default directory for bookmarks
 -define standard directory in bookmarks
 -support alternative fxp
 -added systray support [bochi]
