@@ -1127,7 +1127,7 @@ int ftplib::FtpXfer(const char *localfile, const char *path, netbuf *nControl, i
 
 	if (localfile != NULL)
 	{
-		printf("localfile: -%s-", localfile);
+		//printf("localfile: -%s-", localfile);
 	
 		//local = fopen(localfile, (typ == FTPLIB_FILE_WRITE) ? "r" : "w");
 		char ac[3] = "  ";
