@@ -14,8 +14,16 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
+ 
+#include <kglobal.h>
+#include <kiconloader.h>
+ 
 #include "diritem.h"
+
+diritem::diritem(RemoteFileInfo* rfi, QListView * parent, QListViewItem * after) : kbitem(rfi, parent, after)
+{	
+	setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));	
+}
 
 diritem::diritem(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int) : kbitem(parent, after)
 {

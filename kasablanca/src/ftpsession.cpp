@@ -4,7 +4,7 @@
 // Description: 
 //
 //
-// Author: Magnus Kulke <mkulke@magnusmachine>, (C) 2004
+// Author: Magnus Kulke <sikor_sxe@radicalapproach.de>, (C) 2004
 //
 // Copyright: See COPYING file that comes with this distribution
 //
@@ -18,6 +18,8 @@
 #include <qtoolbutton.h>
 #include <qpopupmenu.h>
 #include <qwidget.h>
+#include <qlineedit.h>
+#include <qlistview.h>
 
 #include "customconnectdialog.h"
 #include "ftpthread.h"
@@ -25,6 +27,9 @@
 #include "siteinfo.h"
 #include "ftpsession.h"
 #include "kasablanca.h"
+#include "diritem.h"
+#include "fileitem.h"
+#include "remotefileinfo.h"
 
 FtpSession::FtpSession(QObject *parent, const char *name)
  : QObject(parent, name)
@@ -45,8 +50,9 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_quit(bool)), SLOT(SLOT_Quit(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_pwd(bool, QString)), SLOT(SLOT_Pwd(bool, QString)));
+	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)), 
+		SLOT(SLOT_Dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)));
 	connect(mp_eventhandler, SIGNAL(ftp_finished()), SLOT(SLOT_Finish()));
-	
 }
 
 FtpSession::~FtpSession()
@@ -155,14 +161,25 @@ void FtpSession::SLOT_Quit(bool success)
 	PrintLog(success);	
 }
 
-void FtpSession::SLOT_Dir(bool success, list<RemoteFileInfo>, list<RemoteFileInfo>)
+void FtpSession::SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist)
 {
 	PrintLog(success);
+	if (success)
+	{	
+		while (QListViewItem* tmpviewitem = mp_browser->firstChild()) delete tmpviewitem;
+		QListViewItem* dirup = new QListViewItem(mp_browser, "..");
+		dirup->setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));
+		dirup->setSelectable(false);	
+		list<RemoteFileInfo>::iterator i;
+		for (i = dirlist.begin(); i != dirlist.end(); i++) new diritem(&*i, mp_browser, mp_browser->lastItem());	
+		for (i = filelist.begin(); i != filelist.end(); i++) new fileitem(&*i, mp_browser, mp_browser->lastItem());
+	}
 }
 
-void FtpSession::SLOT_Pwd(bool success, QString)
+void FtpSession::SLOT_Pwd(bool success, QString pwd)
 {
 	PrintLog(success);
+	if (success) mp_cwdline->setText(pwd);
 }
 
 void FtpSession::PrintLog(bool success)
@@ -189,11 +206,19 @@ void FtpSession::Disconnect()
 
 void FtpSession::Occupy()
 {
+	mp_browser->setEnabled(false);
+	mp_cmdline->setEnabled(false);
+	mp_cwdline->setEnabled(false);
+	mp_refreshbutton->setEnabled(false);
 	m_occupied = true;
 }
 
 void FtpSession::Free()
 {
+	mp_browser->setEnabled(true);
+	mp_cmdline->setEnabled(true);
+	mp_cwdline->setEnabled(true);
+	mp_refreshbutton->setEnabled(true);
 	m_occupied = false;
 }
 #include "ftpsession.moc"

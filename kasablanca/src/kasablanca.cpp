@@ -154,6 +154,9 @@ Kasablanca::Kasablanca()
 	 mp_session_a->SetLogWindow(m_view->LogWindowA);
 	 mp_session_a->SetBrowser(m_view->BrowserA);
 	 mp_session_a->SetConnectButton(m_view->ConnectButtonA);
+	 mp_session_a->SetRefreshButton(m_view->RefreshButtonA);
+	 mp_session_a->SetCmdLine(m_view->CommandLineA);
+	 mp_session_a->SetCwdLine(m_view->CwdLineA);
 	 mp_session_a->SetBookmarksMenu(&m_bookmarksmenu_a);
 	 
 	 connect(m_view->RefreshButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_RefreshButton()));

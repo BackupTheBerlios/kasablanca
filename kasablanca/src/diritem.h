@@ -21,12 +21,15 @@
 #include "kbitem.h"
 #include <qlistview.h>
 
+class RemoteFileInfo;
+
 /**
   *@author mkulke
   */
 
 class diritem : public kbitem  {
 public:
+	diritem(RemoteFileInfo* rfi, QListView * parent, QListViewItem * after);
 	diritem(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int);
 	~diritem();
     int rtti() const;

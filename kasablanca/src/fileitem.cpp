@@ -14,8 +14,16 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
+ 
+#include <kglobal.h>
+#include <kiconloader.h>
+ 
 #include "fileitem.h"
+
+fileitem::fileitem(RemoteFileInfo* rfi, QListView * parent, QListViewItem * after) : kbitem(rfi, parent, after)
+{		
+	setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
+}
 
 fileitem::fileitem(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int) : kbitem(parent, after)
 {

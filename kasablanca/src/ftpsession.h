@@ -31,6 +31,7 @@ class QToolButton;
 class QListView;
 class siteinfo;
 class QPopupMenu;
+class QLineEdit;
 
 /**
 @author Magnus Kulke
@@ -42,8 +43,11 @@ public:
 	FtpSession(QObject *parent = 0, const char *name = 0);
 	~FtpSession();
 	void SetLogWindow(QTextEdit* logwindow) { mp_logwindow = logwindow; };
+	void SetRefreshButton(QToolButton* refreshbutton) { mp_refreshbutton = refreshbutton; };
 	void SetConnectButton(QToolButton* connectbutton) { mp_connectbutton = connectbutton; };
 	void SetBrowser(QListView* browser) { mp_browser = browser; };
+	void SetCwdLine(QLineEdit* cwdline) { mp_cwdline = cwdline; };
+	void SetCmdLine(QLineEdit* cmdline) { mp_cmdline = cmdline; };
 	void SetBookmarksMenu(QPopupMenu *bookmarksmenu) { mp_bookmarksmenu = bookmarksmenu; };
 	bool Connected() { return m_connected; };
 	void Disconnect();
@@ -58,7 +62,8 @@ private:
 	QMutex *mp_mutex;
 	siteinfo *mp_siteinfo;
 	QTextEdit *mp_logwindow;
-	QToolButton *mp_connectbutton;
+	QToolButton *mp_connectbutton, *mp_refreshbutton;
+	QLineEdit *mp_cwdline, *mp_cmdline;
 	QPopupMenu* mp_bookmarksmenu;
 	QListView *mp_browser;
 	QString m_log;

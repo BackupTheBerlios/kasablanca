@@ -715,10 +715,10 @@ void FtpThread::Event(EventHandler::EventType type)
 
 /* parses the dir file */
 
-bool FtpThread::FormatFilelist(const char *filename
-	, QString current
-	, list<RemoteFileInfo> *filetable
-	, list<RemoteFileInfo> *dirtable
+bool FtpThread::FormatFilelist(const char *filename, 
+	QString current, 
+	list<RemoteFileInfo> *dirtable, 
+	list<RemoteFileInfo> *filetable
 )
 {
 	int i, blocks, space, month_int = 1;

@@ -9,13 +9,30 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "kbitem.h"
+
 #include <qdatetime.h>
+#include "remotefileinfo.h"
+
+
+#include "kbitem.h"
+
+
+kbitem::kbitem(RemoteFileInfo *rfi, QListView* parent, QListViewItem* after) : QListViewItem(parent, after)
+{
+	m_file = rfi->fileName();
+	m_path = rfi->dirPath(), 
+	m_date =	rfi->date(), 
+	m_size =	rfi->size(),
+	m_date_int = rfi->date_int();
+
+	setText(0, m_file);
+	setText(1, QString::number(m_size));
+	setText(2, m_date);
+}
 
 kbitem::kbitem(QListView* parent, QListViewItem* after) : QListViewItem(parent, after)
 {
 }
-
 
 kbitem::~kbitem()
 {
