@@ -23,6 +23,17 @@ kbitem::~kbitem()
 
 int kbitem::compare(QListViewItem * i, int col, bool ascending) const
 {
+	if ((this->rtti() == 1001) and (i->rtti() == 1002)) 
+	{
+		if (ascending) return -1;
+		else return 1;
+	}
+	else if ((this->rtti() == 1002) and (i->rtti() == 1001)) 
+	{
+		if (ascending) return 1;
+		else return -1; 
+	}
+		
 	if (col == 1)
 	{
 		int x = this->text(1).toInt();
