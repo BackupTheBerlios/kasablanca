@@ -2242,6 +2242,9 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 			}
 			else if (s.left(10) == "kb.failure")
 			{
+				if (site->GetTls() > 0) encryptionicon->setPixmap(m_iconencrypted);
+				else encryptionicon->setPixmap(m_iconunencrypted);
+			
 				qWarning("kb.failure");
 				logwindow->setColor(red);
 				logwindow->append(*log);
