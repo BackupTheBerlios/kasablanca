@@ -24,12 +24,13 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qdir.h>
-#include <kmessagebox.h>
+
+#include <kcombobox.h>
+#include <kcompletion.h>
 #include <klocale.h>
-#include <qlistbox.h>
-#include <qlineedit.h>
-#include <qcombobox.h>
-#include <qpushbutton.h>
+#include <klineedit.h>
+#include <kmessagebox.h>
+#include <kpushbutton.h>
 
 BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
 : KDialogBase(parent, name, true, i18n( "Bookmarks" ),
@@ -73,6 +74,7 @@ BookmarkDialog::~BookmarkDialog()
 
 void BookmarkDialog::SLOT_EntrySelected(int n)
 {
+    ui_->ApplyButton->setEnabled(true);
     RefreshEntry(m_bookmarks.at(n));
 }
 

@@ -27,7 +27,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QPushButton" row="1" column="0">
+        <widget class="KPushButton" row="1" column="0">
             <property name="name">
                 <cstring>NewButton</cstring>
             </property>
@@ -38,7 +38,7 @@
                 <string>Add a new bookmark entry.</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="1" column="2">
+        <widget class="KPushButton" row="1" column="2">
             <property name="name">
                 <cstring>ApplyButton</cstring>
             </property>
@@ -49,7 +49,7 @@
                 <string>Apply the changes to the bookmark entry.</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="1" column="1">
+        <widget class="KPushButton" row="1" column="1">
             <property name="name">
                 <cstring>RemoveButton</cstring>
             </property>
@@ -86,7 +86,7 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QComboBox" row="4" column="1">
+                    <widget class="KComboBox" row="4" column="1">
                         <item>
                             <property name="text">
                                 <string>Unencrypted</string>
@@ -114,7 +114,7 @@
                             <string>There are 4 encryption levels available. Unencrypted leaves all traffic clear and without encryption. Most ftp servers allow only this mode. Level 1 encryption means that the traffic on the control connection is encrypted while data transfer remains clear. Level 2 is basically the same with the exception of directory information which is transfered on the data channel, but is encrypted too. Eventually Level 3 encrypts everything all communication and all data traffic.</string>
                         </property>
                     </widget>
-                    <widget class="QLineEdit" row="2" column="1">
+                    <widget class="KLineEdit" row="2" column="1">
                         <property name="name">
                             <cstring>UserEdit</cstring>
                         </property>
@@ -130,7 +130,7 @@
                             <string>&lt;p align="right"&gt;Mode&lt;/p&gt;</string>
                         </property>
                     </widget>
-                    <widget class="QLineEdit" row="3" column="1">
+                    <widget class="KLineEdit" row="3" column="1">
                         <property name="name">
                             <cstring>PassEdit</cstring>
                         </property>
@@ -149,7 +149,7 @@
                             <string>&lt;p align="right"&gt;Username&lt;/p&gt;</string>
                         </property>
                     </widget>
-                    <widget class="QLineEdit" row="1" column="1">
+                    <widget class="KLineEdit" row="1" column="1">
                         <property name="name">
                             <cstring>InfoEdit</cstring>
                         </property>
@@ -168,7 +168,7 @@
                             <string>&lt;p align="right"&gt;Host:Port&lt;/p&gt;</string>
                         </property>
                     </widget>
-                    <widget class="QLineEdit" row="0" column="1">
+                    <widget class="KLineEdit" row="0" column="1">
                         <property name="name">
                             <cstring>NameEdit</cstring>
                         </property>
@@ -203,7 +203,7 @@
                             <string></string>
                         </property>
                     </widget>
-                    <widget class="QComboBox" row="5" column="1">
+                    <widget class="KComboBox" row="5" column="1">
                         <item>
                             <property name="text">
                                 <string>Active Mode</string>
