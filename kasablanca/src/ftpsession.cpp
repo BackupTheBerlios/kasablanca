@@ -427,8 +427,7 @@ void FtpSession::QueueItems()
 		{		
 			if (item->rtti() == KbItem::dir) dir->AddDirectory(KbFileInfo(static_cast<KbFile*>(item), "/"));
 			else if (item->rtti() == KbItem::file) dir->AddFile(KbFileInfo(static_cast<KbFile*>(item), "/"));
-			item->setSelected(false);
-			item->repaint();
+			mp_browser->setSelected(item, false);
 		}
 		iit++;
 	}
@@ -953,7 +952,7 @@ void FtpSession::Transfer(KbTransferItem *item)
 		{
 			filecheck result = static_cast<filecheck>(item->DstSession()->CheckFile(item));
 		
-			startTimer(200);
+			startTimer(256);
 			item->StartTimer();
 			
 			if (result == skip)

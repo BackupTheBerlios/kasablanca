@@ -64,10 +64,10 @@ void KbTransferItem::ShowProgress()
 
 void KbTransferItem::Init()
 {
-	setSelected(false);
 	setSelectable(false);
-	setOpen(true);
-	repaint();
+	listView()->setSelected(this, false);
+	listView()->setOpen(this, true);
+	//repaint();
 	mp_srcsession->Occupy();
 	mp_dstsession->Occupy();
 	mp_srcsession->SetCurrentTransfer(this);

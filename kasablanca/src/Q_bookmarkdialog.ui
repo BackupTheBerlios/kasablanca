@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>573</width>
-            <height>262</height>
+            <width>630</width>
+            <height>282</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -68,6 +68,9 @@
         <widget class="QTabWidget" row="0" column="3" rowspan="2" colspan="1">
             <property name="name">
                 <cstring>tabWidget2</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
             </property>
             <property name="minimumSize">
                 <size>
@@ -254,4 +257,16 @@
     <tabstop>ApplyButton</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="0"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>klistbox.h</includehint>
+    <includehint>kcombobox.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kcombobox.h</includehint>
+</includehints>
 </UI>

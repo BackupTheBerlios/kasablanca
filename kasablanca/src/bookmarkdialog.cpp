@@ -64,6 +64,13 @@ BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
     connect(ui_->ApplyButton, SIGNAL(clicked()), SLOT(SLOT_ApplyEntry()));
     connect(ui_->NewButton, SIGNAL(clicked()), SLOT(SLOT_NewEntry()));
     connect(ui_->RemoveButton, SIGNAL(clicked()), SLOT(SLOT_RemoveEntry()));
+	 
+	 connect(ui_->NameEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
+	 connect(ui_->InfoEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
+	 connect(ui_->UserEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
+	 connect(ui_->PassEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
+	 connect(ui_->EncryptionComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&)));
+	 connect(ui_->ModeComboBox, SIGNAL(textChanged(const QString&)), SLOT(SLOT_InputChanged(const QString&))); 
 }
 
 BookmarkDialog::~BookmarkDialog()
@@ -74,14 +81,15 @@ BookmarkDialog::~BookmarkDialog()
 
 void BookmarkDialog::SLOT_EntrySelected(int n)
 {
-    ui_->ApplyButton->setEnabled(true);
+    //ui_->ApplyButton->setEnabled(true);
     RefreshEntry(m_bookmarks.at(n));
 }
 
 void BookmarkDialog::slotOk()
 {
-    bookmarks.setBookmarks(m_bookmarks);
-    accept();
+	SLOT_ApplyEntry();
+	bookmarks.setBookmarks(m_bookmarks);
+	accept();
 }
 
 void BookmarkDialog::SLOT_ApplyEntry()
@@ -110,7 +118,7 @@ void BookmarkDialog::SLOT_ApplyEntry()
         ui_->BookmarkListBox->setSelected(n, true);
     }
 
-    bookmarks.setBookmarks(m_bookmarks);
+	 //bookmarks.WriteBookmarks();
     ui_->ApplyButton->setEnabled(false);
 }
 
@@ -119,7 +127,7 @@ void BookmarkDialog::SLOT_NewEntry()
     int n = m_bookmarks.size();
 
     EnableInput(true);
-    ui_->ApplyButton->setEnabled(true);
+    //ui_->ApplyButton->setEnabled(true);
 
     siteinfo newsite;
     newsite.SetName("New Site");
@@ -195,6 +203,11 @@ void BookmarkDialog::clearInput()
     ui_->InfoEdit->clear();
     ui_->EncryptionComboBox->clear();
     ui_->ModeComboBox->clear();
+}
+
+void BookmarkDialog::SLOT_InputChanged(const QString&)
+{
+	ui_->ApplyButton->setEnabled(true);
 }
 
 int BookmarkDialog::ApplyEntry(siteinfo * site)

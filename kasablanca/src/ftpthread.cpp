@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "ftpthread.h"
 
+#include <kstandarddirs.h>
 #include <list>
 #include "ftplib.h"
 #include "kbdirinfo.h"
@@ -28,6 +29,7 @@
 #include "kbfileinfo.h"
 #include <qdir.h>
 #include <iostream>
+
 
 using namespace std;
 
@@ -486,11 +488,13 @@ void FtpThread::Transfer_Changedir_thread()
 {
 	int result;
 	char buffer[1024];
+	QString dirname;
 	
-	QString dirname = QDir::homeDirPath() + 
-		"/.kasablanca/" +
-		QString::number((int) time(NULL) & 0xffff) + 
-		".dir";
+	//dirname = QDir::homeDirPath() + 
+	//	"/.kasablanca/" +
+	//	QString::number((int) time(NULL) & 0xffff) + 
+	//	".dir";
+	dirname = locateLocal("appdata", QString::number(rand()) + ".dir");
 				
 	QString path = m_stringlist.front();
 	m_stringlist.pop_front();
@@ -871,10 +875,12 @@ void FtpThread::Dir_thread()
 	int result;
 	QString dirname;
 	 
-	dirname = QDir::homeDirPath() + 
-		"/.kasablanca/" +
-		QString::number((int) time(NULL) & 0xffff) + 
-		".dir";
+	//dirname = QDir::homeDirPath() + 
+	//	"/.kasablanca/" +
+	//	QString::number((int) time(NULL) & 0xffff) + 
+	//	".dir";
+	
+	dirname = locateLocal("appdata", QString::number(rand()) + ".dir");
 	
 	result = mp_ftp->Dir(dirname.latin1(), "");
 
@@ -1222,7 +1228,8 @@ bool FtpThread::Scandir_recurse(KbDirInfo *dir, QString path)
 	}
 	else Event(EventHandler::misc_success);
 	
-	dirname = QDir::homeDirPath() + "/.kasablanca/" + QString::number((int) time(NULL) & 0xffff) + ".dir";
+	//dirname = QDir::homeDirPath() + "/.kasablanca/" + QString::number((int) time(NULL) & 0xffff) + ".dir";
+	dirname = locateLocal("appdata", QString::number(rand()) + ".dir");
 	
 	result = mp_ftp->Dir(dirname.latin1(), "");
 			
@@ -1290,10 +1297,11 @@ bool FtpThread::Delete_recurse(QString name)
 	}
 	else Event(EventHandler::misc_success);
 	
-	dirname = QDir::homeDirPath() + 
-	"/.kasablanca/" +
-	QString::number((int) time(NULL) & 0xffff) + 
-	".dir";
+	//dirname = QDir::homeDirPath() + 
+	//"/.kasablanca/" +
+	//QString::number((int) time(NULL) & 0xffff) + 
+	//".dir";
+	dirname = locateLocal("appdata", QString::number(rand()) + ".dir");
 	
 	result = mp_ftp->Dir(dirname.latin1(), "");
 			

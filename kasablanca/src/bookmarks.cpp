@@ -16,6 +16,7 @@
 #include <qfile.h>
 #include <qdir.h>
 #include <qtextstream.h>
+#include <kstandarddirs.h>
 
 Bookmarks::Bookmarks()
 {
@@ -41,7 +42,8 @@ int Bookmarks::setBookmarks(vector<siteinfo> bmarks)
 int Bookmarks::ParseBookmarks()
 {
     QDomDocument doc( "KasablancaBookmarks" );
-    QFile filein(QDir::homeDirPath() + "/.kasablanca/bookmarks.xml");
+    //QFile filein(QDir::homeDirPath() + "/.kasablanca/bookmarks.xml");
+	 QFile filein(locateLocal("appdata", "bookmarks.xml"));
     
     if( !filein.open( IO_ReadOnly ) ) return -1;
     
@@ -144,8 +146,9 @@ int Bookmarks::WriteBookmarks()
                 curElement.appendChild(text);
         }
     }
-
-    QFile fileout( QDir::homeDirPath() + "/.kasablanca/bookmarks.xml" );
+		
+	 QFile fileout(locateLocal("appdata", "bookmarks.xml"));
+    //QFile fileout( QDir::homeDirPath() + "/.kasablanca/bookmarks.xml" );
     
     if( !fileout.open( IO_WriteOnly ) ) return -1;
 
