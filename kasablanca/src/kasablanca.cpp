@@ -220,6 +220,10 @@ void Kasablanca::ConnectCustom(Browser b)
 		proc = &m_proc_b;
 	}
 	
+	/* on connection changes the task view has to be cleared */
+
+	while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
+	
 	site->Clear();
    dlg.mp_site = site;
 
@@ -339,8 +343,8 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			cwdline->setEnabled(true);
 			bookmarksmenu->setEnabled(true);
 			rclickmenu->setEnabled(true);
-			m_rclickmenu_t.setItemEnabled(Start, false);
-			m_rclickmenu_t.setItemEnabled(Skip, false);
+			m_rclickmenu_t.setItemEnabled(Start, true);
+			m_rclickmenu_t.setItemEnabled(Skip, true);
 			rclickmenu->setItemEnabled(Mkdir, true);
 			break;
 
@@ -388,7 +392,11 @@ void Kasablanca::ConnectBookmark(int n, Browser b)
 		site = &m_site_b;
 		proc = &m_proc_b;
 	}
-		
+
+	/* on connection changes the task view has to be cleared */
+
+	while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
+			
 	site->Clear();
 
 	site->SetInfo(m_bookmarks.at(n).GetInfo());
@@ -447,10 +455,6 @@ void Kasablanca::SLOT_EnterCwdA()
 
 void Kasablanca::SLOT_ConnectButtonA()
 {
-	/* on connection changes the task view has to be cleared */
-
-	while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
-
 	if (m_status_a == disconnected)
 	{
 		m_bookmarksmenu_a.exec(QCursor::pos());
@@ -477,10 +481,6 @@ void Kasablanca::SLOT_ConnectA(int i)
 
 void Kasablanca::SLOT_ConnectButtonB()
 {
-	/* on connection changes the task view has to be cleared */
-
-	while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
-
 	if (m_status_b == disconnected)
 	{
 		m_bookmarksmenu_b.exec(QCursor::pos());
@@ -1848,6 +1848,10 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				*log = "";
 				if (s.left(16) == "kb.failure.fatal")
 				{
+					/* on connection changes the task view has to be cleared */
+					while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
+				
+					UpdateLocalDisplay(b);
 					SetGuiStatus(disconnected, b);
 				}
 				else
@@ -1938,6 +1942,9 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 			}
 			else if (s == "kb.quit")
 			{
+				/* on connection changes the task view has to be cleared */
+				while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
+				
 				UpdateLocalDisplay(b);
 				SetGuiStatus(disconnected, b);
 			}
