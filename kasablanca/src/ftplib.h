@@ -82,7 +82,7 @@ struct netbuf {
 	FtpCallbackLog logcb;
 	void *cbarg;
 	unsigned long xfered;
-	int cbbytes;
+	unsigned int cbbytes;
 	unsigned long xfered1;
 	char response[256];
 	SSL* ssl;
