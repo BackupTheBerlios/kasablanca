@@ -419,7 +419,7 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 	
 	filelist = dir->Filelist();
 	dirlist = dir->Dirlist();
-		
+				
 	after = NULL;	
 	list<KbFileInfo>::iterator end_file = filelist->end();
 	for(list<KbFileInfo>::iterator fileIterator = filelist->begin(); fileIterator != end_file; fileIterator++)
