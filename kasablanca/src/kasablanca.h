@@ -67,10 +67,10 @@ public:
 		Skip,
 		Bookmark
 	};
-	
+
 	Kasablanca();
 	~Kasablanca();
-	
+
 	QString m_tempdirname;
 	QString m_version;
 	list<KbSiteInfo> m_bookmarks;
@@ -79,6 +79,7 @@ public:
 
 public slots:
 	void SLOT_EditBookmarks();
+	void SLOT_ImportBookmarks();
 	void SLOT_ItemRightClickedT(QListViewItem * item, const QPoint & point, int col );
 	void SLOT_SelectionChanged();
 	void SLOT_SkipTasks();
@@ -87,7 +88,7 @@ public slots:
 	void SLOT_NextTransfer(QListViewItem* item);
 	void SLOT_ClearQueue(FtpSession* session);
 	void SLOT_LocalProcessExited(KProcess* proc) { delete proc; };
-	 
+
 private slots:
 	void optionsShowToolbar();
 	void optionsShowStatusbar();
@@ -107,7 +108,7 @@ private:
 	void ProcessQueue(KbTransferItem* item);
 	QListViewItem* NextTransfer(QListViewItem* item);
 	void QueueFinished();
-	
+
 	KasablancaMainWindow *mp_view;
 	QPopupMenu m_bookmarksmenu_a, m_bookmarksmenu_b;
 	QRegExp m_skiplist;
@@ -115,7 +116,7 @@ private:
 	QLabel *mp_statusline_a, *mp_statusline_b, *mp_encryptionicon_a, *mp_encryptionicon_b;
 	QPixmap m_iconencrypted, m_iconunencrypted;
 	KToggleAction *m_toolbarAction;
-	KToggleAction *m_statusbarAction;	 
+	KToggleAction *m_statusbarAction;
 	FtpSession *mp_session_a, *mp_session_b;
 	list<FtpSession*> *mp_sessionlist;
 	bool m_skiplistenabled, m_onqueuefinishedenabled;

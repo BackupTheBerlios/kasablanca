@@ -3,6 +3,7 @@
 <MenuBar>
 <Menu name="bookmarks menu"><text>Bookmarks</text>
     <Action name="edit bookmarks action" />
+		<Action name="import bookmarks action" />
 </Menu>
 <Menu name="connect menu"><text>Connect</text>
 </Menu>

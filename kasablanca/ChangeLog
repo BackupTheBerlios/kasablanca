@@ -1,5 +1,6 @@
 [v 0.4.0.1]
 
+-import gftp bookmarks [crissi]
 -added polish translation [tomwal]
 -fixed compilation error
 -fixed some filesize issues
