@@ -30,6 +30,7 @@ class QCloseEvent;
 class QLabel;
 class QPixmap;
 class FtpSession;
+class kbitem;
 
 #include <kapplication.h>
 #include <klistview.h>
@@ -126,6 +127,8 @@ public slots:
     void SLOT_StartQueue();
     void SLOT_SkipTasks();
     void SLOT_KbftpReadReady(kbprocess* p);
+	 void SLOT_QueueItems(list<kbitem*> items, FtpSession* src, FtpSession* dst, bool start);
+	 void SLOT_ProcessQueue();
 
 private slots:
     void optionsShowToolbar();
@@ -151,9 +154,8 @@ private:
     void setupGUI();
     void setupActions();
     void timerEvent(QTimerEvent* e);
-    void closeEvent(QCloseEvent*);
 
-    KasablancaMainWindow *m_view;
+    KasablancaMainWindow *mp_view;
     kbprocess m_proc_a, m_proc_b;
     Bookmarks bookmarks;
     State m_status_a, m_status_b;
@@ -175,6 +177,7 @@ private:
 	 /* new stuff */
 	 
 	 FtpSession *mp_session_a, *mp_session_b;
+	 list<FtpSession*> *mp_sessionlist;
 };
 
 #endif

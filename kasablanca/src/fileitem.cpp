@@ -49,5 +49,5 @@ fileitem::~fileitem()
 
 int fileitem::rtti() const
 {
-    return 1002;
+    return kbitem::file;
 }

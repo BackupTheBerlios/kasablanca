@@ -48,5 +48,5 @@ diritem::~diritem()
 
 int diritem::rtti() const
 {
-    return 1001;
+    return kbitem::dir;
 }

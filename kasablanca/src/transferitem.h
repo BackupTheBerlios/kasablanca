@@ -20,9 +20,16 @@
 #ifndef TRANSFERITEM_H
 #define TRANSFERITEM_H
 
+#include <kiconloader.h>
+#include <kglobal.h>
 #include <qlistview.h>
 #include <qfileinfo.h>
+
+#include "ftpsession.h"
+#include "kbfileinfo.h"
 #include "remotefileinfo.h"
+
+class FtpSession;
 
 /**
 @author Magnus Kulke
@@ -44,6 +51,8 @@ public:
 		  fxp_a_to_b,
 		  fxp_b_to_a
     };
+	 
+	transferitem(QListView *taskview, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo* src, KbFileInfo* dst);
 	//transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
 	transferitem(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
 	transferitem(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type);
@@ -52,8 +61,12 @@ public:
 	QFileInfo m_filocal;
 	RemoteFileInfo m_firemote, m_fifxpsrc, m_fifxpdst;
 	int type();
+	virtual void Transfer();
 private:
 	transfertype m_type;
+protected:
+	FtpSession *mp_srcsession, *mp_dstsession;
+	KbFileInfo *mp_src, *mp_dst;
 };
 
 #endif

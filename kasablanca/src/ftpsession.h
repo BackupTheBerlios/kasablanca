@@ -14,8 +14,10 @@
 
 #define KB_THREAD_TIMEOUT 1000
 
+#include <kprocess.h>
 #include <qstring.h>
 #include <qdir.h>
+#include <qpixmap.h>
 #include <list>
 
 #include "remotefileinfo.h"
@@ -34,10 +36,10 @@ class siteinfo;
 class QPopupMenu;
 class QLineEdit;
 class QLabel;
-class QPixmap;
 class QPoint;
-class KProcess;
+//class KProcess;
 class QHeader;
+class kbitem;
 
 typedef pair<QString, bool> logentries;
 
@@ -53,6 +55,7 @@ public:
 	void SetLogWindow(QTextEdit* logwindow) { mp_logwindow = logwindow; };
 	void SetRefreshButton(QToolButton* refreshbutton) { mp_refreshbutton = refreshbutton; };
 	void SetConnectButton(QToolButton* connectbutton) { mp_connectbutton = connectbutton; };
+	void SetTransferButton(QToolButton* transferbutton) { mp_transferbutton = transferbutton; }
 	void SetBrowser(QListView* browser) { mp_browser = browser; };
 	void SetCwdLine(QLineEdit* cwdline) { mp_cwdline = cwdline; };
 	void SetCmdLine(QLineEdit* cmdline) { mp_cmdline = cmdline; };
@@ -60,20 +63,22 @@ public:
 	void SetEncryptionIcon(QLabel* encryptionicon) { mp_encryptionicon = encryptionicon; };
 	void SetBookmarksMenu(QPopupMenu *bookmarksmenu) { mp_bookmarksmenu = bookmarksmenu; };
 	void SetRclickMenu(QPopupMenu *rclickmenu) { mp_rclickmenu = rclickmenu; };
+	void SetSessionList(list<FtpSession*> *sessionlist) { mp_sessionlist = sessionlist; };
 	bool Connected() { return m_connected; };
 	void Disconnect();
 	void Connect();
 	bool Occupied() { return m_occupied; };
 	void Occupy();
 	void Free();
+	QString WorkingDir();
+	void Get(QString src, QString dst, FtpSession* dstsession);
 	
 private:
 	FtpThread *mp_ftpthread;
 	EventHandler *mp_eventhandler;
-	QMutex *mp_mutex;
 	siteinfo *mp_siteinfo;
 	QTextEdit *mp_logwindow;
-	QToolButton *mp_connectbutton, *mp_refreshbutton;
+	QToolButton *mp_connectbutton, *mp_refreshbutton, *mp_transferbutton;
 	QLineEdit *mp_cwdline, *mp_cmdline;
 	QPopupMenu* mp_bookmarksmenu, *mp_rclickmenu;
 	QListView *mp_browser;
@@ -84,10 +89,12 @@ private:
 	list<logentries> m_loglist;
 	QPixmap m_iconencrypted, m_iconunencrypted;
 	QHeader *mp_header;
+	list<FtpSession*> *mp_sessionlist;
 	
 public slots:
 	void SLOT_Log(QString log, bool out);
 	void SLOT_Xfered(int xfered, bool encrypted);
+	void SLOT_XferDone();
 	void SLOT_ActionMenu(int i);
 	void SLOT_ConnectMenu(int i);
 	void SLOT_HeaderClicked(int section);
@@ -98,10 +105,12 @@ public slots:
 	void SLOT_Login(bool success);
 	void SLOT_Pwd(bool success, QString pwd);
 	void SLOT_Misc(bool success);
+	void SLOT_Get(bool success);
 	void SLOT_EncryptData(bool success, bool enabled);
 	void SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist);
 	void SLOT_ConnectButton();
 	void SLOT_RefreshButton();
+	void SLOT_TransferButton();
 	void SLOT_CwdLine();
 	void SLOT_CmdLine();
 	void SLOT_Finish();
@@ -112,6 +121,9 @@ private:
 	void RefreshBrowser();
 	void UpdateLocal(QString cwd = "");
 	void RmdirLocal(QString dir);
+signals:
+	void gui_update();
+	void gui_queueitems(list<kbitem*> items, FtpSession *src, FtpSession *dst, bool start);
 };
 
 #endif

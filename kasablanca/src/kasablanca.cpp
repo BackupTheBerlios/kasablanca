@@ -83,16 +83,19 @@
 
 Kasablanca::Kasablanca()
     : KMainWindow( 0, "Kasablanca" ),
-      m_view(new KasablancaMainWindow(this))
+      mp_view(new KasablancaMainWindow(this))
 {
 
 	/* new stuff */
 	mp_session_a = new FtpSession(this, "session a");
 	mp_session_b = new FtpSession(this, "session b");
+	mp_sessionlist = new list<FtpSession*>;
+	mp_sessionlist->push_back(mp_session_a);
+	mp_sessionlist->push_back(mp_session_b);
 	/* / new stuff */
 	
     setAcceptDrops(true);
-    setCentralWidget(m_view);
+    setCentralWidget(mp_view);
     setupGUI();
     setupActions();
     setupStatusBar();
@@ -137,46 +140,57 @@ Kasablanca::Kasablanca()
     //connect(&m_proc_a, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
     //connect(&m_proc_b, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
     
-	 connect(m_view->BrowserB, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
-    connect(m_view->BrowserA, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
-    connect(m_view->TaskView, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
-    connect(m_view->TransferButtonA, SIGNAL(clicked()), SLOT(SLOT_TransferA()));
-    connect(m_view->TransferButtonB, SIGNAL(clicked()), SLOT(SLOT_TransferB()));
+	 connect(mp_view->BrowserB, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
+    connect(mp_view->BrowserA, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
+    connect(mp_view->TaskView, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
 	 
 	 /* new stuff */
 	 
-	 mp_session_a->SetLogWindow(m_view->LogWindowA);
-	 mp_session_a->SetBrowser(m_view->BrowserA);
-	 mp_session_a->SetConnectButton(m_view->ConnectButtonA);
-	 mp_session_a->SetRefreshButton(m_view->RefreshButtonA);
-	 mp_session_a->SetCmdLine(m_view->CommandLineA);
-	 mp_session_a->SetCwdLine(m_view->CwdLineA);
+	 mp_session_a->SetLogWindow(mp_view->LogWindowA);
+	 mp_session_a->SetBrowser(mp_view->BrowserA);
+	 mp_session_a->SetConnectButton(mp_view->ConnectButtonA);
+	 mp_session_a->SetRefreshButton(mp_view->RefreshButtonA);
+	 mp_session_a->SetTransferButton(mp_view->TransferButtonA);
+	 mp_session_a->SetCmdLine(mp_view->CommandLineA);
+	 mp_session_a->SetCwdLine(mp_view->CwdLineA);
 	 mp_session_a->SetBookmarksMenu(&m_bookmarksmenu_a);
 	 mp_session_a->SetStatusLine(mp_statusline_a);
 	 mp_session_a->SetEncryptionIcon(mp_encryptionicon_a);
 	 mp_session_a->SetRclickMenu(&m_rclickmenu_a);
+	 mp_session_a->SetSessionList(mp_sessionlist);
 	 
-	 connect(m_view->RefreshButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_RefreshButton()));
-	 connect(m_view->ConnectButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_ConnectButton()));
-	 connect(m_view->CwdLineA, SIGNAL(returnPressed()), mp_session_a, SLOT(SLOT_CwdLine()));
-	 connect(m_view->CommandLineA, SIGNAL(returnPressed()), mp_session_a, SLOT(SLOT_CmdLine()));
+	 connect(mp_view->RefreshButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_RefreshButton()));
+	 connect(mp_view->ConnectButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_ConnectButton()));
+	 connect(mp_view->TransferButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_TransferButton()));
+	 connect(mp_view->CwdLineA, SIGNAL(returnPressed()), mp_session_a, SLOT(SLOT_CwdLine()));
+	 connect(mp_view->CommandLineA, SIGNAL(returnPressed()), mp_session_a, SLOT(SLOT_CmdLine()));
 	 
-	 mp_session_b->SetLogWindow(m_view->LogWindowB);
-	 mp_session_b->SetBrowser(m_view->BrowserB);
-	 mp_session_b->SetConnectButton(m_view->ConnectButtonB);
-	 mp_session_b->SetRefreshButton(m_view->RefreshButtonB);
-	 mp_session_b->SetCmdLine(m_view->CommandLineB);
-	 mp_session_b->SetCwdLine(m_view->CwdLineB);
+	 mp_session_b->SetLogWindow(mp_view->LogWindowB);
+	 mp_session_b->SetBrowser(mp_view->BrowserB);
+	 mp_session_b->SetConnectButton(mp_view->ConnectButtonB);
+	 mp_session_b->SetRefreshButton(mp_view->RefreshButtonB);
+	 mp_session_b->SetTransferButton(mp_view->TransferButtonB);
+	 mp_session_b->SetCmdLine(mp_view->CommandLineB);
+	 mp_session_b->SetCwdLine(mp_view->CwdLineB);
 	 mp_session_b->SetBookmarksMenu(&m_bookmarksmenu_b);
 	 mp_session_b->SetStatusLine(mp_statusline_b);
 	 mp_session_b->SetEncryptionIcon(mp_encryptionicon_b);
 	 mp_session_b->SetRclickMenu(&m_rclickmenu_b);
+	 mp_session_b->SetSessionList(mp_sessionlist);
 	 
-	 connect(m_view->RefreshButtonB, SIGNAL(clicked()), mp_session_b, SLOT(SLOT_RefreshButton()));
-	 connect(m_view->ConnectButtonB, SIGNAL(clicked()), mp_session_b, SLOT(SLOT_ConnectButton()));
-	 connect(m_view->CwdLineB, SIGNAL(returnPressed()), mp_session_b, SLOT(SLOT_CwdLine()));
-	 connect(m_view->CommandLineB, SIGNAL(returnPressed()), mp_session_b, SLOT(SLOT_CmdLine()));
+	 connect(mp_view->RefreshButtonB, SIGNAL(clicked()), mp_session_b, SLOT(SLOT_RefreshButton()));
+	 connect(mp_view->ConnectButtonB, SIGNAL(clicked()), mp_session_b, SLOT(SLOT_ConnectButton()));
+    connect(mp_view->TransferButtonB, SIGNAL(clicked()), mp_session_b, SLOT(SLOT_TransferButton()));
+	 connect(mp_view->CwdLineB, SIGNAL(returnPressed()), mp_session_b, SLOT(SLOT_CwdLine()));
+	 connect(mp_view->CommandLineB, SIGNAL(returnPressed()), mp_session_b, SLOT(SLOT_CmdLine()));
 	 
+	 connect(mp_session_a, SIGNAL(gui_update()), SLOT(SLOT_SelectionChanged()));
+	 connect(mp_session_b, SIGNAL(gui_update()), SLOT(SLOT_SelectionChanged()));
+	 connect(mp_session_a, SIGNAL(gui_queueitems(list<kbitem*>, FtpSession*, FtpSession*, bool)), 
+	 	SLOT(SLOT_QueueItems(list<kbitem*>, FtpSession*, FtpSession*, bool)));
+	connect(mp_session_b, SIGNAL(gui_queueitems(list<kbitem*>, FtpSession*, FtpSession*, bool)), 
+	 	SLOT(SLOT_QueueItems(list<kbitem*>, FtpSession*, FtpSession*, bool)));
+	 	 
 	 mp_session_a->Disconnect();
 	 mp_session_b->Disconnect();
 	 
@@ -186,19 +200,19 @@ Kasablanca::Kasablanca()
 
 void Kasablanca::setupGUI() 
 {
-    m_view->TaskView->setSorting(-1);
-    m_view->BrowserA->setSorting(-1);
-    m_view->BrowserB->setSorting(-1);
+    mp_view->TaskView->setSorting(-1);
+    mp_view->BrowserA->setSorting(-1);
+    mp_view->BrowserB->setSorting(-1);
 
-    mp_header_a = m_view->BrowserA->header();
-    mp_header_b = m_view->BrowserB->header();
+    mp_header_a = mp_view->BrowserA->header();
+    mp_header_b = mp_view->BrowserB->header();
 
-    m_view->TransferButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("forward",KIcon::Toolbar));
-    m_view->TransferButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("back",KIcon::Toolbar));
-    m_view->RefreshButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
-    m_view->RefreshButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
-    m_view->ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
-    m_view->ConnectButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
+    mp_view->TransferButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("forward",KIcon::Toolbar));
+    mp_view->TransferButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("back",KIcon::Toolbar));
+    mp_view->RefreshButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
+    mp_view->RefreshButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
+    mp_view->ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
+    mp_view->ConnectButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
 }
 
 void Kasablanca::setupActions()
@@ -243,7 +257,7 @@ void Kasablanca::optionsShowStatusbar()
 
 void Kasablanca::optionsConfigureKeys()
 {
-    KKeyDialog::configure(actionCollection(), m_view);
+    KKeyDialog::configure(actionCollection(), mp_view);
 }
 
 void Kasablanca::optionsConfigureToolbars()
@@ -334,21 +348,21 @@ void Kasablanca::setupMenu()
 	
 	connect(&m_rclickmenu_a, SIGNAL(activated(int)), mp_session_a, SLOT(SLOT_ActionMenu(int)));
 	connect(&m_bookmarksmenu_a, SIGNAL(activated(int)), mp_session_a, SLOT(SLOT_ConnectMenu(int)));     
-	connect(m_view->BrowserA, SIGNAL(doubleClicked(QListViewItem*)), mp_session_a, SLOT(SLOT_ItemClicked(QListViewItem*)));
-	connect(m_view->BrowserA, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)), 
+	connect(mp_view->BrowserA, SIGNAL(doubleClicked(QListViewItem*)), mp_session_a, SLOT(SLOT_ItemClicked(QListViewItem*)));
+	connect(mp_view->BrowserA, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)), 
 		mp_session_a, SLOT(SLOT_ItemRClicked(QListViewItem *, const QPoint &, int)));
-	connect(m_view->BrowserA->header(), SIGNAL (clicked(int)), mp_session_a, SLOT (SLOT_HeaderClicked(int)));
+	connect(mp_view->BrowserA->header(), SIGNAL (clicked(int)), mp_session_a, SLOT (SLOT_HeaderClicked(int)));
 		
 	connect(&m_rclickmenu_b, SIGNAL(activated(int)), mp_session_b, SLOT(SLOT_ActionMenu(int)));
 	connect(&m_bookmarksmenu_b, SIGNAL(activated(int)), mp_session_b, SLOT(SLOT_ConnectMenu(int)));     
-	connect(m_view->BrowserB, SIGNAL(doubleClicked(QListViewItem*)), mp_session_b, SLOT(SLOT_ItemClicked(QListViewItem*)));
-	connect(m_view->BrowserB, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)), 
+	connect(mp_view->BrowserB, SIGNAL(doubleClicked(QListViewItem*)), mp_session_b, SLOT(SLOT_ItemClicked(QListViewItem*)));
+	connect(mp_view->BrowserB, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)), 
 		mp_session_b, SLOT(SLOT_ItemRClicked(QListViewItem *, const QPoint &, int)));
-	connect(m_view->BrowserB->header(), SIGNAL(clicked(int)), mp_session_b, SLOT(SLOT_HeaderClicked(int)));
+	connect(mp_view->BrowserB->header(), SIGNAL(clicked(int)), mp_session_b, SLOT(SLOT_HeaderClicked(int)));
 		
 	/* /new stuff */
 		
-	connect( m_view->TaskView, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
+	connect( mp_view->TaskView, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
 			SLOT (SLOT_ItemRightClickedT(QListViewItem *, const QPoint &, int )));
 
 	m_rclickmenu_t.connectItem(Start, this, SLOT(SLOT_StartQueue()));
@@ -404,6 +418,42 @@ int Kasablanca::initBookmarks()
    return 1;
 }
 
+void Kasablanca::SLOT_QueueItems(list<kbitem*> items, FtpSession* src, FtpSession* dst, bool start)
+{
+	for (list<kbitem*>::iterator i = items.begin(); i != items.end(); i++)
+	{
+		if ((*i)->rtti() == kbitem::dir) new transferdir(
+			mp_view->TaskView, 
+			mp_view->TaskView->lastItem(), 
+			src,
+			dst,
+			new KbFileInfo(*i, src->WorkingDir()),
+			new KbFileInfo(*i, dst->WorkingDir())
+		);
+		else if ((*i)->rtti() == kbitem::file) new transferfile(
+			mp_view->TaskView, 
+			mp_view->TaskView->lastItem(), 
+			src,
+			dst,
+			new KbFileInfo(*i, src->WorkingDir()),
+			new KbFileInfo(*i, dst->WorkingDir())
+		);
+		(*i)->setSelected(false);
+		(*i)->repaint();
+	}
+	if (start) SLOT_ProcessQueue();
+}
+
+void Kasablanca::SLOT_ProcessQueue()
+{
+	while (mp_view->TaskView->firstChild())
+	{
+		transferitem *ti = static_cast<transferitem*>(mp_view->TaskView->firstChild());
+		ti->Transfer();
+		delete ti;
+	}
+}
+
 void Kasablanca::SLOT_EditBookmarks()
 {
     BookmarkDialog dlg;
@@ -422,28 +472,12 @@ void Kasablanca::SLOT_ItemRightClickedT(QListViewItem *, const QPoint & point, i
 
 void Kasablanca::SLOT_SkipTasks()
 {
-    QListViewItemIterator it(m_view->TaskView);
+    QListViewItemIterator it(mp_view->TaskView);
     while ( it.current() )
     {
         if (it.current()->isSelected()) delete it.current();
         else ++it;
     }
-}
-
-void Kasablanca::closeEvent( QCloseEvent * e )
-{
-	if (m_status_a != disconnected)
-	{
-		m_proc_a.writeStdin("quit");
-	}
-	if (m_status_b != disconnected)
-	{
-		m_proc_b.writeStdin("quit");
-	}
-	
-	if ((m_status_a == disconnected) && (m_status_b == disconnected)) e->accept();
-
-    kapp->exit();
 }
 
 void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* begin)
@@ -454,29 +488,29 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 	{
 		case transferitem::download_a_to_b:
 		{
-			QListViewItemIterator it(m_view->BrowserA);
+			QListViewItemIterator it(mp_view->BrowserA);
 			while (it.current())
 			{	
 				if (it.current()->isSelected())
 				{
 					QListViewItem* item = it.current();
 
-					QFileInfo filocal(m_currentlocaldir_b.absPath(), static_cast<diritem*>(item)->m_file);
-					RemoteFileInfo firemote(static_cast<kbitem*>(item)->m_path,
-						static_cast<diritem*>(item)->m_file,
-						static_cast<diritem*>(item)->m_size,
-						static_cast<diritem*>(item)->m_date,
-						static_cast<diritem*>(item)->m_date_int);
+					QFileInfo filocal(m_currentlocaldir_b.absPath(), static_cast<diritem*>(item)->File());
+					RemoteFileInfo firemote(static_cast<kbitem*>(item)->Path(),
+						static_cast<diritem*>(item)->File(),
+						static_cast<diritem*>(item)->Size(),
+						static_cast<diritem*>(item)->Date(),
+						static_cast<diritem*>(item)->DateInt());
 					
 					if (item->rtti() == 1001)
 					{	
 						qWarning("download a directory from a to b...");
-						lastitem = new transferdir(m_view->TaskView, lastitem, filocal, firemote, t);
+						lastitem = new transferdir(mp_view->TaskView, lastitem, filocal, firemote, t);
 					}
 					else if (item->rtti() == 1002)
 					{
 						qWarning("download a file from a to b...");
-						lastitem = new transferfile(m_view->TaskView, lastitem, filocal, firemote, t);
+						lastitem = new transferfile(mp_view->TaskView, lastitem, filocal, firemote, t);
 					}
 					item->setSelected(false);	
 				}
@@ -486,29 +520,29 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 		}
 		case transferitem::download_b_to_a:
 		{
-			QListViewItemIterator it(m_view->BrowserB);
+			QListViewItemIterator it(mp_view->BrowserB);
 			while (it.current())
 			{	
 				if (it.current()->isSelected())
 				{
 					QListViewItem* item = it.current();
 
-					QFileInfo filocal(m_currentlocaldir_a.absPath(), static_cast<diritem*>(item)->m_file);
-					RemoteFileInfo firemote(static_cast<kbitem*>(item)->m_path,
-						static_cast<diritem*>(item)->m_file,
-						static_cast<diritem*>(item)->m_size,
-						static_cast<diritem*>(item)->m_date,
-						static_cast<diritem*>(item)->m_date_int);
+					QFileInfo filocal(m_currentlocaldir_a.absPath(), static_cast<diritem*>(item)->File());
+					RemoteFileInfo firemote(static_cast<kbitem*>(item)->Path(),
+						static_cast<diritem*>(item)->File(),
+						static_cast<diritem*>(item)->Size(),
+						static_cast<diritem*>(item)->Date(),
+						static_cast<diritem*>(item)->DateInt());
 					
 					if (item->rtti() == 1001)
 					{	
 						qWarning("download a directory from b to a...");
-						lastitem = new transferdir(m_view->TaskView, lastitem, filocal, firemote, t);
+						lastitem = new transferdir(mp_view->TaskView, lastitem, filocal, firemote, t);
 					}
 					else if (item->rtti() == 1002)
 					{
 						qWarning("download a file from b to a...");
-						lastitem = new transferfile(m_view->TaskView, lastitem, filocal, firemote, t);
+						lastitem = new transferfile(mp_view->TaskView, lastitem, filocal, firemote, t);
 					}
 					item->setSelected(false);	
 				}
@@ -518,29 +552,29 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 		}
 		case transferitem::upload_a_to_b:
 		{
-			QListViewItemIterator it(m_view->BrowserA);
+			QListViewItemIterator it(mp_view->BrowserA);
 			while (it.current())
 			{	
 				if (it.current()->isSelected())
 				{
 					QListViewItem* item = it.current();
 
-					QFileInfo filocal(m_currentlocaldir_a.absPath(), static_cast<kbitem*>(item)->m_file);
+					QFileInfo filocal(m_currentlocaldir_a.absPath(), static_cast<kbitem*>(item)->File());
 					RemoteFileInfo firemote(m_currentremotedir_b,
-						static_cast<diritem*>(item)->m_file,
-						static_cast<diritem*>(item)->m_size,
-						static_cast<diritem*>(item)->m_date,
-						static_cast<diritem*>(item)->m_date_int);
+						static_cast<diritem*>(item)->File(),
+						static_cast<diritem*>(item)->Size(),
+						static_cast<diritem*>(item)->Date(),
+						static_cast<diritem*>(item)->DateInt());
 					
 					if (item->rtti() == 1001)
 					{	
 						qWarning("upload a directory from a to b...");
-						lastitem = new transferdir(m_view->TaskView, lastitem, filocal, firemote, t);
+						lastitem = new transferdir(mp_view->TaskView, lastitem, filocal, firemote, t);
 					}
 					else if (item->rtti() == 1002)
 					{
 						qWarning("upload a file from a to b...");
-						lastitem = new transferfile(m_view->TaskView, lastitem, filocal, firemote, t);
+						lastitem = new transferfile(mp_view->TaskView, lastitem, filocal, firemote, t);
 					}
 					item->setSelected(false);	
 				}
@@ -550,29 +584,29 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 		}
 		case transferitem::upload_b_to_a:
 		{
-			QListViewItemIterator it(m_view->BrowserB);
+			QListViewItemIterator it(mp_view->BrowserB);
 			while (it.current())
 			{	
 				if (it.current()->isSelected())
 				{
 					QListViewItem* item = it.current();
 
-					QFileInfo filocal(m_currentlocaldir_b.absPath(), static_cast<kbitem*>(item)->m_file);
+					QFileInfo filocal(m_currentlocaldir_b.absPath(), static_cast<kbitem*>(item)->File());
 					RemoteFileInfo firemote(m_currentremotedir_a,
-						static_cast<diritem*>(item)->m_file,
-						static_cast<diritem*>(item)->m_size,
-						static_cast<diritem*>(item)->m_date,
-						static_cast<diritem*>(item)->m_date_int);
+						static_cast<diritem*>(item)->File(),
+						static_cast<diritem*>(item)->Size(),
+						static_cast<diritem*>(item)->Date(),
+						static_cast<diritem*>(item)->DateInt());
 					
 					if (item->rtti() == 1001)
 					{	
 						qWarning("upload a directory from b to a...");
-						lastitem = new transferdir(m_view->TaskView, lastitem, filocal, firemote, t);
+						lastitem = new transferdir(mp_view->TaskView, lastitem, filocal, firemote, t);
 					}
 					else if (item->rtti() == 1002)
 					{
 						qWarning("upload a file from b to a...");
-						lastitem = new transferfile(m_view->TaskView, lastitem, filocal, firemote, t);
+						lastitem = new transferfile(mp_view->TaskView, lastitem, filocal, firemote, t);
 					}
 					item->setSelected(false);	
 				}
@@ -580,9 +614,10 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 			}	
 			break;
 		}
+		/*
 		case transferitem::fxp_a_to_b:
 		{
-			QListViewItemIterator it(m_view->BrowserA);
+			QListViewItemIterator it(mp_view->BrowserA);
 			while (it.current())
 			{
 				if (it.current()->isSelected())
@@ -604,12 +639,12 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 					if (item->rtti() == 1001)
 					{
 						qWarning("fxp a directory from a to b...");
-						lastitem = new transferdir(m_view->TaskView, lastitem, fifxpsrc, fifxpdst, t);
+						lastitem = new transferdir(mp_view->TaskView, lastitem, fifxpsrc, fifxpdst, t);
 					}
 					else if (item->rtti() == 1002)
 					{
 						qWarning("fxp a file from a to b...");
-						lastitem = new transferfile(m_view->TaskView, lastitem, fifxpsrc, fifxpdst, t);
+						lastitem = new transferfile(mp_view->TaskView, lastitem, fifxpsrc, fifxpdst, t);
 					}
 					item->setSelected(false);
 				}
@@ -619,7 +654,7 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 		}
 		case transferitem::fxp_b_to_a:
 		{
-			QListViewItemIterator it(m_view->BrowserB);
+			QListViewItemIterator it(mp_view->BrowserB);
 			while (it.current())
 			{
 				if (it.current()->isSelected())
@@ -641,12 +676,12 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 					if (item->rtti() == 1001)
 					{
 						qWarning("fxp a directory from b to a...");
-						lastitem = new transferdir(m_view->TaskView, lastitem, fifxpsrc, fifxpdst, t);
+						lastitem = new transferdir(mp_view->TaskView, lastitem, fifxpsrc, fifxpdst, t);
 					}
 					else if (item->rtti() == 1002)
 					{
 						qWarning("fxp a file from b to a...");
-						lastitem = new transferfile(m_view->TaskView, lastitem, fifxpsrc, fifxpdst, t);
+						lastitem = new transferfile(mp_view->TaskView, lastitem, fifxpsrc, fifxpdst, t);
 					}
 					item->setSelected(false);
 				}
@@ -654,6 +689,7 @@ void Kasablanca::InsertMarkedItems(transferitem::transfertype t, QListViewItem* 
 			}
 			break;
 		}
+		*/
 	}	
 }
 
@@ -667,19 +703,17 @@ void Kasablanca::Xfer()
 	QListView* remoteview, *view_fxpsrc, *view_fxpdst;
 	QueueState* qstate, *qstate_fxpsrc, *qstate_fxpdst;
 
-	if (m_view->TaskView->childCount() == 0)
+	if (mp_view->TaskView->childCount() == 0)
 	{
-		//SLOT_RefreshBrowserA();
-		//SLOT_RefreshBrowserB();
 		return;
 	}
 	else
 	{
-		m_view->TaskView->firstChild()->setSelected(false);
-		m_view->TaskView->firstChild()->setSelectable(false);
+		mp_view->TaskView->firstChild()->setSelected(false);
+		mp_view->TaskView->firstChild()->setSelectable(false);
 	}
 
-	transferitem* item = static_cast<transferitem*>(m_view->TaskView->firstChild());
+	transferitem* item = static_cast<transferitem*>(mp_view->TaskView->firstChild());
 
 	qWarning("item: %s", item->text(0).latin1());
 
@@ -689,7 +723,7 @@ void Kasablanca::Xfer()
 		proc = &m_proc_a;
 		remotebrowser = A;
 		localbrowser = B;
-		remoteview = m_view->BrowserA;
+		remoteview = mp_view->BrowserA;
 		remotedir = m_currentremotedir_a;
 		localdir = &m_currentlocaldir_b;
 		qstate = &m_qstate_a;
@@ -700,7 +734,7 @@ void Kasablanca::Xfer()
 		proc = &m_proc_b;
 		remotebrowser = B;
 		localbrowser = A;
-		remoteview = m_view->BrowserB;
+		remoteview = mp_view->BrowserB;
 		remotedir = m_currentremotedir_b;
 		localdir = &m_currentlocaldir_a;
 		qstate = &m_qstate_b;
@@ -713,8 +747,8 @@ void Kasablanca::Xfer()
 		proc_fxpdst = &m_proc_b;
 		browser_fxpsrc = A;
 		browser_fxpdst = B;
-		view_fxpsrc = m_view->BrowserA;
-		view_fxpdst = m_view->BrowserB;
+		view_fxpsrc = mp_view->BrowserA;
+		view_fxpdst = mp_view->BrowserB;
 		dir_fxpsrc = m_currentremotedir_a;
 		dir_fxpdst = m_currentremotedir_b;
 		qstate_fxpsrc = &m_qstate_a;
@@ -728,8 +762,8 @@ void Kasablanca::Xfer()
 		proc_fxpdst = &m_proc_a;
 		browser_fxpsrc = B;
 		browser_fxpdst = A;
-		view_fxpsrc = m_view->BrowserB;
-		view_fxpdst = m_view->BrowserA;
+		view_fxpsrc = mp_view->BrowserB;
+		view_fxpdst = mp_view->BrowserA;
 		dir_fxpsrc = m_currentremotedir_b;
 		dir_fxpdst = m_currentremotedir_a;
 		qstate_fxpsrc = &m_qstate_b;
@@ -790,7 +824,7 @@ void Kasablanca::Xfer()
 	if (item->rtti() == transferitem::dir)
 	{
 		qWarning("...is a dir");
-		transferdir* dir = static_cast<transferdir*>(m_view->TaskView->firstChild());
+		transferdir* dir = static_cast<transferdir*>(mp_view->TaskView->firstChild());
 
 		/*-------------upload/download---------------*/
 
@@ -869,7 +903,7 @@ void Kasablanca::Xfer()
 	else if (item->rtti() == transferitem::file)
 	{
 		qWarning("...is a file");
-		transferfile* file = static_cast<transferfile*>(m_view->TaskView->firstChild());
+		transferfile* file = static_cast<transferfile*>(mp_view->TaskView->firstChild());
 
 		/*-------------upload/download---------------*/
 
@@ -917,7 +951,7 @@ void Kasablanca::Xfer()
 					if (it.current()->rtti() == 1002)
 					{
 						fileitem* firemote = static_cast<fileitem*>(it.current());
-						if (offset < firemote->m_size)
+						if (offset < firemote->Size())
 							{
 								dialog.ResumeButton->setEnabled(true);
 							}
@@ -1107,38 +1141,38 @@ void Kasablanca::SLOT_SelectionChanged()
 	int counter_a = 0;
 	int counter_b = 0;
 	bool flag;
-
-	QListViewItemIterator ita(m_view->BrowserA);
+		
+	QListViewItemIterator ita(mp_view->BrowserA);
  	while ( ita.current() )
  	{
    	if (ita.current()->isSelected()) counter_a++;
    	++ita;
  	}
-
-	QListViewItemIterator itb(m_view->BrowserB);
- 	while ( itb.current() )
- 	{
-   	if (itb.current()->isSelected()) counter_b++;
-   	++itb;
- 	}
 	
-	//flag = ((counter_a != 0) && ((m_status_a == connected) || (m_status_b == connected)));
+	flag = ((counter_a) && (!mp_session_a->Occupied()) && (!mp_session_b->Occupied()));
 
-	m_rclickmenu_a.setItemEnabled(Transfer, false);
-	m_rclickmenu_a.setItemEnabled(Queue, false);
-	m_view->TransferButtonA->setEnabled(false);
+	m_rclickmenu_a.setItemEnabled(Transfer, flag);
+	m_rclickmenu_a.setItemEnabled(Queue, flag);
+	mp_view->TransferButtonA->setEnabled(flag);
 	
 	/* when at least one item is selected, Delete and Rename are
 	enabled. */
 	
 	m_rclickmenu_a.setItemEnabled(Rename, (counter_a >= 1));
 	m_rclickmenu_a.setItemEnabled(Delete, (counter_a >= 1));
-	
-	//flag = ((counter_b != 0) && ((m_status_a == connected) || (m_status_b == connected)));
 
-	m_rclickmenu_b.setItemEnabled(Transfer, false);
-	m_rclickmenu_b.setItemEnabled(Queue, false);
-	m_view->TransferButtonB->setEnabled(false);
+	QListViewItemIterator itb(mp_view->BrowserB);
+ 	while ( itb.current() )
+ 	{
+   	if (itb.current()->isSelected()) counter_b++;
+   	++itb;
+ 	}
+		
+	flag = ((counter_b) && (!mp_session_a->Occupied()) && (!mp_session_b->Occupied()));
+
+	m_rclickmenu_b.setItemEnabled(Transfer, flag);
+	m_rclickmenu_b.setItemEnabled(Queue, flag);
+	mp_view->TransferButtonB->setEnabled(flag);
 	
 	/* when at least one item is selected, Delete and Rename are
 	enabled. */
@@ -1149,6 +1183,26 @@ void Kasablanca::SLOT_SelectionChanged()
 
 void Kasablanca::SLOT_TransferA()
 {
+	if ((mp_session_a->Occupied()) || (mp_session_b->Occupied()))
+	{
+		qWarning("ERROR: transfer button clicked while one of the sessions is occupied");
+		return;
+	}
+	else if ((mp_session_a->Connected()) || (!mp_session_b->Connected()))
+	{
+		QListViewItemIterator it(mp_view->BrowserA);
+		while (it.current())
+		{
+			if (it.current()->isSelected()) 
+			{	
+				kbitem* item = static_cast<kbitem*>(it.current());
+				mp_session_a->Get(item->File(), mp_view->CwdLineB->text() + "/" + item->File(), mp_session_b);
+				return;
+			}
+			it++;
+		}
+	}
+	/*
 	qWarning("slot: SLOT_TransferA()");
 
 	if ((m_status_a == connected) && (m_status_b == disconnected))
@@ -1167,6 +1221,7 @@ void Kasablanca::SLOT_TransferA()
 		Xfer();
 		//KMessageBox::error(0,"site to site transfer (fxp) is not supported yet.");
 	}
+	*/
 }
 
 void Kasablanca::SLOT_TransferB()
@@ -1197,11 +1252,11 @@ void Kasablanca::SLOT_QueueA()
 
 	if ((m_status_a == connected) && (m_status_b == disconnected))
 	{
-		InsertMarkedItems(transferitem::download_a_to_b, m_view->TaskView->lastItem()); 
+		InsertMarkedItems(transferitem::download_a_to_b, mp_view->TaskView->lastItem()); 
 	}
 	else if ((m_status_a == disconnected) && (m_status_b == connected))
 	{
-		InsertMarkedItems(transferitem::upload_a_to_b, m_view->TaskView->lastItem()); 
+		InsertMarkedItems(transferitem::upload_a_to_b, mp_view->TaskView->lastItem()); 
 	}
 	else if ((m_status_a == connected) && (m_status_b == connected))
 	{
@@ -1216,11 +1271,11 @@ void Kasablanca::SLOT_QueueB()
 
 	if ((m_status_a == connected) && (m_status_b == disconnected))
 	{
-		InsertMarkedItems(transferitem::upload_b_to_a, m_view->TaskView->lastItem());
+		InsertMarkedItems(transferitem::upload_b_to_a, mp_view->TaskView->lastItem());
 	}
 	else if ((m_status_a == disconnected) && (m_status_b == connected))
 	{
-		InsertMarkedItems(transferitem::download_b_to_a, m_view->TaskView->lastItem());
+		InsertMarkedItems(transferitem::download_b_to_a, mp_view->TaskView->lastItem());
 	}	
 	else if ((m_status_a == connected) && (m_status_b == connected))
 	{
@@ -1251,11 +1306,11 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 		site = &m_site_a;
 		encryptionicon = mp_encryptionicon_a;
 		statusline = mp_statusline_a;
-		logwindow = m_view->LogWindowA;
+		logwindow = mp_view->LogWindowA;
 		log = &m_log_a;
 		b = A;
-		browser = m_view->BrowserA;
-		otherbrowser = m_view->BrowserB;
+		browser = mp_view->BrowserA;
+		otherbrowser = mp_view->BrowserB;
 		remotedir = &m_currentremotedir_a;
 		qstate = &m_qstate_a;
 	}
@@ -1264,11 +1319,11 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 		site = &m_site_b;
 		encryptionicon = mp_encryptionicon_b;
 		statusline = mp_statusline_b;
-		logwindow = m_view->LogWindowB;
+		logwindow = mp_view->LogWindowB;
 		log = &m_log_b;
 		b = B;
-		browser = m_view->BrowserB;
-		otherbrowser = m_view->BrowserA;
+		browser = mp_view->BrowserB;
+		otherbrowser = mp_view->BrowserA;
 		remotedir = &m_currentremotedir_b;
 		qstate = &m_qstate_b;
 	}
@@ -1309,7 +1364,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					else encryptionicon->setPixmap(m_iconunencrypted);	
 				
 					*qstate = xfer;
-					m_xferallsize = static_cast<transferitem*>(m_view->TaskView->firstChild())->m_firemote.size();
+					m_xferallsize = static_cast<transferitem*>(mp_view->TaskView->firstChild())->m_firemote.size();
 					m_xferresumesize = 0;
 					m_xfered = 0;
 					m_time.start();
@@ -1321,8 +1376,8 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					else encryptionicon->setPixmap(m_iconunencrypted);
 				
 					*qstate = xfer;
-					m_xferallsize = static_cast<transferitem*>(m_view->TaskView->firstChild())->m_firemote.size();
-					m_xferresumesize = static_cast<transferitem*>(m_view->TaskView->firstChild())->m_filocal.size();
+					m_xferallsize = static_cast<transferitem*>(mp_view->TaskView->firstChild())->m_firemote.size();
+					m_xferresumesize = static_cast<transferitem*>(mp_view->TaskView->firstChild())->m_filocal.size();
 					m_xfered = 0;
 					m_time.start();
 					startTimer(200);
@@ -1333,7 +1388,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					else encryptionicon->setPixmap(m_iconunencrypted);
 				
 					*qstate = xfer;
-					m_xferallsize = static_cast<transferitem*>(m_view->TaskView->firstChild())->m_filocal.size();
+					m_xferallsize = static_cast<transferitem*>(mp_view->TaskView->firstChild())->m_filocal.size();
 					m_xferresumesize = 0;
 					m_xfered = 0;
 					m_time.start();
@@ -1345,8 +1400,8 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					else encryptionicon->setPixmap(m_iconunencrypted);
 				
 					*qstate = xfer;
-					m_xferallsize = static_cast<transferitem*>(m_view->TaskView->firstChild())->m_filocal.size();
-					m_xferresumesize = static_cast<transferitem*>(m_view->TaskView->firstChild())->m_firemote.size();
+					m_xferallsize = static_cast<transferitem*>(mp_view->TaskView->firstChild())->m_filocal.size();
+					m_xferresumesize = static_cast<transferitem*>(mp_view->TaskView->firstChild())->m_firemote.size();
 					m_xfered = 0;
 					m_time.start();
 					startTimer(200);
@@ -1415,8 +1470,8 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					
 					if (*qstate > changedir)
 					{
-						qWarning("delete item: %s", m_view->TaskView->firstChild()->text(0).latin1());
-						delete m_view->TaskView->firstChild();
+						qWarning("delete item: %s", mp_view->TaskView->firstChild()->text(0).latin1());
+						delete mp_view->TaskView->firstChild();
 					}
 					
 					if (*qstate == scanremote)
@@ -1533,7 +1588,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 			else if (s == "kb.quit")
 			{
 				/* on connection changes the task view has to be cleared */
-				while (QListViewItem* tmpviewitem = m_view->TaskView->firstChild()) delete tmpviewitem;
+				while (QListViewItem* tmpviewitem = mp_view->TaskView->firstChild()) delete tmpviewitem;
 				
 				//UpdateLocalDisplay(b);
 				//SetGuiStatus(disconnected, b);
@@ -1545,8 +1600,8 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 
 void Kasablanca::timerEvent(QTimerEvent*)
 {
-	if (!m_view->TaskView->firstChild()) return;
-	else m_view->TaskView->firstChild()->setText(1, 
+	if (!mp_view->TaskView->firstChild()) return;
+	else mp_view->TaskView->firstChild()->setText(1, 
 		"[" +
 		QString::number((m_xfered + m_xferresumesize) >> 10) +
 		"kb of " +
@@ -1561,7 +1616,7 @@ void Kasablanca::timerEvent(QTimerEvent*)
 
 void Kasablanca::EndXfer()
 {
-	if (m_view->TaskView->firstChild()) delete m_view->TaskView->firstChild();
+	if (mp_view->TaskView->firstChild()) delete mp_view->TaskView->firstChild();
 	m_qstate_a = done;
 	m_qstate_b = done;
 }

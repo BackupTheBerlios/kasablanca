@@ -32,7 +32,7 @@ public:
 	diritem(RemoteFileInfo* rfi, QListView * parent, QListViewItem * after);
 	diritem(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int);
 	~diritem();
-    int rtti() const;
+	int rtti() const;
 };
 
 #endif

@@ -29,10 +29,12 @@ class transferfile : public transferitem
 {
 public:
 	//transferfile(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
+	transferfile(QListView *taskview, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst);
 	transferfile(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
 	transferfile(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type);
     ~transferfile();
 	int rtti() const;
+	void Transfer();
 };
 
 #endif

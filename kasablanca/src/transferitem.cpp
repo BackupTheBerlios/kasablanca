@@ -17,7 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+ 
+#include "kbfileinfo.h"
+
 #include "transferitem.h"
+
 
 /*transferitem::transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
  : QListViewItem(taskview, taskview->lastItem())
@@ -31,6 +35,16 @@
 	if (type == transferitem::upload_a_to_b) setText(0, "upload " + firemote.fileName() + " >>");
 	if (type == transferitem::upload_b_to_a) setText(0, "upload " + firemote.fileName() + " <<");
 }*/
+
+transferitem::transferitem(QListView *taskview, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst) : QListViewItem(taskview, after)
+{
+	mp_srcsession = srcsession;
+	mp_dstsession = dstsession;
+	mp_src = src;
+	mp_dst = dst;
+	
+	setText(0, src->fileName());
+}
 
 transferitem::transferitem(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
  : QListViewItem(taskview, after)
@@ -58,9 +72,16 @@ transferitem::transferitem(QListView* taskview, QListViewItem* after, RemoteFile
 
 transferitem::~transferitem()
 {
+	delete mp_src;
+	delete mp_dst;
 }
 
 int transferitem::type()
 {
 	return m_type;
+}
+
+void transferitem::Transfer()
+{
+
 }

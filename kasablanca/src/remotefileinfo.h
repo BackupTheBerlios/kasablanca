@@ -33,9 +33,9 @@ public:
     QString date();
 	uint date_int();
 private:
-    uint m_size;
+   uint m_size;
 	uint m_date_int;
-    QString m_date;
+	QString m_date;
 };
 
 #endif
