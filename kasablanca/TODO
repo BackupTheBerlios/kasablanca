@@ -1,16 +1,24 @@
-v 0.3.2
+v 0.4 pre1
 
+-abort transfers
+-delete queue on connect changes
 -size variable is too small for calculations?
--close won't work if browserB is connected.
--when fxp fails at the last item...
--recursive delete
+-fxp
+
+v 0.4
+
+-get rid of this eventhandler stuff
+-add waiting window
+-make log colouring dependent on the answer code
 -add alternative fxp
 -define standard directory in bookmarks
 -update FormatFileList(), make it use qt stuff instead of c
 -remember dirlistings (caching)
 -move tasks in taskview
 -auto-adjustment for the header
--check if filesize variables are ok
+-add custom color stuff
+-skip all files functionality
+-skiplist
 
 v 0.5
 
