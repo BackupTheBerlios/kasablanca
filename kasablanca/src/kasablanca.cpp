@@ -63,6 +63,7 @@
 #include "fileitem.h"
 #include "customconnectdialog.h"
 #include "fileexistsdialog.h"
+#include "bookmarks.h"
 #include "bookmarkdialog.h"
 #include "remotefileinfo.h"
 #include "transferdir.h"
@@ -78,9 +79,9 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 
 	setWFlags(WDestructiveClose);
 			
-	/* if parsebookmarks returns false, an error box appears */
+	/* if initbookmarks returns false, an error box appears */
 	
-	if (ParseBookmarks() != 1) KMessageBox::error(0,"could not open kasablanca bookmark xml.");
+	if (initBookmarks() != 1) KMessageBox::error(0,"could not open kasablanca bookmark xml.");
 
 	//when developing you might want to change the following line to the kbftp path
 	//and disable the other two lines. */
@@ -436,11 +437,12 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 
 void Kasablanca::SLOT_EditBookmarks()
 {
-	BookmarkDialog dlg;
-	if (dlg.exec() == QDialog::Accepted)
-	{
-		ParseBookmarks();
-	}
+    BookmarkDialog dlg;
+    
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        initBookmarks();
+    }
 }
 
 void Kasablanca::ConnectBookmark(int n, Browser b)
@@ -601,86 +603,25 @@ void Kasablanca::SLOT_ConnectB(int i)
 	else ConnectBookmark(i-1, B);
 }
 
-int Kasablanca::ParseBookmarks()
+int Kasablanca::initBookmarks()
 {
-	QFileInfo fi(QDir::homeDirPath() + "/.kasablanca/bookmarks.xml");
-	if (fi.exists() == false)
-	{
-		if (QDir::home().mkdir(".kasablanca") == false) return -1;
-		QDomDocument doc( "KasablancaBookmarks" );
-		QDomElement root = doc.createElement( "kasablanca" );
-		doc.appendChild( root );
-		QFile fileout( QDir::homeDirPath() + "/.kasablanca/bookmarks.xml" );
-  		if( !fileout.open( IO_WriteOnly ) ) return -1;
+    m_bookmarks.clear();
+    m_bookmarks = bookmarks.getBookmarks();
+    
+    m_bookmarksmenu_a.clear();
+    m_bookmarksmenu_b.clear();
+    
+    m_bookmarksmenu_a.insertItem("Custom",0);
+    m_bookmarksmenu_b.insertItem("Custom",0);
+    
+    m_bookmarksmenu_a.insertSeparator();
+    m_bookmarksmenu_b.insertSeparator();
 
-  		QTextStream ts( &fileout );
-  		ts << doc.toString();
-  		fileout.close();
-	}
-
-	QDomDocument doc( "KasablancaBookmarks" );
-	QFile filein( QDir::homeDirPath() + "/.kasablanca/bookmarks.xml" );
-	if( !filein.open( IO_ReadOnly ) ) return -1;
-	if( !doc.setContent( &filein ) )
-	{
-  		filein.close();
-  		return -2;
-	}
-	filein.close();
-
-	m_bookmarks.clear();
-
-	QDomElement root = doc.documentElement();
-	if( root.tagName() != "kasablanca" ) return -3;
-
-	QDomNode curNode = root.firstChild();
-	while( !curNode.isNull() )
-	{
-		QDomElement siteElement = curNode.toElement();
-		if( !siteElement.isNull() )
-		{
-			if( siteElement.tagName() == "site" )
-			{
-				siteinfo entry;
-
-				entry.SetPasv(1);
-            entry.SetTls(0);
-            entry.SetName(siteElement.attribute( "name", "" ).latin1());
-
-				QDomNode siteNode = siteElement.firstChild();
-				while( !siteNode.isNull() )
-				{
-					QDomElement curElement = siteNode.toElement();
-					if( !curElement.isNull() )
-					{
-						if( curElement.tagName() == "user" ) entry.SetUser(curElement.text().latin1());
-						if( curElement.tagName() == "pass" ) entry.SetPass(curElement.text().latin1());
-						if( curElement.tagName() == "info" ) entry.SetInfo(curElement.text().latin1());
-						if( curElement.tagName() == "pasv" ) entry.SetPasv(curElement.text().toInt());
-						if( curElement.tagName() == "tls" ) entry.SetTls(curElement.text().toInt());
-					}
-					siteNode = siteNode.nextSibling();
-				}
-				if (entry.CheckContent()) m_bookmarks.push_back(entry);
-			}
-		}
-		curNode = curNode.nextSibling();
-	}
-
-	m_bookmarksmenu_a.clear();
-	m_bookmarksmenu_b.clear();
-	
-	m_bookmarksmenu_a.insertItem("Custom",0);
-	m_bookmarksmenu_b.insertItem("Custom",0);
-	
-	m_bookmarksmenu_a.insertSeparator();
-	m_bookmarksmenu_b.insertSeparator();
-	
-	for (int i = 0; i < static_cast<int>(m_bookmarks.size()); i++)
-   {
-		m_bookmarksmenu_a.insertItem(m_bookmarks.at(i).GetName(),i + 1);
-   	m_bookmarksmenu_b.insertItem(m_bookmarks.at(i).GetName(),i + 1);
-   }
+    for (int i = 0; i < static_cast<int>(m_bookmarks.size()); i++)
+    {
+        m_bookmarksmenu_a.insertItem(m_bookmarks.at(i).GetName(),i + 1);
+        m_bookmarksmenu_b.insertItem(m_bookmarks.at(i).GetName(),i + 1);
+    }
 
    return 1;
 }

@@ -46,6 +46,8 @@ public:
 	void SetName(const char *name);
 	int CheckContent();
 	void Clear();
+        bool isGroup();
+        void setIsGroup(bool g);
 private:
 	char *mp_info;
 	char *mp_dir;
@@ -58,6 +60,7 @@ private:
 	string m_pass;
 	int m_pasv;
 	int m_tls;
+        bool b_isGroup;
 };
 
 #endif

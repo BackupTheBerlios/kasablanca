@@ -136,3 +136,12 @@ void siteinfo::Clear()
 	m_pasv = 0;
 	m_tls = 0;
 }
+
+void siteinfo::setIsGroup(bool g)
+{
+}
+
+bool siteinfo::isGroup()
+{
+    return(false);
+}

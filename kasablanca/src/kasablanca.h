@@ -35,6 +35,7 @@ class QPixmap;
 #include <qdir.h>
 #include <vector>
 #include <qmenubar.h>
+#include "bookmarks.h"
 #include "transferitem.h"
 #include "siteinfo.h"
 #include "kbprocess.h"
@@ -157,7 +158,7 @@ private:
 	void Xfer();
 	void InsertMarkedItems(transferitem::transfertype t, QListViewItem* begin = NULL);
 	void UpdateLocalDisplay(Browser x);
-	int ParseBookmarks();
+	int initBookmarks();
 	void SetGuiStatus(State s, Browser b);
 	void UpdateRemote(Browser b);
 	void UpdateRemoteDisplay(QString dirfile, Browser b);
@@ -171,6 +172,7 @@ private:
 	void closeEvent(QCloseEvent * e);
 	
 	kbprocess m_proc_a, m_proc_b;
+        Bookmarks bookmarks;
 	State m_status_a, m_status_b;
 	QDir m_currentlocaldir_a, m_currentlocaldir_b;
 	QString m_currentremotedir_a, m_currentremotedir_b;

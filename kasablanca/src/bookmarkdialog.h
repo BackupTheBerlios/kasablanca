@@ -22,6 +22,7 @@
 
 #include <Q_bookmarkdialog.h>
 #include "siteinfo.h"
+#include "bookmarks.h"
 #include <vector>
 
 /**
@@ -46,8 +47,7 @@ private:
 	void RefreshEntry(siteinfo site);
 	void EnableInput(bool b);
 	vector<siteinfo> m_bookmarks;
-	int WriteBookmarks();
-	int ParseBookmarks();
+        Bookmarks bookmarks;
 };
 
 #endif
