@@ -1,5 +1,7 @@
 [v 0.4.0.1]
 
+-fixed evil flaw in local delete method, added option to move 
+ files into trash instead
 -import gftp bookmarks [crissi]
 -added polish translation [tomwal]
 -fixed compilation error

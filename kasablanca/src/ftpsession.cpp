@@ -202,8 +202,16 @@ void FtpSession::SLOT_ActionMenu(int i)
 					int warning = KMessageBox::warningContinueCancel(0, i18n("Delete this item?"), item->File());
 					if (warning == KMessageBox::Continue)
 					{
-						if (item->rtti() == KbItem::dir) RmdirLocal(item->File());
-						else if (item->rtti() == KbItem::file) m_localworkingdir.remove(item->File());
+						if (KbConfig::deleteMovesIntoTrashIsEnabled())
+						{
+							system(QString("mv " + m_localworkingdir.absPath() + "/" + item->File() +
+								+ " " + KGlobalSettings::trashPath()).latin1());
+						}
+						else
+						{
+							if (item->rtti() == KbItem::dir) RmdirLocal(item->File());
+							else if (item->rtti() == KbItem::file) m_localworkingdir.remove(item->File());
+						}
 					}
 				}
 				it++;
@@ -769,25 +777,33 @@ void FtpSession::UpdateLocal(QString cwd)
 	if (KbConfig::hideHiddenFilesIsEnabled()) FilterHiddenFiles(true);
 }
 
-void FtpSession::RmdirLocal(QString dir)
+bool FtpSession::RmdirLocal(QString dir)
 {
 	QStringList filelist, dirlist;
 	QString olddir;
 	
 	olddir = m_localworkingdir.path();
-	m_localworkingdir.cd(dir);
+	if (!m_localworkingdir.cd(dir)) return false;
 	
 	filelist = m_localworkingdir.entryList("*", QDir::Files | QDir::Hidden); 
-	for (QStringList::Iterator it = filelist.begin(); it != filelist.end(); ++it) m_localworkingdir.remove(*it);
+	for (QStringList::Iterator it = filelist.begin(); it != filelist.end(); ++it) 
+	{
+		if (!m_localworkingdir.remove(*it)) return false;
+	}
 	
 	dirlist = m_localworkingdir.entryList("*", QDir::Dirs | QDir::Hidden);
 	for (QStringList::Iterator it = dirlist.begin(); it != dirlist.end(); ++it) 
 	{
-		if ((*it != ".") && (*it != "..")) RmdirLocal(*it);
+		if ((*it != ".") && (*it != "..")) 
+		{
+			if (!RmdirLocal(*it)) return false;
+		}
 	}
 	
-	m_localworkingdir.cd(olddir);
-	m_localworkingdir.rmdir(dir);
+	if (!m_localworkingdir.cd(olddir)) return false;
+	if (!m_localworkingdir.rmdir(dir)) return false;
+	
+	return true;
 }
 
 bool FtpSession::ScandirLocal(KbDirInfo *dir, QString path)

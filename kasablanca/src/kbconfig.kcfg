@@ -11,6 +11,9 @@
 		<entry name="DirCachingIsEnabled" type="Bool">
 			<default>false</default>
 		</entry>
+		<entry name="DeleteMovesIntoTrashIsEnabled" type="Bool">
+			<default>false</default>
+		</entry>
 		<entry name="SkiplistIsEnabled" type="Bool">
 			<default>false</default>
 		</entry>
