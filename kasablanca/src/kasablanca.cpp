@@ -1193,9 +1193,24 @@ void Kasablanca::Xfer()
 							break;
 						case 4:
 							bool b = false;
-							while ((remotename.lower() == file->m_firemote.fileName().lower()) || (!b))
+							
+							/* a new name is entered and checked if it exists yet,
+							if so, it's looped. */
+							
+							while ((filepresent) || (!b))
 							{
 								remotename = KInputDialog::getText("Enter New Name:", "Enter New Name:", remotename + "_alt", &b, this);
+								filepresent = false;
+												
+								QListViewItemIterator it(remoteview);
+								while ( it.current() )
+								{
+									if (remotename.lower() == it.current()->text(0).lower())
+									{
+										filepresent = true;
+									}
+									++it;
+								}
 							}
 							break;
 					}
@@ -1223,7 +1238,8 @@ void Kasablanca::Xfer()
 			else if ((file->type() == transferitem::download_a_to_b) || (file->type() == transferitem::download_b_to_a))
 			{
 				uint offset = file->m_filocal.size();
-
+				bool filepresent;
+				
 				/* check if file is yet present */
 
 				if (file->m_filocal.isFile())
@@ -1240,6 +1256,7 @@ void Kasablanca::Xfer()
 
 				if ((file->m_filocal.isFile() == true) or (file->m_filocal.isDir() == true))
 				{
+					filepresent = true;
 					dialog.setCaption(file->m_filocal.fileName() + " exists yet...");
 					switch (dialog.exec())
 					{
@@ -1254,9 +1271,14 @@ void Kasablanca::Xfer()
 						break;
 					case 4:
 						bool b = false;
-						while ((localname.lower() == file->m_firemote.fileName().lower()) || (!b))
+						
+						while ((filepresent) or (!b))
+						//while ((localname.lower() == file->m_firemote.fileName().lower()) || (!b))
 						{
 							localname = KInputDialog::getText("Enter New Name:", "Enter New Name:", localname + "_alt", &b, this);
+							filepresent = false;
+							QFileInfo fi(file->m_filocal.dirPath() + "/" + localname);
+							if ((fi.isFile() == true) or (fi.isDir() == true)) filepresent = true;
 						}
 						break;
 					}
