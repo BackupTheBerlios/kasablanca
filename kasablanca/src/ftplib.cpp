@@ -230,7 +230,7 @@ int ftplib::readline(char *buf,int max,netbuf *ctl)
 		if ((ctl->dir == FTPLIB_CONTROL) && (mp_netbuf->logcb != NULL))
 		{
 			*((ctl->cput)+x) = '\0';
-			mp_netbuf->logcb(ctl->cput, mp_netbuf->cbarg);
+			mp_netbuf->logcb(ctl->cput, mp_netbuf->cbarg, true);
 		}
 
 		if (x == 0) eof = 1;
@@ -464,6 +464,8 @@ int ftplib::FtpSendCmd(const char *cmd, char expresp, netbuf *nControl)
 		return 0;
 	}
 
+	if (mp_netbuf->logcb != NULL) mp_netbuf->logcb(buf, mp_netbuf->cbarg, false);
+	
 	return readresp(expresp, nControl);
 }
 

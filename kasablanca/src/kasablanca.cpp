@@ -137,7 +137,7 @@ Kasablanca::Kasablanca()
     connect(&m_proc_b, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
 	 //connect(m_view->ConnectButtonA, SIGNAL(clicked()), SLOT(SLOT_ConnectButtonA()));
     connect(m_view->CommandLineA, SIGNAL(returnPressed()), SLOT(SLOT_EnterCommandA()));
-    connect(m_view->CwdLineA, SIGNAL(returnPressed()), SLOT(SLOT_EnterCwdA()));
+    //connect(m_view->CwdLineA, SIGNAL(returnPressed()), SLOT(SLOT_EnterCwdA()));
     connect(m_view->CommandLineB, SIGNAL(returnPressed()), SLOT(SLOT_EnterCommandB()));
     connect(m_view->BrowserB, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
     connect(m_view->BrowserA, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
@@ -161,6 +161,7 @@ Kasablanca::Kasablanca()
 	 
 	 connect(m_view->RefreshButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_RefreshButton()));
 	 connect(m_view->ConnectButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_ConnectButton()));
+	 connect(m_view->CwdLineA, SIGNAL(returnPressed()), mp_session_a, SLOT(SLOT_CwdLine()));
 	 
 	 /* /new stuff */
 	

@@ -64,16 +64,25 @@ FtpThread::~FtpThread()
 
 /* callback function for the logs */
 
-void FtpThread::CallbackLog(char *log, void *arg)
+void FtpThread::CallbackLog(char *log, void *arg, bool out)
 {
 	FtpThread* ftp = static_cast<FtpThread*>(arg);
-		
-	ftp->out_log+=log;
+
+	if (out)
+	{	
+		ftp->out_outlog+=log;
 	
-	if (ftp->out_log.endsWith("\r\n")) 
+		if (ftp->out_outlog.endsWith("\r\n")) 
+		{
+			ftp->out_outlog.replace("\r\n", "\n");
+			ftp->Event(EventHandler::outlog);
+		}
+	}
+	else 
 	{
-		ftp->out_log.replace("\r\n", "\n");
-		ftp->Event(EventHandler::log);
+		ftp->out_inlog = log;
+		ftp->out_inlog.replace("\r\n", "\n");
+		ftp->Event(EventHandler::inlog);
 	}
 }
 

@@ -33,6 +33,8 @@ class siteinfo;
 class QPopupMenu;
 class QLineEdit;
 
+typedef pair<QString, bool> logentries;
+
 /**
 @author Magnus Kulke
 */
@@ -66,23 +68,27 @@ private:
 	QLineEdit *mp_cwdline, *mp_cmdline;
 	QPopupMenu* mp_bookmarksmenu;
 	QListView *mp_browser;
-	QString m_log;
+	QString m_remoteworkingdir;
 	bool m_connected, m_occupied;
+	list<logentries> m_loglist;
 	
 public slots:
-	void SLOT_Log(QString log) { m_log = m_log + log; };
+	void SLOT_Log(QString log, bool out);
 	void SLOT_ConnectMenu(int i);
 	void SLOT_Connect(bool success);
 	void SLOT_Login(bool success);
 	void SLOT_Quit(bool success);
 	void SLOT_Pwd(bool success, QString pwd);
+	void SLOT_Chdir(bool success);
 	void SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist);
 	void SLOT_ConnectButton();
 	void SLOT_RefreshButton();
+	void SLOT_CwdLine();
 	void SLOT_Finish();
 	
 private:
 	void PrintLog(bool success);
+		
 };
 
 #endif

@@ -46,7 +46,8 @@ public:
 	enum EventType
 	{
 		error = 1001,
-		log,
+		outlog,
+		inlog,
 		finished,
 		connectionlost,
 		misc_success,
@@ -92,7 +93,7 @@ private:
 	FtpThread* mp_thread;
 signals:
 	void ftp_error(QString error);
-	void ftp_log(QString log);
+	void ftp_log(QString log, bool out);
 	void ftp_misc(bool success);
 	void ftp_finished();
 	void ftp_connect(bool success);

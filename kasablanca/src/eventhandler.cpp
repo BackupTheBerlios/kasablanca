@@ -65,10 +65,15 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
 		emit ftp_error("mp_thread is NULL");
 		return TRUE;
 	}
-	else if (type == log) 
+	else if (type == outlog) 
 	{   
-		emit ftp_log(mp_thread->out_log);
-		mp_thread->out_log = "";
+		emit ftp_log(mp_thread->out_outlog, true);
+		mp_thread->out_outlog = "";
+      return TRUE; 
+   }
+	else if (type == inlog) 
+	{   
+		emit ftp_log(mp_thread->out_inlog, false);
       return TRUE; 
    }
 	else if (type == finished) 

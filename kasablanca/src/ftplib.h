@@ -64,7 +64,7 @@ using namespace std;
 
 typedef int (*FtpCallbackXfer)(int xfered, void *arg);
 typedef int (*FtpCallbackIdle)(void *arg);
-typedef void (*FtpCallbackLog)(char *str, void* arg);
+typedef void (*FtpCallbackLog)(char *str, void* arg, bool out);
 
 struct netbuf {
 	char *cput,*cget;

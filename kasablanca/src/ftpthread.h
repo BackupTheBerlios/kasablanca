@@ -39,7 +39,7 @@ class FtpThread : public QThread
 public:
    FtpThread();
    ~FtpThread();
-	static void CallbackLog(char *log, void *arg);
+	static void CallbackLog(char *log, void *arg, bool out);
 	void SetEventReceiver(QObject* eventreceiver);
 	void ClearQueue();
 	bool Connect(QString host);
@@ -134,7 +134,8 @@ private:
 	list<QString> m_rawlist;
 	QValueList<task> m_tasklist;
 public:
-	QString out_log;
+	QString out_outlog;
+	QString out_inlog;
 	QString out_path;
 	kbdirectory* out_scandir;
 	list<RemoteFileInfo> out_dirlist;

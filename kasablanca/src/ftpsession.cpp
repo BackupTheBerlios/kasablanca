@@ -41,14 +41,15 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	m_connected = false;
 	m_occupied = false;
 		
-	mp_eventhandler->SetFtpThread(mp_ftpthread);
+	mp_eventhandler->SetFtpThread(mp_ftpthread); 
 	mp_ftpthread->SetEventReceiver(mp_eventhandler);
 
 	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
-	connect(mp_eventhandler, SIGNAL(ftp_log(QString)), SLOT(SLOT_Log(QString)));
+	connect(mp_eventhandler, SIGNAL(ftp_log(QString, bool)), SLOT(SLOT_Log(QString, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_connect(bool)), SLOT(SLOT_Connect(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_quit(bool)), SLOT(SLOT_Quit(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_chdir(bool)), SLOT(SLOT_Chdir(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_pwd(bool, QString)), SLOT(SLOT_Pwd(bool, QString)));
 	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)), 
 		SLOT(SLOT_Dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)));
@@ -57,6 +58,12 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 
 FtpSession::~FtpSession()
 {
+}
+
+void FtpSession::SLOT_Log(QString log, bool out) 
+{ 
+	if (out) m_loglist.push_back(make_pair(log, true));
+	else m_loglist.push_back(make_pair(log, false));
 }
 
 void FtpSession::SLOT_ConnectMenu(int i)
@@ -99,7 +106,7 @@ void FtpSession::SLOT_ConnectButton()
 
 	if (Occupied()) 
 	{
-		m_log = "aborted ftp operation";
+		m_loglist.push_back(make_pair(i18n("aborted ftp operation"), false));
 		SLOT_Quit(false);
 		SLOT_Finish();
 		Disconnect();
@@ -123,32 +130,60 @@ void FtpSession::SLOT_ConnectButton()
 	else if (!Connected()) mp_bookmarksmenu->exec(mp_connectbutton->mapToGlobal(QPoint(0,0)));
 }
 
+void FtpSession::SLOT_CwdLine()
+{
+	if (Occupied()) 
+	{	
+		qWarning("ERROR: refresh button pressed while occupied");
+		return;
+	}
+	if (Connected())
+	{	
+		Occupy();
+		mp_ftpthread->Chdir(mp_cwdline->text());
+		mp_ftpthread->Pwd();
+		mp_ftpthread->Dir();
+		mp_ftpthread->start();
+	}
+	else qWarning("WARNING: local browsing not yet implemented"); 		
+}
+
 void FtpSession::SLOT_RefreshButton()
 {
 	if (Occupied()) 
 	{	
-		qWarning("WARNING: refresh button pressed while occupied");
+		qWarning("ERROR: refresh button pressed while occupied");
 		return;
 	}
 	if (Connected())
 	{	
 		Occupy();
 		mp_ftpthread->Pwd();
+		if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true);
 		mp_ftpthread->Dir();
 		mp_ftpthread->start();
 	}
-	else qWarning("WARNING: local listing not yet implemented");
+	else 
+	{
+		while (QListViewItem* tmpviewitem = mp_browser->firstChild()) delete tmpviewitem;
+		qWarning("WARNING: local browsing not yet implemented");
+	}
 }
 
 void FtpSession::SLOT_Connect(bool success)
 {
 	if (!success) 
 	{
-		m_log = i18n("connection failed");
+		m_loglist.push_back(make_pair(i18n("connection failed"), false));
 		Disconnect();
 	}
 	PrintLog(success);	
 }
+
+void FtpSession::SLOT_Chdir(bool success)
+{
+	PrintLog(success);
+}	
 
 void FtpSession::SLOT_Login(bool success)
 {
@@ -179,15 +214,31 @@ void FtpSession::SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<Remot
 void FtpSession::SLOT_Pwd(bool success, QString pwd)
 {
 	PrintLog(success);
-	if (success) mp_cwdline->setText(pwd);
+	if (success) 
+	{
+		m_remoteworkingdir = pwd;
+		mp_cwdline->setText(pwd);
+	}
 }
 
 void FtpSession::PrintLog(bool success)
 {
-	if (success == true) mp_logwindow->setColor(green);
-	else mp_logwindow->setColor(red);	
-	mp_logwindow->append(m_log);
-	m_log = "";		
+	list<logentries>::iterator i;
+	for (i = m_loglist.begin(); i != m_loglist.end(); i++)
+	{
+		if ((*i).second == true)
+		{
+			if (success) mp_logwindow->setColor(green);
+			else mp_logwindow->setColor(red);
+			mp_logwindow->append((*i).first);
+		}
+		else
+		{
+			mp_logwindow->setColor(yellow);
+			mp_logwindow->append((*i).first);
+		}	
+	}	
+	m_loglist.clear();
 }
 
 void FtpSession::Connect()
