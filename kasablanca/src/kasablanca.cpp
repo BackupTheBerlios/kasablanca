@@ -91,15 +91,15 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	//when developing you might want to change the following line to the kbftp path
 	//and disable the other two lines. */
 
-	m_proc_a.addArgument("kbftp/kbftp");
-	m_proc_b.addArgument("kbftp/kbftp");
+	//m_proc_a.addArgument("kbftp/kbftp");
+	//m_proc_b.addArgument("kbftp/kbftp");
 
-	/*if (locate("exe", "kbftp") == QString::null) KMessageBox::error(0,"kbftp binary is not in kde binary path.");
+	if (locate("exe", "kbftp") == QString::null) KMessageBox::error(0,"kbftp binary is not in kde binary path.");
 	else 
 	{
 		m_proc_a.addArgument(locate("exe", "kbftp"));
 		m_proc_b.addArgument(locate("exe", "kbftp"));
-	}*/
+	}
 	
    TaskView->setSorting(-1);
 	BrowserA->setSorting(-1);
