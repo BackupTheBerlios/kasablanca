@@ -1,5 +1,9 @@
 [v 0.4.0.1]
 
+-fixed some filesize issues
+-applied some changes to the bookmark editor
+-improved directory caching
+-auto-completion in the lineedits
 -items are queued at the end of the queue list now
 -remember sorting preference when changing directories
 -report when ftp servers do not support encryption

@@ -30,7 +30,7 @@ class KbFileInfo;
 class KbFile : public KbItem  {
 public:
 	KbFile(KbFileInfo kfi, QListView * parent, QListViewItem * after);
-	KbFile(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int);
+	KbFile(QListView * parent, QListViewItem * after, QString file, QString path, QString date, ulong size, uint date_int);
 	~KbFile();
 	int rtti() const;
 };

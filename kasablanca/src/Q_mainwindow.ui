@@ -58,14 +58,6 @@
                 <bool>false</bool>
             </property>
         </widget>
-        <widget class="QLineEdit" row="0" column="3">
-            <property name="name">
-                <cstring>CwdLineA</cstring>
-            </property>
-            <property name="maxLength">
-                <number>1024</number>
-            </property>
-        </widget>
         <widget class="QToolButton" row="0" column="2">
             <property name="name">
                 <cstring>TransferButtonA</cstring>
@@ -120,24 +112,6 @@
             </property>
             <property name="autoRaise">
                 <bool>false</bool>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="7">
-            <property name="name">
-                <cstring>CwdLineB</cstring>
-            </property>
-            <property name="maxLength">
-                <number>1024</number>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="2" column="0" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>CommandLineA</cstring>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="2" column="4" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>CommandLineB</cstring>
             </property>
         </widget>
         <widget class="QListView" row="1" column="0" rowspan="1" colspan="4">
@@ -353,12 +327,32 @@
                 </widget>
             </widget>
         </widget>
+        <widget class="KLineEdit" row="0" column="3">
+            <property name="name">
+                <cstring>CwdLineA</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="0" column="7">
+            <property name="name">
+                <cstring>CwdLineB</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="2" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>CommandLineA</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="2" column="4" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>CommandLineB</cstring>
+            </property>
+        </widget>
     </grid>
 </widget>
 <customwidgets>
     <customwidget>
         <class>KbTaskView</class>
-        <header location="global">kbtaskview.h</header>
+        <header location="global">/home/mkulke/Development/kasablanca/src/kbtaskview.h</header>
         <sizehint>
             <width>-1</width>
             <height>-1</height>
@@ -379,16 +373,16 @@
     </image>
 </images>
 <tabstops>
-    <tabstop>CwdLineA</tabstop>
-    <tabstop>CwdLineB</tabstop>
     <tabstop>BrowserA</tabstop>
     <tabstop>BrowserB</tabstop>
-    <tabstop>CommandLineA</tabstop>
-    <tabstop>CommandLineB</tabstop>
     <tabstop>LogWindowA</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kbtaskview.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
 </includehints>
 </UI>

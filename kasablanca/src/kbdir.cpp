@@ -28,7 +28,7 @@ KbDir::KbDir(KbFileInfo kfi, QListView * parent, QListViewItem * after) : KbItem
 	if ((kfi.fileName() == ".") || (kfi.fileName() == "..")) delete this;
 }
 
-KbDir::KbDir(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int) : KbItem(parent, after)
+KbDir::KbDir(QListView * parent, QListViewItem * after, QString file, QString path, QString date, ulong size, uint date_int) : KbItem(parent, after)
 {
 	setText(0,file);
 

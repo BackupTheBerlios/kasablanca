@@ -16,11 +16,12 @@
 #include <kprocess.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
+#include <klineedit.h>
+
 #include <qtextedit.h>
 #include <qtoolbutton.h>
 #include <qpopupmenu.h>
 #include <qwidget.h>
-#include <qlineedit.h>
 #include <qlistview.h>
 #include <qlabel.h>
 #include <qpixmap.h>
@@ -56,6 +57,7 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	
 	m_connected = false;
 	m_occupied = false;
+	m_encrypted = false;
 	m_startqueue = false;
 	m_sortascending = true;
 	mp_currenttransfer = NULL;
@@ -89,7 +91,7 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_pwd(bool, QString)), SLOT(SLOT_Pwd(bool, QString)));
 	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<KbFileInfo>, list<KbFileInfo>)), 
 		SLOT(SLOT_Dir(bool, list<KbFileInfo>, list<KbFileInfo>)));
-	connect(mp_eventhandler, SIGNAL(ftp_encryptdata(bool, bool)), SLOT(SLOT_EncryptData(bool, bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_encryptdata(bool)), SLOT(SLOT_EncryptData(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_finished()), SLOT(SLOT_Finish()));
 	connect(mp_eventhandler, SIGNAL(ftp_connectionlost()), SLOT(SLOT_ConnectionLost()));
 	connect(mp_eventhandler, SIGNAL(ftp_transfer(bool)), SLOT(SLOT_Transfer(bool)));
@@ -100,6 +102,22 @@ FtpSession::~FtpSession()
 {
 }
 
+void FtpSession::SetCmdLine(KLineEdit* cmdline)
+{ 
+	KCompletion *comp = cmdline->completionObject();
+ 	connect(cmdline, SIGNAL(returnPressed(const QString&)), comp, SLOT(addItem(const QString&)));
+	cmdline->setCompletionMode(KGlobalSettings::CompletionAuto);
+	mp_cmdline = cmdline;
+}
+
+void FtpSession::SetCwdLine(KLineEdit* cwdline)
+{ 
+	KCompletion *comp = cwdline->completionObject();
+ 	connect(cwdline, SIGNAL(returnPressed(const QString&)), comp, SLOT(addItem(const QString&)));
+	cwdline->setCompletionMode(KGlobalSettings::CompletionAuto);
+	mp_cwdline = cwdline;
+}
+
 void FtpSession::SLOT_Log(QString log, bool out) 
 { 
 	if (out) m_loglist.push_back(make_pair(log, true));
@@ -108,8 +126,12 @@ void FtpSession::SLOT_Log(QString log, bool out)
 
 void FtpSession::SLOT_Xfered(unsigned long xfered, bool encrypted)
 {
-	if (encrypted) mp_encryptionicon->setPixmap(m_iconencrypted);
-	else mp_encryptionicon->setPixmap(m_iconunencrypted);	
+	//if (encrypted) mp_encryptionicon->setPixmap(m_iconencrypted);
+	//else mp_encryptionicon->setPixmap(m_iconunencrypted);	
+
+	if ((encrypted) && (!m_encrypted)) mp_encryptionicon->setPixmap(m_iconencrypted);
+	else if ((!encrypted) && (m_encrypted)) mp_encryptionicon->setPixmap(m_iconunencrypted);	
+	m_encrypted = encrypted;
 	
 	if (mp_currenttransfer) mp_currenttransfer->Xfered(xfered);
 }
@@ -314,7 +336,9 @@ void FtpSession::SLOT_ItemClicked(QListViewItem * item)
 		Occupy();
 		if (item->text(0) == "..") mp_ftpthread->Cdup();
 		else mp_ftpthread->Chdir(item->text(0));
-		RefreshBrowser();
+		mp_ftpthread->Pwd();
+		if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true);
+		mp_ftpthread->Dir(false);
 		mp_ftpthread->start();
 	}
 	else UpdateLocal(item->text(0));
@@ -420,7 +444,9 @@ void FtpSession::SLOT_CwdLine()
 	{	
 		Occupy();
 		mp_ftpthread->Chdir(mp_cwdline->text());
-		RefreshBrowser();
+		mp_ftpthread->Pwd();
+		if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true);
+		mp_ftpthread->Dir(false);
 		mp_ftpthread->start();
 	}
 	else UpdateLocal(mp_cwdline->text());		
@@ -436,9 +462,7 @@ void FtpSession::SLOT_RefreshButton()
 	if (Connected())
 	{	
 		Occupy();
-		mp_ftpthread->Pwd();
-		if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true);
-		mp_ftpthread->Dir(true);
+		RefreshBrowser();
 		mp_ftpthread->start();
 	}
 	else UpdateLocal();
@@ -447,18 +471,18 @@ void FtpSession::SLOT_RefreshButton()
 void FtpSession::QueueItems()
 {
 	KbDirInfo *dir = new KbDirInfo(WorkingDir());
-		
-	QListViewItemIterator iit(mp_browser);
+			
+	QListViewItemIterator iit(mp_browser->lastItem());//, QListViewItemIterator::Selected);
 	while (iit.current())
 	{
 		QListViewItem *item = iit.current();
-		if (item->isSelected()) 
-		{		
+		if (item->isSelected())
+		{
 			if (item->rtti() == KbItem::dir) dir->AddDirectory(KbFileInfo(static_cast<KbFile*>(item), "/"));
 			else if (item->rtti() == KbItem::file) dir->AddFile(KbFileInfo(static_cast<KbFile*>(item), "/"));
 			mp_browser->setSelected(item, false);
 		}
-		iit++;
+		iit--;
 	}
 	
 	if (Connected())
@@ -524,7 +548,7 @@ void FtpSession::SLOT_Connect(bool success)
 	PrintLog(success);	
 }
 
-void FtpSession::SLOT_EncryptData(bool success, bool)
+void FtpSession::SLOT_EncryptData(bool success)
 {
 	PrintLog(success);	
 }
@@ -697,8 +721,8 @@ void FtpSession::Free()
 void FtpSession::RefreshBrowser()
 {
 	mp_ftpthread->Pwd();
-	if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true);
-	mp_ftpthread->Dir();
+	if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true, true);
+	mp_ftpthread->Dir(true);
 }
 
 void FtpSession::UpdateLocal(QString cwd)
@@ -1018,7 +1042,7 @@ void FtpSession::Transfer(KbTransferItem *item)
 		{
 			filecheck result = static_cast<filecheck>(item->DstSession()->CheckFile(item));
 		
-			startTimer(256);
+			startTimer(1024);
 			item->StartTimer();
 			
 			if (result == skip)

@@ -36,12 +36,12 @@ public:
 	QString Path() { return m_path; };
 	QString Date() { return m_date; };
 	uint DateInt() { return m_date_int; };
-	uint Size() { return m_size; };
+	ulong Size() { return m_size; };
 		
 protected:
 	QString m_path;
 	QString m_date;
-	uint m_size;
+	ulong m_size;
 	uint m_date_int;
 	QString m_file;
 

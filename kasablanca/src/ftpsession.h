@@ -32,7 +32,7 @@ class QToolButton;
 class QListView;
 class KbSiteInfo;
 class QPopupMenu;
-class QLineEdit;
+class KLineEdit;
 class QLabel;
 class QPoint;
 class KbDirInfo;
@@ -63,8 +63,6 @@ public:
 	void SetConnectButton(QToolButton* connectbutton) { mp_connectbutton = connectbutton; };
 	void SetTransferButton(QToolButton* transferbutton) { mp_transferbutton = transferbutton; }
 	void SetBrowser(QListView* browser) { mp_browser = browser; };
-	void SetCwdLine(QLineEdit* cwdline) { mp_cwdline = cwdline; };
-	void SetCmdLine(QLineEdit* cmdline) { mp_cmdline = cmdline; };
 	void SetStatusLine(QLabel* statusline) { mp_statusline = statusline; };
 	void SetEncryptionIcon(QLabel* encryptionicon) { mp_encryptionicon = encryptionicon; };
 	void SetBookmarksMenu(QPopupMenu *bookmarksmenu) { mp_bookmarksmenu = bookmarksmenu; };
@@ -88,13 +86,15 @@ public:
 	void SetOnFileExistsDefault(filecheck onfileexistsdefault) {m_onfileexistsdefault = onfileexistsdefault; };
 	void EnableCmdLine(bool b);
 	void FilterHiddenFiles(bool b);
+	void SetCmdLine(KLineEdit* cmdline);
+	void SetCwdLine(KLineEdit* cwdline);
 private:
 	FtpThread *mp_ftpthread;
 	EventHandler *mp_eventhandler;
 	KbSiteInfo *mp_siteinfo;
 	QTextEdit *mp_logwindow;
 	QToolButton *mp_connectbutton, *mp_refreshbutton, *mp_transferbutton;
-	QLineEdit *mp_cwdline, *mp_cmdline;
+	KLineEdit *mp_cwdline, *mp_cmdline;
 	QPopupMenu* mp_bookmarksmenu, *mp_rclickmenu;
 	QListView *mp_browser;
 	QLabel *mp_statusline, *mp_encryptionicon;
@@ -110,6 +110,7 @@ private:
 	list<FtpSession*> *mp_sessionlist;
 	KbTransferItem *mp_currenttransfer;
 	filecheck m_onfileexistsdefault;
+	bool m_encrypted;
 	
 public slots:
 	void SLOT_Log(QString log, bool out);
@@ -125,7 +126,7 @@ public slots:
 	void SLOT_Pwd(bool success, QString pwd);
 	void SLOT_Misc(bool success);
 	void SLOT_AuthTls(bool success);
-	void SLOT_EncryptData(bool success, bool enabled);
+	void SLOT_EncryptData(bool success);
 	void SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInfo> filelist);
 	void SLOT_ConnectButton();
 	void SLOT_RefreshButton();

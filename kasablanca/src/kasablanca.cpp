@@ -34,9 +34,9 @@
 #include <ksystemtray.h>
 #include <kconfigdialog.h>
 #include <kpassivepopup.h>
+#include <klineedit.h>
 
 #include <qtextedit.h>
-#include <qlineedit.h>
 #include <qcolor.h>
 #include <qlistview.h>
 #include <qpushbutton.h>
@@ -423,7 +423,7 @@ void Kasablanca::QueueItemsRecurse(KbDirInfo *dir, FtpSession* src, FtpSession* 
 	
 	filelist = dir->Filelist();
 	dirlist = dir->Dirlist();
-				
+	
 	if (KbConfig::prioritylistIsEnabled()) 
 	{	
 		dirlist->sort(KbDirInfo::PrioritySort);

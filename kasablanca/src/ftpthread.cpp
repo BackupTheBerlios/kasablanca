@@ -253,13 +253,14 @@ bool FtpThread::Pasv(bool flag)
 
 /* set wether the data channel is encrypted or not */
 
-bool FtpThread::EncryptData(bool flag)
+bool FtpThread::EncryptData(bool flag, bool force)
 {
 	if (running()) return false;
 	else
 	{	
-		if (flag) m_tasklist.append(FtpThread::dataencon);
-		else m_tasklist.append(FtpThread::dataencoff);
+		m_intlist.append(flag);
+		m_intlist.append(force);
+		m_tasklist.append(FtpThread::dataencryption);
 		return true;
 	}
 }
@@ -459,40 +460,41 @@ void FtpThread::Login_thread()
 	}
 }
 
-void FtpThread::Dataencoff_thread()
+void FtpThread::Dataencryption_thread()
 {
-	int result;
-	
-	result = mp_ftp->SetDataEncryption(ftplib::unencrypted);
+	int result, flag, force, cacheindex;
 
+	flag = m_intlist.front();
+	m_intlist.pop_front();
+	force = m_intlist.front();
+	m_intlist.pop_front();
+	
+	cacheindex = -1;
+	
+	if (KbConfig::dirCachingIsEnabled())
+	{
+		cacheindex = m_cache_list.findIndex(m_pwd);
+	
+		if ((cacheindex != -1) && (!force))
+		{
+			Event(EventHandler::encryptdata_success);
+			return;
+		}
+	}
+	
+	if (flag) result = mp_ftp->SetDataEncryption(ftplib::secure);
+	else result = mp_ftp->SetDataEncryption(ftplib::unencrypted);
+	
 	if (result) 
 	{
-		Event(EventHandler::encryptdataoff_success);
-		m_dataencrypted = false;
+		Event(EventHandler::encryptdata_success);
+		m_dataencrypted = flag;
 	}
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
-		else Event(EventHandler::encryptdataoff_failure);
-	}
-}
-
-void FtpThread::Dataencon_thread()
-{
-	int result;
-	
-	result = mp_ftp->SetDataEncryption(ftplib::secure);
-
-	if (result) 
-	{
-		Event(EventHandler::encryptdataon_success);
-		m_dataencrypted = true;
-	}
-	else 
-	{
-		if (ConnectionLost()) Event(EventHandler::connectionlost);
-		else Event(EventHandler::encryptdataon_failure);
-	}
+		else Event(EventHandler::encryptdata_failure);
+	}	
 }
 
 void FtpThread::Transfer_Changedir_thread()
@@ -501,10 +503,6 @@ void FtpThread::Transfer_Changedir_thread()
 	char buffer[1024];
 	QString dirname;
 	
-	//dirname = QDir::homeDirPath() + 
-	//	"/.kasablanca/" +
-	//	QString::number((int) time(NULL) & 0xffff) + 
-	//	".dir";
 	dirname = locateLocal("appdata", QString::number(rand()) + ".dir");
 				
 	QString path = m_stringlist.front();
@@ -547,13 +545,13 @@ void FtpThread::Transfer_Changedir_thread()
 		result = mp_ftp->SetDataEncryption(ftplib::secure);
 		if (result) 
 		{
-			Event(EventHandler::encryptdataon_success);
+			Event(EventHandler::encryptdata_success);
 			m_dataencrypted = true;
 		}
 		else 
 		{
 			if (ConnectionLost()) Event(EventHandler::connectionlost);
-			else Event(EventHandler::encryptdataon_failure);
+			else Event(EventHandler::encryptdata_failure);
 			Event(EventHandler::transfer_failure);
 			return;
 		}
@@ -619,13 +617,13 @@ void FtpThread::Transfer_Get_thread()
 		else result = mp_ftp->SetDataEncryption(ftplib::secure);
 		if (result) 
 		{
-			Event(EventHandler::encryptdataon_success);
-			m_dataencrypted = true;
+			Event(EventHandler::encryptdata_success);
+			m_dataencrypted = (tls > 2);
 		}
 		else 
 		{
 			if (ConnectionLost()) Event(EventHandler::connectionlost);
-			else Event(EventHandler::encryptdataon_failure);
+			else Event(EventHandler::encryptdata_failure);
 			Event(EventHandler::transfer_failure);
 			return;
 		}
@@ -665,13 +663,13 @@ void FtpThread::Transfer_Put_thread()
 		else result = mp_ftp->SetDataEncryption(ftplib::secure);
 		if (result) 
 		{
-			Event(EventHandler::encryptdataon_success);
-			m_dataencrypted = true;
+			Event(EventHandler::encryptdata_success);
+			m_dataencrypted = (tls > 2);
 		}
 		else 
 		{
 			if (ConnectionLost()) Event(EventHandler::connectionlost);
-			else Event(EventHandler::encryptdataon_failure);
+			else Event(EventHandler::encryptdata_failure);
 			Event(EventHandler::transfer_failure);
 			return;
 		}
@@ -764,13 +762,13 @@ bool FtpThread::FxpDisableTls()
 	bool result = mp_ftp->SetDataEncryption(ftplib::unencrypted);
 	if (result) 
 	{
-		Event(EventHandler::encryptdataon_success);
+		Event(EventHandler::encryptdata_success);
 		m_dataencrypted = false;
 	}
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
-		else Event(EventHandler::encryptdataon_failure);
+		else Event(EventHandler::encryptdata_failure);
 	}
 	
 	return result;
@@ -1040,11 +1038,8 @@ void FtpThread::run()
 			case FtpThread::authtls:
 				Authtls_thread();
 				break;
-			case FtpThread::dataencon:
-				Dataencon_thread();
-				break;
-			case FtpThread::dataencoff:
-				Dataencoff_thread();
+			case FtpThread::dataencryption:
+				Dataencryption_thread();
 				break;
 			case FtpThread::transfer_get:
 				Transfer_Get_thread();
@@ -1215,7 +1210,7 @@ bool FtpThread::FormatFilelist(const char *filename, QString current, list<KbFil
 				loc--;
 			}
 
-			int size = atoi(buffer.substr( sizebegin, datebegin - sizebegin).c_str());
+			ulong size = atol(buffer.substr( sizebegin, datebegin - sizebegin).c_str());
 			
 			filestring.erase();
 			filestring.append(buffer, fileloc, buffer.length() - fileloc);
@@ -1417,6 +1412,12 @@ bool FtpThread::ConnectionLost()
 void FtpThread::ClearQueue()
 {
 	m_tasklist.clear();
+	m_stringlist.clear();
+	m_intlist.clear();
+	m_ulonglist.clear();
+	m_ftplist.clear();
+	m_cache_vector.clear();
+	m_cache_list.clear();
 }
 	
 	

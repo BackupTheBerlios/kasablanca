@@ -60,7 +60,7 @@ KbFileInfo::KbFileInfo(KbItem* item, QString workingdir) : QFileInfo(QDir(workin
 	m_size = item->Size();
 }
 
-KbFileInfo::KbFileInfo(const QString & d, const QString & fileName, uint size, QString date, uint date_int)
+KbFileInfo::KbFileInfo(const QString & d, const QString & fileName, ulong size, QString date, uint date_int)
  : QFileInfo(QDir(d), fileName)
 {
 	m_date_int = date_int;

@@ -75,10 +75,8 @@ public:
 		quit_failure,
 		authtls_success,
 		authtls_failure,
-		encryptdataon_success,
-		encryptdataon_failure,
-		encryptdataoff_success,
-		encryptdataoff_failure,
+		encryptdata_success,
+		encryptdata_failure,
 		get_success,
 		get_failure,
 		mkdir_success,
@@ -114,7 +112,7 @@ signals:
 	void ftp_rm(bool success);
 	void ftp_rmdir(bool success);
 	void ftp_authtls(bool success);
-	void ftp_encryptdata(bool success, bool enabled);
+	void ftp_encryptdata(bool success);
 	void ftp_get(bool success);
 	void ftp_mkdir(bool success);
 	void ftp_rename(bool success);

@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
+ 
 #include "kbtransferfile.h"
 
 KbTransferFile::KbTransferFile(QListView *taskview, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst) : KbTransferItem(taskview, after, srcsession, dstsession, src, dst)
@@ -57,7 +57,7 @@ void KbTransferFile::ShowProgress()
 	int time = m_time.elapsed();
 	int time_dif = time - m_time_old;
 	if (time_dif == 0) time_dif = 1;
-	int xfer_dif = m_xfered - m_xfered_old;
+	ulong xfer_dif = m_xfered - m_xfered_old;
 
 	setText(1, 
 		"[" +

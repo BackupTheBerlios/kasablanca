@@ -41,16 +41,16 @@ public slots:
     void slotUser1();
 	 void slotUser2();
     void slotOk();
-	 void slotApply();
 	 void SLOT_TextChanged(const QString& s);
 	 void SLOT_StateChanged();
 	 void SLOT_SelectionChanged();
 private:
+	 void ApplyChanges();
     void RefreshEntry(KbSiteInfo *site);
     void EnableInput(bool b);
     KasablancaBookmarkDialog *mp_dialog;
     list<KbSiteInfo> m_bookmarklist;
-	 bool m_inputchanged;
+	 bool m_newitemselected;
 };
 
 #endif

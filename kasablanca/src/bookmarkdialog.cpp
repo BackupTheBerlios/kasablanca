@@ -40,7 +40,6 @@ BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
               KDialogBase::Ok | 
 				  KDialogBase::Help | 
 				  KDialogBase::Cancel | 
-				  KDialogBase::Apply | 
 				  KDialogBase::User1 | 
 				  KDialogBase::User2,
               KDialogBase::Ok, true , KGuiItem(i18n("New")), KGuiItem(i18n("Remove")))
@@ -58,7 +57,7 @@ BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
 	list<KbSiteInfo>::iterator end_bookmarks = m_bookmarklist.end();
 	for (list<KbSiteInfo>::iterator i = m_bookmarklist.begin(); i != end_bookmarks; i++)
 		after = new KbBookmarkItem(mp_dialog->BookmarkListView, after, &(*i));
-	 
+		
 	 connect(mp_dialog->NameEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
 	 connect(mp_dialog->InfoEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
 	 connect(mp_dialog->UserEdit, SIGNAL(textChanged(const QString&)), SLOT(SLOT_TextChanged(const QString&)));
@@ -71,9 +70,8 @@ BookmarkDialog::BookmarkDialog(QWidget *parent, const char *name)
 	 
 	 connect(mp_dialog->BookmarkListView, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
 	 
-	 m_inputchanged = false;
+	 m_newitemselected = false;
 	 
-	 enableButton(KDialogBase::Apply, false);
 	 enableButton(KDialogBase::User2, false);
 }
 
@@ -94,7 +92,9 @@ void BookmarkDialog::SLOT_SelectionChanged()
 		return;
 	}
 	
+	m_newitemselected = true;
 	s = kbb->GetSiteInfo();
+	
 	EnableInput(true);
 	RefreshEntry(s);
 }
@@ -168,23 +168,20 @@ void BookmarkDialog::RefreshEntry(KbSiteInfo* site)
 	mp_dialog->CorrectPasvCheckBox->setChecked(site->GetCorrectPasv());
 	mp_dialog->DefaultDirectoryEdit->setText(site->GetDefaultDirectory());
 	
-	m_inputchanged = false;
-	enableButton(KDialogBase::Apply, false);	
+	m_newitemselected = false;
 }
 
 void BookmarkDialog::SLOT_StateChanged()
 {
-	m_inputchanged = true;
-	enableButton(KDialogBase::Apply, true);
+	if (!m_newitemselected) ApplyChanges();
 }
 
 void BookmarkDialog::SLOT_TextChanged(const QString&)
 {
-	m_inputchanged = true;
-	enableButton(KDialogBase::Apply, true);
+	if (!m_newitemselected) ApplyChanges();
 }
 
-void BookmarkDialog::slotApply()
+void BookmarkDialog::ApplyChanges()
 {
 	KbSiteInfo *siteinfo;
 	KbBookmarkItem *kbb;
@@ -192,10 +189,6 @@ void BookmarkDialog::slotApply()
 	kbb = static_cast<KbBookmarkItem*>(mp_dialog->BookmarkListView->selectedItem());
 	if (!kbb) return;
 	siteinfo = kbb->GetSiteInfo();	
-	
-	if (mp_dialog->NameEdit->text() == "") mp_dialog->NameEdit->setText(i18n("Enter sitename"));
-	if (mp_dialog->UserEdit->text() == "") mp_dialog->UserEdit->setText(i18n("Enter username"));
-	if (mp_dialog->InfoEdit->text() == "") mp_dialog->InfoEdit->setText(i18n("Enter hostname"));
 	
 	siteinfo->SetName(mp_dialog->NameEdit->text());
 	siteinfo->SetUser(mp_dialog->UserEdit->text());
@@ -208,7 +201,4 @@ void BookmarkDialog::slotApply()
 	siteinfo->SetDefaultDirectory(mp_dialog->DefaultDirectoryEdit->text());
 
 	kbb->setText(0, mp_dialog->NameEdit->text());
-	
-	m_inputchanged = false;
-	enableButton(KDialogBase::Apply, false);	
 }

@@ -36,7 +36,7 @@ public:
 	void ShowProgress();
 private:
 	int m_time_old;
-	unsigned long m_xfered_old;
+	ulong m_xfered_old;
 };
 
 #endif

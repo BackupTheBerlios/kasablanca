@@ -30,7 +30,6 @@
 #include "eventhandler.h"
 #include "kbfileinfo.h"
 
-
 using namespace std;
 
 class ftplib;
@@ -65,7 +64,7 @@ public:
 	bool Rmdir(QString name);
 	bool Authtls();
 	bool Pasv(bool flag);
-	bool EncryptData(bool flag);
+	bool EncryptData(bool flag, bool force = false);
 	bool Transfer_Fxp(QString src, QString dst, FtpThread* dstftp, int srctls, int dsttls, unsigned long resume = 0, int alt = 0);
 	bool Mkdir(QString path);
 	bool Rename(QString src, QString dst);
@@ -93,8 +92,7 @@ private:
 		rm,
 		rmdir,
 		authtls,
-		dataencoff,
-		dataencon,
+		dataencryption,
 		mkdir,
 		rename,
 		raw,
@@ -123,8 +121,7 @@ private:
 	void Rm_thread();
 	void Rmdir_thread();
 	void Authtls_thread();
-	void Dataencoff_thread();
-	void Dataencon_thread();
+	void Dataencryption_thread();
 	void Mkdir_thread();
 	void Rename_thread();
 	void Raw_thread();
