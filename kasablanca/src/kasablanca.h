@@ -29,6 +29,9 @@ class QWidget;
 class QCloseEvent;
 class QLabel;
 class QPixmap;
+class FtpThread;
+class EventHandler;
+class QMutex;
 
 #include <kapplication.h>
 #include <klistview.h>
@@ -202,6 +205,14 @@ private:
     QPixmap m_iconencrypted, m_iconunencrypted;
     KToggleAction *m_toolbarAction;
     KToggleAction *m_statusbarAction;
+	 
+	 /* new stuff */
+	 
+	 FtpThread* mp_ftpthread_a;
+	 FtpThread* mp_ftpthread_b;
+	 EventHandler* mp_eventhandler_a;
+	 EventHandler* mp_eventhandler_b;
+	 QMutex* mp_mutex;	 
 };
 
 #endif

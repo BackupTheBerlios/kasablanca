@@ -60,6 +60,7 @@
 #include <qaction.h>
 #include <qtoolbutton.h>
 #include <qcursor.h>
+#include <qmutex.h>
 
 #include <vector>
 
@@ -73,6 +74,9 @@
 #include "transferdir.h"
 #include "transferfile.h"
 #include "kbprocess.h"
+
+#include "eventhandler.h"
+#include "ftpthread.h"
 
 #include "kasablanca.h"
 
@@ -138,6 +142,14 @@ Kasablanca::Kasablanca()
     connect(m_view->RefreshButtonB, SIGNAL(clicked()), SLOT(SLOT_RefreshBrowserB()));
     connect(m_view->RefreshButtonA, SIGNAL(clicked()), SLOT(SLOT_RefreshBrowserA()));
     connect(m_view->ConnectButtonB, SIGNAL(clicked()), SLOT(SLOT_ConnectButtonB()));
+	 
+	 mp_mutex = new QMutex();
+	 mp_eventhandler_a = new EventHandler(mp_mutex, this);
+	 mp_eventhandler_b = new EventHandler(mp_mutex, this);
+	 mp_ftpthread_a = new FtpThread(mp_mutex);
+	 mp_ftpthread_b = new FtpThread(mp_mutex);
+	 mp_eventhandler_a->SetFtpThread(mp_ftpthread_a);
+	 mp_eventhandler_b->SetFtpThread(mp_ftpthread_b);
 }
 
 void Kasablanca::setupGUI() 
