@@ -29,12 +29,15 @@
 class CustomConnectDialog : public KasablancaCustomConnectDialog  {
    Q_OBJECT
 public:
-	CustomConnectDialog(QWidget *parent=0, const char *name=0);
-	~CustomConnectDialog();
+    CustomConnectDialog(QWidget *parent=0, const char *name=0);
+    ~CustomConnectDialog();
     siteinfo * mp_site; 
 public slots:
     void accept();
-	 void SLOT_AnonymousToggled();
+    void SLOT_AnonymousToggled();
+private:
+    string m_user;
+    string m_pass;
 };
 
 #endif

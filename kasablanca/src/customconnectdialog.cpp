@@ -36,17 +36,9 @@ void CustomConnectDialog::accept()
 {
     mp_site->SetName("Custom Site");
     mp_site->SetInfo(InfoEdit->text());
-    if (AnonymousCheckBox->isOn())
-	 {
-		mp_site->SetUser("anonymous");
-    	mp_site->SetPass("some@email.org"); 
-	 }
-	 else
-	 {
-	 	mp_site->SetUser(UserLineEdit->text().latin1());
-    	mp_site->SetPass(PassLineEdit->text().latin1());
-    }
-	 mp_site->SetTls(EncryptionComboBox->currentItem());
+    mp_site->SetUser(UserLineEdit->text().latin1());
+    mp_site->SetPass(PassLineEdit->text().latin1());
+    mp_site->SetTls(EncryptionComboBox->currentItem());
     mp_site->SetPasv(ModeComboBox->currentItem() ^ 1);
     
     done(QDialog::Accepted);
@@ -54,6 +46,16 @@ void CustomConnectDialog::accept()
 
 void CustomConnectDialog::SLOT_AnonymousToggled()
 {
-	UserLineEdit->setEnabled(!AnonymousCheckBox->isOn());
-	PassLineEdit->setEnabled(!AnonymousCheckBox->isOn());
+    UserLineEdit->setEnabled(!AnonymousCheckBox->isOn());
+    PassLineEdit->setEnabled(!AnonymousCheckBox->isOn());
+
+    if(AnonymousCheckBox->isOn()) {
+        m_user = UserLineEdit->text().latin1();
+        m_pass = PassLineEdit->text().latin1();
+        UserLineEdit->setText("anonymous");
+        PassLineEdit->setText("some@email.org");
+    } else {
+        UserLineEdit->setText(m_user);
+        PassLineEdit->setText(m_pass);
+    }
 }
