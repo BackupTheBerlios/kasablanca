@@ -21,11 +21,11 @@
 
 #include <list>
 #include "ftplib.h"
-#include "kbdirectory.h"
+#include "kbdirinfo.h"
 #include <qapplication.h>
 #include <qevent.h>
 #include "eventhandler.h"
-#include "remotefileinfo.h"
+#include "kbfileinfo.h"
 #include <qdir.h>
 #include <iostream>
 
@@ -155,30 +155,45 @@ bool FtpThread::Quit()
 
 /* get file */
 
-bool FtpThread::Get(QString src, QString dst, unsigned long resume)
+bool FtpThread::Transfer_Get(QString src, QString dst, bool tls, unsigned long resume)
 {
 	if (running()) return false;
 	else
 	{
-		m_tasklist.append(FtpThread::get);
-		m_getsrclist.push_back(src);
-		m_getdstlist.push_back(dst);
-		m_getresumelist.push_back(resume);
+		m_tasklist.append(FtpThread::transfer_get);
+		m_transfer_gettlslist.push_back(tls);
+		m_transfer_getsrclist.push_back(src);
+		m_transfer_getdstlist.push_back(dst);
+		m_transfer_getresumelist.push_back(resume);
 		return true;
 	}
 }
 
 /* put file */
 
-bool FtpThread::Put(QString src, QString dst, unsigned long resume)
+bool FtpThread::Transfer_Put(QString src, QString dst, bool tls, unsigned long resume)
 {
 	if (running()) return false;
 	else
 	{
-		m_tasklist.append(FtpThread::put);
-		m_putsrclist.push_back(src);
-		m_putdstlist.push_back(dst);
-		m_putresumelist.push_back(resume);
+		m_tasklist.append(FtpThread::transfer_put);
+		m_transfer_puttlslist.push_back(tls);
+		m_transfer_putsrclist.push_back(src);
+		m_transfer_putdstlist.push_back(dst);
+		m_transfer_putresumelist.push_back(resume);
+		return true;
+	}
+}
+
+/* transfer mkdir */
+
+bool FtpThread::Transfer_Mkdir(QString dir)
+{
+	if (running()) return false;
+	else
+	{
+		m_tasklist.append(FtpThread::transfer_mkdir);
+		m_transfer_mkdirlist.push_back(dir);
 		return true;
 	}
 }
@@ -248,10 +263,24 @@ bool FtpThread::Chdir(QString path)
 	}
 }
 
+/* change working dir to the given path, used by transfers */
+
+bool FtpThread::Transfer_Changedir(QString dir, bool tls)
+{
+	if (running()) return false;
+	else
+	{
+		m_tasklist.append(FtpThread::transfer_changedir);
+		m_transfer_changedirlist.append(make_pair(dir, tls));
+		return true;
+	}
+}
+
 /* creates a directory */
 
 bool FtpThread::Mkdir(QString path)
 {
+	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -265,6 +294,7 @@ bool FtpThread::Mkdir(QString path)
 
 bool FtpThread::Cdup()
 {
+	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -277,6 +307,7 @@ bool FtpThread::Cdup()
 
 bool FtpThread::Dir()
 {
+	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -289,6 +320,7 @@ bool FtpThread::Dir()
 
 bool FtpThread::Authtls()
 {
+	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -301,6 +333,7 @@ bool FtpThread::Authtls()
 
 bool FtpThread::Rm(QString name)
 {
+	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -314,6 +347,7 @@ bool FtpThread::Rm(QString name)
 
 bool FtpThread::Rmdir(QString name)
 {
+	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -327,6 +361,7 @@ bool FtpThread::Rmdir(QString name)
 
 bool FtpThread::Raw(QString cmd)
 {
+	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -338,13 +373,14 @@ bool FtpThread::Raw(QString cmd)
 
 /* scan the directory recursively */
 
-bool FtpThread::Scandir(kbdirectory* dir)
+bool FtpThread::Scandir(KbDirInfo* dir)
 {
+	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
 		m_tasklist.append(FtpThread::scandir);
-		m_scandir = dir;
+		mp_scandir = dir;
 		return true;
 	}
 }
@@ -428,6 +464,200 @@ void FtpThread::Dataencon_thread()
 	}
 }
 
+void FtpThread::Transfer_Changedir_thread()
+{
+	int result;
+	char buffer[1024];
+	bool tls;
+	QString dirname, path;
+
+	dirname = QDir::homeDirPath() + 
+		"/.kasablanca/" +
+		QString::number((int) time(NULL) & 0xffff) + 
+		".dir";
+				
+	path = m_transfer_changedirlist.front().first;
+	tls = m_transfer_changedirlist.front().second;
+	m_transfer_changedirlist.pop_front();
+	
+	if (path == m_pwd)
+	{
+		Event(EventHandler::transfer_success);
+		return;	
+	}
+	
+	result = mp_ftp->Chdir(path.latin1());
+	if (result) Event(EventHandler::chdir_success);
+	else 
+	{
+		if (ConnectionLost()) Event(EventHandler::connectionlost);
+		else Event(EventHandler::chdir_failure);	
+		Event(EventHandler::transfer_failure);
+		return;
+	}
+
+	result = mp_ftp->Pwd(buffer, 1024);
+	if (result) 
+	{
+		Event(EventHandler::pwd_success, new QString(buffer));
+		m_pwd = buffer;
+	}
+	else 
+	{
+		if (ConnectionLost()) Event(EventHandler::connectionlost);
+		else Event(EventHandler::pwd_failure);
+		Event(EventHandler::transfer_failure);
+		return;
+	}
+	
+	if (tls)
+	{
+		result = mp_ftp->SetDataEncryption(ftplib::secure);
+		if (result) 
+		{
+			Event(EventHandler::encryptdataon_success);
+			m_dataencrypted = true;
+		}
+		else 
+		{
+			if (ConnectionLost()) Event(EventHandler::connectionlost);
+			else Event(EventHandler::encryptdataon_failure);
+			Event(EventHandler::transfer_failure);
+			return;
+		}
+	}
+		
+	result = mp_ftp->Dir(dirname.latin1(), "");
+	if (result) 
+	{		
+		m_dirlist.clear();
+		m_filelist.clear();		
+		FormatFilelist(dirname.latin1(), m_pwd, &m_dirlist, &m_filelist); 
+		m_dircontent.first = m_dirlist;
+		m_dircontent.second = m_filelist;
+		Event(EventHandler::dir_success, &m_dircontent);
+	}
+	else 
+	{
+		if (ConnectionLost()) Event(EventHandler::connectionlost);
+		else Event(EventHandler::dir_failure, &m_dircontent);
+	}
+	
+	if (!result) Event(EventHandler::transfer_failure);
+	else Event(EventHandler::transfer_success);
+	
+	QFile::remove(dirname);	
+}
+
+void FtpThread::Transfer_Mkdir_thread()
+{
+	int result;
+	QString dir = m_transfer_mkdirlist.front();
+	m_transfer_mkdirlist.pop_front();
+	
+	result = mp_ftp->Mkdir(dir.latin1());
+	if (result) Event(EventHandler::mkdir_success);
+	else 
+	{
+		if (ConnectionLost()) Event(EventHandler::connectionlost);
+		else Event(EventHandler::mkdir_failure);	
+		Event(EventHandler::transfer_failure);
+		return;
+	}
+	
+	Event(EventHandler::transfer_success);
+}
+
+void FtpThread::Transfer_Get_thread()
+{
+	int result;
+	
+	QString src = m_transfer_getsrclist.front();
+	m_transfer_getsrclist.pop_front();
+	QString dst = m_transfer_getdstlist.front();
+	m_transfer_getdstlist.pop_front();
+	bool tls = m_transfer_gettlslist.front();
+	m_transfer_gettlslist.pop_front();
+	unsigned long resume = m_transfer_getresumelist.front();
+	m_transfer_getresumelist.pop_front();
+	
+	if (tls)
+	{
+		result = mp_ftp->SetDataEncryption(ftplib::secure);
+		if (result) 
+		{
+			Event(EventHandler::encryptdataon_success);
+			m_dataencrypted = true;
+		}
+		else 
+		{
+			if (ConnectionLost()) Event(EventHandler::connectionlost);
+			else Event(EventHandler::encryptdataon_failure);
+			Event(EventHandler::transfer_failure);
+			return;
+		}
+	}
+	
+	if (resume == 0) result = mp_ftp->Get(dst.latin1(), src.latin1(), ftplib::image);
+	else result = mp_ftp->Get(dst.latin1(), src.latin1(), ftplib::image, resume);
+
+	if (result) Event(EventHandler::get_success);
+	else 
+	{
+		if (ConnectionLost()) Event(EventHandler::connectionlost);
+		else Event(EventHandler::get_failure);
+		Event(EventHandler::transfer_failure);
+		return;
+	}
+	
+	Event(EventHandler::transfer_success);
+}
+
+void FtpThread::Transfer_Put_thread()
+{
+	int result;
+	
+	QString src = m_transfer_putsrclist.front();
+	m_transfer_putsrclist.pop_front();
+	QString dst = m_transfer_putdstlist.front();
+	m_transfer_putdstlist.pop_front();
+	bool tls = m_transfer_puttlslist.front();
+	m_transfer_puttlslist.pop_front();
+	unsigned long resume = m_transfer_putresumelist.front();
+	m_transfer_putresumelist.pop_front();
+	
+	if (tls)
+	{
+		result = mp_ftp->SetDataEncryption(ftplib::secure);
+		if (result) 
+		{
+			Event(EventHandler::encryptdataon_success);
+			m_dataencrypted = true;
+		}
+		else 
+		{
+			if (ConnectionLost()) Event(EventHandler::connectionlost);
+			else Event(EventHandler::encryptdataon_failure);
+			Event(EventHandler::transfer_failure);
+			return;
+		}
+	}
+	
+	if (resume == 0) result = mp_ftp->Put(src.latin1(), dst.latin1(), ftplib::image);
+	else result = mp_ftp->Put(src.latin1(), dst.latin1(), ftplib::image, resume);
+
+	if (result) Event(EventHandler::put_success);
+	else 
+	{
+		if (ConnectionLost()) Event(EventHandler::connectionlost);
+		else Event(EventHandler::put_failure);
+		Event(EventHandler::transfer_failure);
+		return;
+	}
+	
+	Event(EventHandler::transfer_success);
+}
+
 void FtpThread::Quit_thread()
 {
 	int result;
@@ -501,11 +731,11 @@ void FtpThread::Cdup_thread()
 	
 	result = mp_ftp->Cdup();
 
-	if (result) Event(EventHandler::cdup_success);
+	if (result) Event(EventHandler::chdir_success);
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
-		else Event(EventHandler::cdup_failure);
+		else Event(EventHandler::chdir_failure);
 	}
 }
 
@@ -523,50 +753,6 @@ void FtpThread::Rm_thread()
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
 		else Event(EventHandler::rm_failure);
-	}
-}
-
-void FtpThread::Get_thread()
-{
-	int result;
-	
-	QString src = m_getsrclist.front();
-	m_getsrclist.pop_front();
-	QString dst = m_getdstlist.front();
-	m_getdstlist.pop_front();
-	unsigned long resume = m_getresumelist.front();
-	m_getresumelist.pop_front();
-	
-	if (resume == 0) result = mp_ftp->Get(dst.latin1(), src.latin1(), ftplib::image);
-	else result = mp_ftp->Get(dst.latin1(), src.latin1(), ftplib::image, resume);
-
-	if (result) Event(EventHandler::get_success);
-	else 
-	{
-		if (ConnectionLost()) Event(EventHandler::connectionlost);
-		else Event(EventHandler::get_failure);
-	}
-}
-
-void FtpThread::Put_thread()
-{
-	int result;
-	
-	QString src = m_putsrclist.front();
-	m_putsrclist.pop_front();
-	QString dst = m_putdstlist.front();
-	m_putdstlist.pop_front();
-	unsigned long resume = m_putresumelist.front();
-	m_putresumelist.pop_front();
-	
-	if (resume == 0) result = mp_ftp->Put(src.latin1(), dst.latin1(), ftplib::image);
-	else result = mp_ftp->Put(src.latin1(), dst.latin1(), ftplib::image, resume);
-
-	if (result) Event(EventHandler::put_success);
-	else 
-	{
-		if (ConnectionLost()) Event(EventHandler::connectionlost);
-		else Event(EventHandler::put_failure);
 	}
 }
 
@@ -623,14 +809,14 @@ void FtpThread::Scandir_thread()
 {
 	bool result = true;
 
-	list<kbdirectory*>::iterator dirIterator;
+	list<KbDirInfo*>::iterator dirIterator;
 	
-	for(dirIterator = m_scandir->Dirlist()->begin(); dirIterator != m_scandir->Dirlist()->end(); dirIterator++)
+	for(dirIterator = mp_scandir->Dirlist()->begin(); dirIterator != mp_scandir->Dirlist()->end(); dirIterator++)
 	{
-		result = Scandir_recurse(*dirIterator);
+		result = Scandir_recurse(*dirIterator, (*dirIterator)->dirPath() + (*dirIterator)->fileName());
 	}
 	
-	if (result) Event(EventHandler::scandir_success, m_scandir);
+	if (result) Event(EventHandler::scandir_success, mp_scandir);
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
@@ -722,8 +908,11 @@ void FtpThread::run()
 			case FtpThread::dataencoff:
 				Dataencoff_thread();
 				break;
-			case FtpThread::get:
-				Get_thread();
+			case FtpThread::transfer_get:
+				Transfer_Get_thread();
+				break;
+			case transfer_put:
+				Transfer_Put_thread();
 				break;
 			case FtpThread::mkdir:
 				Mkdir_thread();
@@ -734,8 +923,11 @@ void FtpThread::run()
 			case FtpThread::raw:
 				Raw_thread();
 				break;
-			case FtpThread::put:
-				Put_thread();
+			case FtpThread::transfer_changedir:
+				Transfer_Changedir_thread();
+				break;
+			case transfer_mkdir:
+				Transfer_Mkdir_thread();
 				break;
 			default:
 				Event(EventHandler::error);
@@ -760,18 +952,12 @@ void FtpThread::Event(EventHandler::EventType type, void *data)
 
 /* parses the dir file */
 
-bool FtpThread::FormatFilelist(const char *filename, 
-	QString current, 
-	list<RemoteFileInfo> *dirtable, 
-	list<RemoteFileInfo> *filetable
+bool FtpThread::FormatFilelist(const char *filename, QString current, list<KbFileInfo> *dirtable, list<KbFileInfo> *filetable
 )
 {
 	int i, blocks, space, month_int = 1;
 	unsigned int loc, fileloc, datebegin, sizebegin = 0;
 	string buffer, filestring;
-
-	RemoteFileInfo fi;
-	QFileInfo dp;
 
 	FILE* dirfile;
 
@@ -897,7 +1083,7 @@ bool FtpThread::FormatFilelist(const char *filename,
 			{
 				if ((*file == 'd') || (*file == 'D'))
 				{
-					RemoteFileInfo di(current, filestring.c_str(), size, date.latin1(), date_int);
+					KbFileInfo di(current, filestring.c_str(), size, date.latin1(), date_int);
 					dirtable->push_back(di);
 				}
 				else if ((*file == 'l') || (*file == 'L'))
@@ -906,7 +1092,7 @@ bool FtpThread::FormatFilelist(const char *filename,
 				}
 				else
 				{
-					RemoteFileInfo fi(current, filestring.c_str(), size, date.latin1(), date_int);
+					KbFileInfo fi(current, filestring.c_str(), size, date.latin1(), date_int);
 					filetable->push_back(fi);
 				}
 			}
@@ -918,15 +1104,15 @@ bool FtpThread::FormatFilelist(const char *filename,
 
 /* recursive method to check content of a directory */
 
-bool FtpThread::Scandir_recurse(kbdirectory* dir)
-{
-	char currentdir[1024];
+bool FtpThread::Scandir_recurse(KbDirInfo *dir, QString path)
+{	
+	char currentpath[1024];
 	int result;
-	list<RemoteFileInfo> dirlist;
-	list<RemoteFileInfo> filelist;
+	list<KbFileInfo> dirlist;
+	list<KbFileInfo> filelist;
 	QString dirname;
-	
-	result = mp_ftp->Pwd(currentdir, 1024);
+		
+	result = mp_ftp->Pwd(currentpath, 1024);
 	
 	if (!result) 
 	{
@@ -934,8 +1120,8 @@ bool FtpThread::Scandir_recurse(kbdirectory* dir)
 		return false;
 	}
 	else Event(EventHandler::misc_success);
-		
-	result = mp_ftp->Chdir(dir->Name().latin1());
+	
+	result = mp_ftp->Chdir(dir->fileName().latin1());
 	
 	if (!result) 
 	{
@@ -944,10 +1130,7 @@ bool FtpThread::Scandir_recurse(kbdirectory* dir)
 	}
 	else Event(EventHandler::misc_success);
 	
-	dirname = QDir::homeDirPath() + 
-	"/.kasablanca/" +
-	QString::number((int) time(NULL) & 0xffff) + 
-	".dir";
+	dirname = QDir::homeDirPath() + "/.kasablanca/" + QString::number((int) time(NULL) & 0xffff) + ".dir";
 	
 	result = mp_ftp->Dir(dirname.latin1(), "");
 			
@@ -958,24 +1141,24 @@ bool FtpThread::Scandir_recurse(kbdirectory* dir)
 	}
 	else Event(EventHandler::misc_success);
 	
-	if(!FormatFilelist(dirname.latin1(), "", &dirlist, &filelist)) return false; 
+	if(!FormatFilelist(dirname.latin1(), path, &dirlist, &filelist)) return false; 
 	
 	QFile::remove(dirname);
 	
-	list<RemoteFileInfo>::iterator fiIterator;
+	list<KbFileInfo>::iterator fiIterator;
 	
 	for(fiIterator = filelist.begin(); fiIterator != filelist.end(); fiIterator++)
 	{
-		dir->AddFile((*fiIterator).fileName());
+		dir->AddFile(*fiIterator);
 	}
 	
 	for(fiIterator = dirlist.begin(); fiIterator != dirlist.end(); fiIterator++)
 	{
-		kbdirectory* newdir = dir->AddDirectory((*fiIterator).fileName());
-		if (!Scandir_recurse(newdir)) return false;
+		KbDirInfo* newdir = dir->AddDirectory(*fiIterator);
+		if (!Scandir_recurse(newdir, path + '/' + newdir->fileName())) return false;
 	}
 		
-	result = mp_ftp->Chdir(currentdir);
+	result = mp_ftp->Chdir(currentpath);
 	
 	if (!result) 
 	{
@@ -993,8 +1176,8 @@ bool FtpThread::Delete_recurse(QString name)
 {
 	char currentdir[1024];
 	int result;
-	list<RemoteFileInfo> dirlist;
-	list<RemoteFileInfo> filelist;
+	list<KbFileInfo> dirlist;
+	list<KbFileInfo> filelist;
 	QString dirname;
 	
 	result = mp_ftp->Pwd(currentdir, 1024);
@@ -1033,11 +1216,17 @@ bool FtpThread::Delete_recurse(QString name)
 	
 	QFile::remove(dirname);
 	
-	list<RemoteFileInfo>::iterator fiIterator;
+	list<KbFileInfo>::iterator fiIterator;
 	
 	for(fiIterator = filelist.begin(); fiIterator != filelist.end(); fiIterator++)
 	{
-		mp_ftp->Delete((*fiIterator).fileName().latin1());
+		result = mp_ftp->Delete((*fiIterator).fileName().latin1());
+		if (!result) 
+		{
+			Event(EventHandler::misc_failure);
+			return false;
+		}
+		else Event(EventHandler::misc_success);
 	}
 	
 	for(fiIterator = dirlist.begin(); fiIterator != dirlist.end(); fiIterator++)

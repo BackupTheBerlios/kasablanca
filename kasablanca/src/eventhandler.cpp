@@ -168,14 +168,14 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
 		emit ftp_chdir(false);
       return TRUE; 
    }
-	else if (type == cdup_success) 
+	else if (type == transfer_success) 
 	{   
-		emit ftp_cdup(true);
+		emit ftp_transfer(true);
       return TRUE; 
    }
-	else if (type == cdup_failure) 
+	else if (type == transfer_failure) 
 	{   
-		emit ftp_cdup(false);
+		emit ftp_transfer(false);
       return TRUE; 
    }
 	else if (type == dir_success) 
@@ -192,7 +192,7 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
    }
 	else if (type == scandir_success) 
 	{   
-		kbdirectory *dir = static_cast<kbdirectory*>(static_cast<QCustomEvent*>(e)->data());
+		KbDirInfo *dir = static_cast<KbDirInfo*>(static_cast<QCustomEvent*>(e)->data());
 		emit ftp_scandir(true, dir);
       return TRUE; 
    }

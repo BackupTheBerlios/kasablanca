@@ -1,7 +1,7 @@
 /***************************************************************************
-                          fileitem.h  -  description
+                          kbdir.cpp  -  description
                              -------------------
-    begin                : Die Sep 23 2003
+    begin                : Sam Sep 20 2003
     copyright            : (C) 2003 by mkulke
     email                : sikor_sxe@radicalapproach.de
  ***************************************************************************/
@@ -14,25 +14,42 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+ 
+#include <kglobal.h>
+#include <kiconloader.h>
+#include "kbfileinfo.h"
 
-#ifndef FILEITEM_H
-#define FILEITEM_H
+#include "kbdir.h"
 
-#include <qlistview.h>
-#include "kbitem.h"
+KbDir::KbDir(KbFileInfo kfi, QListView * parent, QListViewItem * after) : KbItem(kfi, parent, after)
+{	
+	setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));	
 
-class RemoteFileInfo;
+	if ((kfi.fileName() == ".") || (kfi.fileName() == "..")) delete this;
+}
 
-/**
-  *@author mkulke
-  */
+KbDir::KbDir(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int) : KbItem(parent, after)
+{
+	setText(0,file);
 
-class fileitem : public kbitem  {
-public:
-	fileitem(RemoteFileInfo* rfi, QListView * parent, QListViewItem * after);
-	fileitem(QListView * parent, QListViewItem * after, QString file, QString path, QString date, uint size, uint date_int);
-	~fileitem();
-	int rtti() const;
-};
+    QString s;
+    s.setNum(size);
+    setText(1, s);
 
-#endif
+    setText(2, date);
+
+    m_path = path;
+    m_file = file;
+    m_date = date;
+    m_size = size;
+
+	m_date_int = date_int;
+}
+KbDir::~KbDir()
+{
+}
+
+int KbDir::rtti() const
+{
+	return KbItem::dir;
+}

@@ -1,5 +1,5 @@
 //
-// C++ Interface: kbitem
+// C++ Interface: KbItem
 //
 // Description: 
 //
@@ -14,12 +14,12 @@
 
 #include <qlistview.h>
 
-class RemoteFileInfo;
+class KbFileInfo;
 
 /**
 @author mkulke
 */
-class kbitem : public QListViewItem
+class KbItem : public QListViewItem
 {
 public:
 	enum entrytype
@@ -27,10 +27,10 @@ public:
 		dir = 1001,
 		file
 	};
-	kbitem(RemoteFileInfo *rfi, QListView* parent, QListViewItem* after);
-	kbitem(QListView* parent, QListViewItem* after);
+	KbItem(KbFileInfo kfi, QListView* parent, QListViewItem* after);
+	KbItem(QListView* parent, QListViewItem* after);
 	int compare (QListViewItem * i, int col, bool ascending) const;
-	~kbitem();
+	~KbItem();
 	
 	QString File() { return m_file; };
 	QString Path() { return m_path; };

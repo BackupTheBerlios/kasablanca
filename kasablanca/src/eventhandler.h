@@ -23,20 +23,19 @@
 #include <qobject.h>
 #include <qvaluelist.h>
 #include <list>
-#include "remotefileinfo.h"
+#include "kbfileinfo.h"
 
 using namespace std;
 
-class kbdirectory;
+class KbDirInfo;
 class FtpThread;
-class c;
 
 /**
 @author Magnus Kulke
 */
 
-typedef list<RemoteFileInfo> rfilist;
-typedef pair<rfilist, rfilist> contentpair;
+typedef list<KbFileInfo> filist;
+typedef pair<filist, filist> contentpair;
 
 class EventHandler : public QObject
 {
@@ -64,8 +63,6 @@ public:
 		pwd_failure,
 		chdir_success,
 		chdir_failure,
-		cdup_success,
-		cdup_failure,
 		dir_success,
 		dir_failure,
 		scandir_success,
@@ -91,10 +88,12 @@ public:
 		raw_success,
 		raw_failure,
 		put_success,
-		put_failure
+		put_failure,
+		transfer_success,
+		transfer_failure
 	};
 private:
-	bool eventFilter(QObject* o, QEvent *e);	 
+	bool eventFilter(QObject* o, QEvent *e);
 private:
 	FtpThread* mp_thread;
 signals:
@@ -108,9 +107,8 @@ signals:
 	void ftp_quit(bool success);
 	void ftp_pwd(bool success, QString path);
 	void ftp_chdir(bool success);
-	void ftp_cdup(bool success);
-	void ftp_dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist);
-	void ftp_scandir(bool success, kbdirectory* dir);
+	void ftp_dir(bool success, list<KbFileInfo> dirlist, list<KbFileInfo> filelist);
+	void ftp_scandir(bool success, KbDirInfo* dir);
 	void ftp_rm(bool success);
 	void ftp_rmdir(bool success);
 	void ftp_authtls(bool success);
@@ -120,6 +118,7 @@ signals:
 	void ftp_rename(bool success);
 	void ftp_raw(bool success);
 	void ftp_put(bool success);
+	void ftp_transfer(bool success);
 	void ftp_connectionlost();
 };
 

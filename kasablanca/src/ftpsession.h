@@ -12,15 +12,13 @@
 #ifndef FTPSESSION_H
 #define FTPSESSION_H
 
-#define KB_THREAD_TIMEOUT 1000
-
 #include <kprocess.h>
 #include <qstring.h>
 #include <qdir.h>
 #include <qpixmap.h>
 #include <list>
 
-#include "remotefileinfo.h"
+#include "kbfileinfo.h"
 
 #include <qobject.h>
 
@@ -37,9 +35,9 @@ class QPopupMenu;
 class QLineEdit;
 class QLabel;
 class QPoint;
-//class KProcess;
+class KbDirInfo;
 class QHeader;
-class kbitem;
+class KbTransferItem;
 
 typedef pair<QString, bool> logentries;
 
@@ -64,6 +62,7 @@ public:
 	void SetBookmarksMenu(QPopupMenu *bookmarksmenu) { mp_bookmarksmenu = bookmarksmenu; };
 	void SetRclickMenu(QPopupMenu *rclickmenu) { mp_rclickmenu = rclickmenu; };
 	void SetSessionList(list<FtpSession*> *sessionlist) { mp_sessionlist = sessionlist; };
+	void SetCurrentTransfer(KbTransferItem* currenttransfer) { mp_currenttransfer = currenttransfer; };
 	bool Connected() { return m_connected; };
 	void Disconnect();
 	void Connect();
@@ -71,7 +70,7 @@ public:
 	void Occupy();
 	void Free();
 	QString WorkingDir();
-	void Get(QString src, QString dst, FtpSession* dstsession);
+ 	void Transfer(KbTransferItem *item);
 	
 private:
 	FtpThread *mp_ftpthread;
@@ -85,11 +84,12 @@ private:
 	QLabel *mp_statusline, *mp_encryptionicon;
 	QString m_remoteworkingdir; 
 	QDir m_localworkingdir;
-	bool m_connected, m_occupied, m_sortascending;
+	bool m_connected, m_occupied, m_sortascending, m_startqueue;
 	list<logentries> m_loglist;
 	QPixmap m_iconencrypted, m_iconunencrypted;
 	QHeader *mp_header;
 	list<FtpSession*> *mp_sessionlist;
+	KbTransferItem *mp_currenttransfer;
 	
 public slots:
 	void SLOT_Log(QString log, bool out);
@@ -107,7 +107,7 @@ public slots:
 	void SLOT_Misc(bool success);
 	void SLOT_Get(bool success);
 	void SLOT_EncryptData(bool success, bool enabled);
-	void SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist);
+	void SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInfo> filelist);
 	void SLOT_ConnectButton();
 	void SLOT_RefreshButton();
 	void SLOT_TransferButton();
@@ -115,15 +115,28 @@ public slots:
 	void SLOT_CmdLine();
 	void SLOT_Finish();
 	void SLOT_ConnectionLost();
+	void SLOT_Transfer(bool success);
+	void SLOT_Scandir(bool success, KbDirInfo* dir);
 	
 private:
 	void PrintLog(bool success);
+	void QueueItems();
 	void RefreshBrowser();
 	void UpdateLocal(QString cwd = "");
 	void RmdirLocal(QString dir);
+	void GetFile(QString file);
+	void PutFile(QString file);
+	void ChangeDirectory(QString path);
+	bool CheckLocalDirectory(QString path);
+	bool MakeLocalDirectory(QString path);
+	bool CopyLocalFile(KbTransferItem* item);
+	bool ScandirLocal(KbDirInfo *dir, QString path);
+	void MakeDirectory(QString dir);
 signals:
 	void gui_update();
-	void gui_queueitems(list<kbitem*> items, FtpSession *src, FtpSession *dst, bool start);
+	void gui_queueitems(KbDirInfo* dir, FtpSession* src, FtpSession* dst);
+	void gui_succeedtransfer(QListViewItem* item);
+	void gui_startqueue();
 };
 
 #endif

@@ -14,7 +14,7 @@
 
 #include <qfileinfo.h>
 
-class kbitem;
+class KbItem;
 
 /**
 @author Magnus Kulke
@@ -23,12 +23,17 @@ class KbFileInfo : public QFileInfo
 {
 public:
 
-	KbFileInfo(kbitem* item, QString workingdir);
+	KbFileInfo();
+	KbFileInfo(QFileInfo qfi);
+	KbFileInfo(const KbFileInfo & kfi);
+	KbFileInfo(QString workingdir);
+	KbFileInfo(KbItem* item, QString workingdir);
 	KbFileInfo(const QString & d, const QString & fileName, uint size, QString date, uint date_int);
 	~KbFileInfo();
 	uint Size() { return m_size; };
 	QString Date() { return m_date; };
 	uint DateInt() { return m_date_int; };
+	void SetDirPath(QString path); 
 private:
    uint m_size;
 	uint m_date_int;

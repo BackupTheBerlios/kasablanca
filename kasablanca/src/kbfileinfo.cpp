@@ -15,7 +15,34 @@
 
 #include "kbfileinfo.h"
 
-KbFileInfo::KbFileInfo(kbitem* item, QString workingdir) : QFileInfo(QDir(workingdir), item->File())
+KbFileInfo::KbFileInfo() : QFileInfo()
+{
+
+}
+
+KbFileInfo::KbFileInfo(QString workingdir) : QFileInfo(QDir(workingdir), ".")
+{
+
+}
+
+KbFileInfo::KbFileInfo(QFileInfo qfi) : QFileInfo(qfi)
+{
+	m_date_int = 
+		qfi.lastModified().date().year() * 10000 +
+		qfi.lastModified().date().month() * 100 +
+		qfi.lastModified().date().day();
+	m_date = qfi.lastModified().toString("MMM dd yyyy");
+	m_size = qfi.size();
+}
+
+KbFileInfo::KbFileInfo(const KbFileInfo & kfi) : QFileInfo(kfi)
+{
+	m_date_int = kfi.m_date_int;
+	m_date = kfi.m_date;
+	m_size = kfi.m_size;
+}
+
+KbFileInfo::KbFileInfo(KbItem* item, QString workingdir) : QFileInfo(QDir(workingdir), item->File())
 {
 	m_date_int = item->DateInt();
 	m_date = item->Date();
@@ -34,4 +61,8 @@ KbFileInfo::~KbFileInfo()
 {
 }
 
+void KbFileInfo::SetDirPath(QString path)
+{
+	setFile(QDir(path), fileName());
+} 
 

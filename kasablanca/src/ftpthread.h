@@ -20,19 +20,24 @@
 #ifndef FTPTHREAD_H
 #define FTPTHREAD_H
 
+#define KB_THREAD_TIMEOUT 1000
+
 #include <list>
 #include <qthread.h>
+#include <qstringlist.h>
 #include "eventhandler.h"
-#include "remotefileinfo.h"
+#include "kbfileinfo.h"
+
 
 using namespace std;
 
 class ftplib;
 class QObject;
-class kbdirectory;
+class KbDirInfo;
 
-typedef list<RemoteFileInfo> rfilist;
+typedef list<KbFileInfo> filist;
 typedef pair<int, bool> xferpair;
+typedef pair<QString, bool> changedirpair;
 
 /**
 @author Magnus Kulke
@@ -53,24 +58,28 @@ public:
 	bool Chdir(QString path);
 	bool Cdup();
 	bool Dir();
-	bool Scandir(kbdirectory* dir);
+	bool Scandir(KbDirInfo* dir);
 	bool Rm(QString name);
 	bool Rmdir(QString name);
 	bool Authtls();
 	bool Pasv(bool flag);
 	bool EncryptData(bool flag);
-	bool Get(QString src, QString dst, unsigned long resume = 0);
-	bool Put(QString src, QString dst, unsigned long resume = 0);
+	//bool Get(QString src, QString dst, unsigned long resume = 0);
+	//bool Put(QString src, QString dst, unsigned long resume = 0);
 	bool Mkdir(QString path);
 	bool Rename(QString src, QString dst);
 	bool Raw(QString cmd);
+	bool Transfer_Get(QString src, QString dst, bool tls, unsigned long resume = 0);
+	bool Transfer_Put(QString src, QString dst, bool tls, unsigned long resume = 0);
+	bool Transfer_Changedir(QString dir, bool tls);
+	bool Transfer_Mkdir(QString dir);
+	void Event(EventHandler::EventType type, void *data = NULL);
 private:
 	void run();
-	void Event(EventHandler::EventType type, void *data = NULL);
 	bool FormatFilelist(const char *filename,
 		QString current,
-		list<RemoteFileInfo> *filetable,
-		list<RemoteFileInfo> *dirtable
+		list<KbFileInfo> *filetable,
+		list<KbFileInfo> *dirtable
 	);
 	void InitInternals();
 	void Connect_thread(); 
@@ -87,12 +96,15 @@ private:
 	void Authtls_thread();
 	void Dataencoff_thread();
 	void Dataencon_thread();
-	void Get_thread();
-	void Put_thread();
+	//void Put_thread();
 	void Mkdir_thread();
 	void Rename_thread();
 	void Raw_thread();
-	bool Scandir_recurse(kbdirectory* dir);
+	void Transfer_Changedir_thread();
+	void Transfer_Get_thread();
+	void Transfer_Put_thread();
+	void Transfer_Mkdir_thread();
+	bool Scandir_recurse(KbDirInfo *dir, QString path);
 	bool Delete_recurse(QString name);
 	bool ConnectionLost();
 private:
@@ -112,11 +124,13 @@ private:
 		authtls,
 		dataencoff,
 		dataencon,
-		get,
 		mkdir,
 		rename,
 		raw,
-		put
+		transfer_changedir,
+		transfer_get,
+		transfer_mkdir,
+		transfer_put
 	};
 	QMutex* mp_mutex;
 	QObject* mp_eventreceiver;
@@ -126,22 +140,29 @@ private:
 	QString m_pass;
 	QString m_pwd;
 	bool m_dataencrypted;
-	kbdirectory* m_scandir;
-	rfilist m_dirlist, m_filelist;
-	pair<rfilist, rfilist> m_dircontent;
-	list<QString> m_chdirlist;
-	list<QString> m_rmlist;
-	list<QString> m_rmdirlist;
-	list<QString> m_getsrclist;
-	list<QString> m_getdstlist;
-	list<QString> m_putsrclist;
-	list<QString> m_putdstlist;
+	KbDirInfo* mp_scandir;
+	filist m_dirlist, m_filelist;
+	pair<filist, filist> m_dircontent;
+	QStringList m_chdirlist;
+	QStringList m_rmlist;
+	QStringList m_rmdirlist;
+	QStringList m_transfer_mkdirlist;
+	list<bool> m_transfer_gettlslist;
+	list<bool> m_transfer_puttlslist;
+	QStringList m_transfer_getsrclist;
+	QStringList m_transfer_getdstlist;
+	QStringList m_transfer_putsrclist;
+	QStringList m_transfer_putdstlist;
+	QValueList<changedirpair> m_transfer_changedirlist;
+	list<unsigned long> m_transfer_getresumelist;
+	list<unsigned long> m_transfer_putresumelist;
+	QStringList m_putsrclist;
+	QStringList m_putdstlist;
 	list<unsigned long> m_putresumelist;
-	list<QString> m_mkdirlist;
-	list<unsigned long> m_getresumelist;
-	list<QString> m_renamesrclist;
-	list<QString> m_renamedstlist;
-	list<QString> m_rawlist;
+	QStringList m_mkdirlist;
+	QStringList m_renamesrclist;
+	QStringList m_renamedstlist;
+	QStringList m_rawlist;
 	QValueList<task> m_tasklist;
 public:
 	QString m_linebuffer;

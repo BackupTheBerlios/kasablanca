@@ -25,6 +25,10 @@
 #include <qlabel.h>
 #include <qpixmap.h>
 #include <qheader.h>
+#include <qstringlist.h>
+#include <qevent.h>
+#include <qfile.h>
+#include <qtextstream.h>
 
 #include "customconnectdialog.h"
 #include "ftpthread.h"
@@ -32,20 +36,25 @@
 #include "siteinfo.h"
 #include "ftpsession.h"
 #include "kasablanca.h"
-#include "diritem.h"
-#include "fileitem.h"
-#include "remotefileinfo.h"
+#include "kbdir.h"
+#include "kbdirinfo.h"
+#include "kbfile.h"
+#include "kbfileinfo.h"
 
 FtpSession::FtpSession(QObject *parent, const char *name)
  : QObject(parent, name)
 {
+	installEventFilter(this);
+
 	mp_ftpthread = new FtpThread();
 	mp_eventhandler = new EventHandler(this, "event handler");
 	mp_siteinfo = new siteinfo();
 	
 	m_connected = false;
 	m_occupied = false;
+	m_startqueue = false;
 	m_sortascending = true;
+	mp_currenttransfer = NULL;
 		
 	mp_eventhandler->SetFtpThread(mp_ftpthread); 
 	mp_ftpthread->SetEventReceiver(mp_eventhandler);
@@ -61,16 +70,19 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_chdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_raw(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_get(bool)), SLOT(SLOT_Get(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_put(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_rm(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_misc(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_mkdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_rename(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_pwd(bool, QString)), SLOT(SLOT_Pwd(bool, QString)));
-	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)), 
-		SLOT(SLOT_Dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)));
+	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<KbFileInfo>, list<KbFileInfo>)), 
+		SLOT(SLOT_Dir(bool, list<KbFileInfo>, list<KbFileInfo>)));
 	connect(mp_eventhandler, SIGNAL(ftp_encryptdata(bool, bool)), SLOT(SLOT_EncryptData(bool, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_finished()), SLOT(SLOT_Finish()));
 	connect(mp_eventhandler, SIGNAL(ftp_connectionlost()), SLOT(SLOT_ConnectionLost()));
+	connect(mp_eventhandler, SIGNAL(ftp_transfer(bool)), SLOT(SLOT_Transfer(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_scandir(bool, KbDirInfo*)), SLOT(SLOT_Scandir(bool, KbDirInfo*)));
 }
 
 FtpSession::~FtpSession()
@@ -87,7 +99,7 @@ void FtpSession::SLOT_Xfered(int xfered, bool encrypted)
 {
 	if (encrypted) mp_encryptionicon->setPixmap(m_iconencrypted);
 	else mp_encryptionicon->setPixmap(m_iconunencrypted);	
-	qWarning("INFO: %d bytes transfered", xfered);
+	//qWarning("INFO: %d bytes transfered", xfered);
 }
 
 void FtpSession::SLOT_HeaderClicked(int section)
@@ -139,12 +151,12 @@ void FtpSession::SLOT_ActionMenu(int i)
 			{
 				if (it.current()->isSelected())
 				{
-					kbitem* item = static_cast<kbitem*>(it.current());
+					KbItem* item = static_cast<KbItem*>(it.current());
 					int warning = KMessageBox::warningContinueCancel(0, i18n("Delete this item?"), item->File());
 					if (warning == KMessageBox::Continue)
 					{
-						if (item->rtti() == kbitem::dir) mp_ftpthread->Rmdir(item->File());
-						else if (item->rtti() == kbitem::file) mp_ftpthread->Rm(item->File());
+						if (item->rtti() == KbItem::dir) mp_ftpthread->Rmdir(item->File());
+						else if (item->rtti() == KbItem::file) mp_ftpthread->Rm(item->File());
 					}
 				}
 				it++;
@@ -159,12 +171,12 @@ void FtpSession::SLOT_ActionMenu(int i)
 			{
 				if (it.current()->isSelected())
 				{
-					kbitem* item = static_cast<kbitem*>(it.current());
+					KbItem* item = static_cast<KbItem*>(it.current());
 					int warning = KMessageBox::warningContinueCancel(0, i18n("Delete this item?"), item->File());
 					if (warning == KMessageBox::Continue)
 					{
-						if (item->rtti() == kbitem::dir) RmdirLocal(item->File());
-						else if (item->rtti() == kbitem::file) m_localworkingdir.remove(item->File());
+						if (item->rtti() == KbItem::dir) RmdirLocal(item->File());
+						else if (item->rtti() == KbItem::file) m_localworkingdir.remove(item->File());
 					}
 				}
 				it++;
@@ -183,7 +195,7 @@ void FtpSession::SLOT_ActionMenu(int i)
 				if (it.current()->isSelected()) 
 				{	
 					bool b;
-					kbitem* item = static_cast<kbitem*>(it.current());
+					KbItem* item = static_cast<KbItem*>(it.current());
 					QString name = KInputDialog::getText(i18n("Enter new name"), i18n("Enter new name:"), item->File(), &b);
 					if (b) mp_ftpthread->Rename(item->File(), name);
 				}
@@ -200,7 +212,7 @@ void FtpSession::SLOT_ActionMenu(int i)
 				if (it.current()->isSelected()) 
 				{	
 					bool b;
-					kbitem* item = static_cast<kbitem*>(it.current());
+					KbItem* item = static_cast<KbItem*>(it.current());
 					QString name = KInputDialog::getText(i18n("Enter new name"), i18n("Enter new name:"), item->File(), &b);
 					if (b) m_localworkingdir.rename(item->text(0), name);
 				}
@@ -208,6 +220,12 @@ void FtpSession::SLOT_ActionMenu(int i)
 			}
 			UpdateLocal();
 		}
+	}
+	else if (i == Kasablanca::Queue) QueueItems();
+	else if (i == Kasablanca::Transfer) 
+	{
+		this->m_startqueue = true;
+		QueueItems();
 	}
 }
 
@@ -243,7 +261,10 @@ void FtpSession::SLOT_ConnectMenu(int i)
 
 void FtpSession::SLOT_Finish()
 {
-	Free();
+	while (!mp_ftpthread->wait(KB_THREAD_TIMEOUT)) qWarning("WARNING: thread timeout, should *not* happen.");
+
+	if (mp_currenttransfer) Transfer(mp_currenttransfer); 
+	else Free();
 }
 
 void FtpSession::SLOT_ItemClicked(QListViewItem * item)
@@ -253,7 +274,7 @@ void FtpSession::SLOT_ItemClicked(QListViewItem * item)
 		qWarning("ERROR: item clicked while occupied");
 		return;
 	}
-	if (item->rtti() == kbitem::file) return;
+	if (item->rtti() == KbItem::file) return;
 	else if (Connected())
 	{
 		Occupy();
@@ -268,28 +289,6 @@ void FtpSession::SLOT_ItemClicked(QListViewItem * item)
 void FtpSession::SLOT_ItemRClicked(QListViewItem *, const QPoint & point, int)
 {
 	mp_rclickmenu->exec(point);
-}
-
-void FtpSession::Get(QString src, QString dst, FtpSession* dstsession)
-{
-	if (Occupied()) 
-	{	
-		qWarning("ERROR: get called while occupied");
-		return;
-	}
-	else if (!Connected()) 
-	{	
-		qWarning("ERROR: get called while not connected");
-		return;
-	}
-	else 
-	{
-		Occupy();
-		dstsession->Occupy();
-		connect(this, SIGNAL(gui_xferdone()), dstsession, SLOT(SLOT_XferDone()));
-		mp_ftpthread->Get(src, dst);
-		mp_ftpthread->start();
-	}
 }
 
 void FtpSession::SLOT_CmdLine()
@@ -383,6 +382,53 @@ void FtpSession::SLOT_RefreshButton()
 	else UpdateLocal();
 }
 
+void FtpSession::QueueItems()
+{
+	KbDirInfo *dir = new KbDirInfo(WorkingDir());
+		
+	QListViewItemIterator iit(mp_browser);
+	while (iit.current())
+	{
+		QListViewItem *item = iit.current();
+		if (item->isSelected()) 
+		{		
+			if (item->rtti() == KbItem::dir) dir->AddDirectory(KbFileInfo(static_cast<KbFile*>(item), "/"));
+			else if (item->rtti() == KbItem::file) dir->AddFile(KbFileInfo(static_cast<KbFile*>(item), "/"));
+			item->setSelected(false);
+			item->repaint();
+		}
+		iit++;
+	}
+	
+	if (Connected())
+	{
+		Occupy();
+		mp_ftpthread->Scandir(dir);
+		mp_ftpthread->start();
+	}
+	else
+	{
+		list<KbDirInfo*>::iterator dirIterator;
+		for(dirIterator = dir->Dirlist()->begin(); dirIterator != dir->Dirlist()->end(); dirIterator++)
+		{
+			ScandirLocal(*dirIterator, '/' + (*dirIterator)->fileName());
+		}
+		/* temporary hack, as there are only 2 ftpsessions available yet */
+	
+		FtpSession* dst;
+		for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != mp_sessionlist->end(); i++) if (*i != this) dst = *i;
+		
+		/* /temporary hack */
+		
+		emit gui_queueitems(dir, this, dst);
+		if (m_startqueue)
+		{
+			m_startqueue = false;
+			emit gui_startqueue();
+		}	
+	}
+}
+
 void FtpSession::SLOT_TransferButton()
 {
 	if (Occupied()) 
@@ -390,23 +436,29 @@ void FtpSession::SLOT_TransferButton()
 		qWarning("ERROR: transfer button pressed while occupied");
 		return;
 	}
+	m_startqueue = true;
+	QueueItems();
+}
+
+void FtpSession::SLOT_Scandir(bool success, KbDirInfo* dir)
+{
+	if (success) 
+	{	
+		/* temporary hack, as there are only 2 ftpsessions available yet */
 	
-	list<kbitem*> items;	
-	QListViewItemIterator iit(mp_browser);
-	while (iit.current())
-	{
-		if (iit.current()->isSelected()) items.push_back(static_cast<kbitem*>(iit.current()));
-		iit++;
-	}
-	
-	/* temporary hack, as there are only 2 ftpsessions available yet */
-	
-	FtpSession* dst;
-	for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != mp_sessionlist->end(); i++) if (*i != this) dst = *i;
+		FtpSession* dst;
+		for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != mp_sessionlist->end(); i++) if (*i != this) dst = *i;
 		
-	/* /temporary hack */
-	
-	emit gui_queueitems(items, this, dst, true);
+		/* /temporary hack */
+		
+		emit gui_queueitems(dir, this, dst);
+		if (m_startqueue)
+		{
+			m_startqueue = false;
+			emit gui_startqueue();
+		}	
+	}
+	else qWarning("INFO: scandir error");
 }
 
 void FtpSession::SLOT_Connect(bool success)
@@ -447,7 +499,7 @@ void FtpSession::SLOT_ConnectionLost()
 	Disconnect();
 }
 
-void FtpSession::SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist)
+void FtpSession::SLOT_Dir(bool success, list<KbFileInfo> dirlist, list<KbFileInfo> filelist)
 {
 	PrintLog(success);
 	if (success)
@@ -456,9 +508,9 @@ void FtpSession::SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<Remot
 		QListViewItem* dirup = new QListViewItem(mp_browser, "..");
 		dirup->setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));
 		dirup->setSelectable(false);	
-		list<RemoteFileInfo>::iterator i;
-		for (i = dirlist.begin(); i != dirlist.end(); i++) new diritem(&*i, mp_browser, mp_browser->lastItem());	
-		for (i = filelist.begin(); i != filelist.end(); i++) new fileitem(&*i, mp_browser, mp_browser->lastItem());	
+		list<KbFileInfo>::iterator i;
+		for (i = dirlist.begin(); i != dirlist.end(); i++) new KbDir(*i, mp_browser, mp_browser->lastItem());	
+		for (i = filelist.begin(); i != filelist.end(); i++) new KbFile(*i, mp_browser, mp_browser->lastItem());	
 		emit gui_update(); //static_cast<Kasablanca*>(parent())->SLOT_SelectionChanged();
 	}
 }
@@ -561,7 +613,7 @@ void FtpSession::RefreshBrowser()
 
 void FtpSession::UpdateLocal(QString cwd)
 {
-	const QFileInfoList *filelist, *dirlist;
+	QFileInfoList filelist, dirlist;
 
 	if (cwd != "") m_localworkingdir.cd(cwd);
 		
@@ -575,38 +627,25 @@ void FtpSession::UpdateLocal(QString cwd)
 	dirup->setSelectable(false);
 
 	m_localworkingdir.setFilter(QDir::Dirs | QDir::Hidden);
-	dirlist = m_localworkingdir.entryInfoList();
+	dirlist = *m_localworkingdir.entryInfoList();
 	
-	QFileInfoListIterator dit( *dirlist );
-	QFileInfo * dirinfo;
-	while( (dirinfo=dit.current()) != 0 )
+	QFileInfoListIterator dit(dirlist);
+	dit.atFirst();
+	while (dit.current())
 	{
+		new KbDir(KbFileInfo(*dit.current()), mp_browser, mp_browser->lastItem());
 		++dit;
-		if ( (dirinfo->fileName() != QString(".")) && (dirinfo->fileName() != QString("..")) )
-		{
-			diritem * di = new diritem(mp_browser, mp_browser->lastItem(), dirinfo->fileName(),
-				m_localworkingdir.absPath(), dirinfo->lastModified().toString("MMM dd yyyy"), dirinfo->size(),
-				dirinfo->lastModified().date().year() * 10000
-				+ dirinfo->lastModified().date().month() * 100
-				+ dirinfo->lastModified().date().day());
-			di->setPixmap(0, KGlobal::iconLoader()->loadIcon("folder",KIcon::Small));
-		}
 	}
-
+	
 	m_localworkingdir.setFilter(QDir::Files | QDir::Hidden);
-	filelist = m_localworkingdir.entryInfoList();
-
-	QFileInfoListIterator fit( *filelist );
-	QFileInfo * fileinfo;
-	while( (fileinfo=fit.current()) != 0 )
+	filelist = *m_localworkingdir.entryInfoList();
+	
+	QFileInfoListIterator fit(filelist);
+	fit.atFirst();
+	while (fit.current())
 	{
+		new KbFile(KbFileInfo(*fit.current()), mp_browser, mp_browser->lastItem());
 		++fit;
-		fileitem * fi = new fileitem(mp_browser, mp_browser->lastItem(), fileinfo->fileName(),
-			m_localworkingdir.absPath(), fileinfo->lastModified().toString("MMM dd yyyy"), fileinfo->size(),
-			fileinfo->lastModified().date().year() * 10000
-			+ fileinfo->lastModified().date().month() * 100
-			+ fileinfo->lastModified().date().day());
-		fi->setPixmap(0, KGlobal::iconLoader()->loadIcon("files",KIcon::Small));
 	}
 	
 	mp_cwdline->setText(m_localworkingdir.absPath());
@@ -633,10 +672,243 @@ void FtpSession::RmdirLocal(QString dir)
 	m_localworkingdir.rmdir(dir);
 }
 
+bool FtpSession::ScandirLocal(KbDirInfo *dir, QString path)
+{
+	QFileInfoList filelist, dirlist;
+	QString olddir;
+	
+	qWarning("dir: path: %s file: %s", dir->dirPath(true).latin1(), dir->fileName().latin1());
+	
+	olddir = WorkingDir();
+	if (!m_localworkingdir.cd(dir->fileName())) return false;
+	
+	m_localworkingdir.setFilter(QDir::Files | QDir::Hidden);
+	filelist = *m_localworkingdir.entryInfoList();
+	
+	QFileInfoListIterator fit(filelist);
+	fit.atFirst();
+	while (fit.current())
+	{
+		KbFileInfo kfi(*fit.current());
+		kfi.SetDirPath(path);
+		dir->AddFile(kfi);
+		qWarning("file: path: %s file: %s", kfi.dirPath(true).latin1(), kfi.fileName().latin1());
+		++fit;
+	}
+	
+	m_localworkingdir.setFilter(QDir::Dirs | QDir::Hidden);
+	dirlist = *m_localworkingdir.entryInfoList();
+	
+	list<KbFileInfo> kfilist;
+	list<KbFileInfo>::iterator kfiit;
+	
+		
+	QFileInfoListIterator dit(dirlist);
+	dit.atFirst();
+	while (dit.current())
+	{
+		QFileInfo qfi = *dit.current();
+		KbFileInfo kfi(qfi);
+		kfi.SetDirPath(path);
+		kfilist.push_back(kfi);
+		++dit;
+	}
+	
+	for(kfiit = kfilist.begin(); kfiit != kfilist.end(); kfiit++)
+	{	
+		KbDirInfo* newdir = dir->AddDirectory(*kfiit);
+		if (newdir) if (!ScandirLocal(newdir, path + '/' + newdir->fileName())) return false;
+	}
+	
+	if (!m_localworkingdir.cd(olddir)) return false;
+	
+	return true;
+}
+
 QString FtpSession::WorkingDir()
 {
 	if (Connected()) return m_remoteworkingdir;
 	else return m_localworkingdir.absPath();
+}
+
+bool FtpSession::CheckLocalDirectory(QString path)
+{
+	if (Connected())
+	{
+		qWarning("ERROR: CheckLocalDirectory on connected session called");
+		return false;
+	}
+
+	if (path == m_localworkingdir.absPath()) return true;
+	else
+	{
+		bool result;
+		result = m_localworkingdir.cd(path);
+		if (result) UpdateLocal();
+		return result;
+	}
+}
+
+bool FtpSession::MakeLocalDirectory(QString path)
+{
+	if (Connected())
+	{
+		qWarning("ERROR: MakeLocalDirectory on connected session called");
+		return false;
+	}
+	
+	bool result;
+	result = m_localworkingdir.mkdir(path);
+	if (result) UpdateLocal();
+	return result;
+}
+
+void FtpSession::MakeDirectory(QString dir)
+{
+	bool result = mp_ftpthread->Transfer_Mkdir(dir);			
+	if (result) mp_ftpthread->start();
+	else qWarning("ERROR: thread error, thread was still busy.");
+}
+
+bool FtpSession::CopyLocalFile(KbTransferItem* item)
+{
+	QTextStream srcstream;
+	QTextStream dststream;
+	QFile srcfile(item->SrcFileInfo()->filePath());
+	QFile dstfile(item->DstFileInfo()->filePath());		
+	if (!dstfile.open(IO_WriteOnly))
+	{
+		qWarning("ERROR: writing to local destination file not allowed");
+		return false;
+	}
+	dststream.setDevice(&dstfile);	
+	if (!srcfile.open(IO_ReadOnly)) 
+	{
+		qWarning("ERROR: reading from local source file not allowed");
+		return false;
+	}	
+	srcstream.setDevice(&srcfile);
+	dststream << srcstream.read();
+	srcfile.close(); 
+	dstfile.close();
+	
+	return true;
+}
+
+void FtpSession::ChangeDirectory(QString path)
+{
+	bool result = mp_ftpthread->Transfer_Changedir(path, (mp_siteinfo->GetTls() > 1));			
+	if (result) mp_ftpthread->start();
+	else qWarning("ERROR: thread error, thread was still busy.");
+}
+
+void FtpSession::SLOT_Transfer(bool success)
+{
+	qWarning("INFO: Transfer signal arrived: %d", success);
+	if (success) mp_currenttransfer->IncrementStatus();
+	else emit gui_succeedtransfer(mp_currenttransfer);
+}
+
+void FtpSession::Transfer(KbTransferItem *item)
+{
+	if (item->Status() == KbTransferItem::clear)
+	{
+		item->Info();
+		item->Init();	
+		if (!item->SrcSession()->Connected()) 
+		{
+			if (item->SrcSession()->CheckLocalDirectory(item->SrcFileInfo()->dirPath(true)) == false)
+			{
+				emit gui_succeedtransfer(mp_currenttransfer);
+				return;
+			}
+			else item->IncrementStatus();
+		}
+		else item->SrcSession()->ChangeDirectory(item->SrcFileInfo()->dirPath(true));
+	}
+	
+	if (item->Status() == KbTransferItem::src_ready)
+	{
+		if (!item->DstSession()->Connected()) 
+		{
+			if (item->DstSession()->CheckLocalDirectory(item->DstFileInfo()->dirPath(true)) == false)
+			{
+				emit gui_succeedtransfer(mp_currenttransfer);
+				return;
+			}
+			else item->IncrementStatus();
+		}
+		else item->DstSession()->ChangeDirectory(item->DstFileInfo()->dirPath(true));
+	}
+	
+	if (item->Status() == KbTransferItem::dst_ready)
+	{
+		if (item->rtti() == KbTransferItem::dir)
+		{
+			if (item->DstSession()->Connected()) item->DstSession()->MakeDirectory(item->DstFileInfo()->fileName());
+			else
+			{
+				if (item->DstSession()->MakeLocalDirectory(item->DstFileInfo()->fileName()) == false)
+				{
+					emit gui_succeedtransfer(mp_currenttransfer);
+					return;
+				}
+				else item->IncrementStatus();
+			}
+		}
+		else if (item->rtti() == KbTransferItem::file)
+		{
+			if (item->SrcSession()->Connected()) 
+			{
+				if (item->DstSession()->Connected())
+				{
+					// FXP Copy
+				}
+				else item->SrcSession()->GetFile(item->SrcFileInfo()->fileName());
+			}
+			else
+			{
+				if (item->DstSession()->Connected()) item->DstSession()->PutFile(item->DstFileInfo()->fileName());	
+				else
+				{
+					if (CopyLocalFile(item) == false)
+					{
+						emit gui_succeedtransfer(mp_currenttransfer);
+						return;
+					}	
+					else item->IncrementStatus();
+				}
+			}	
+		}		
+	}
+	
+	if (item->Status() == KbTransferItem::done) emit gui_succeedtransfer(mp_currenttransfer);
+}
+
+void FtpSession::GetFile(QString file)
+{
+	bool tls;
+	QString localfile;
+
+	localfile = mp_currenttransfer->DstSession()->WorkingDir() + '/' + file;
+	tls = (mp_siteinfo->GetTls() > 1);
+	
+	bool result = mp_ftpthread->Transfer_Get(file, localfile, tls);
+	if (result) mp_ftpthread->start();
+	else qWarning("ERROR: thread error, thread was still busy.");
+}
+
+void FtpSession::PutFile(QString file)
+{
+	bool tls;
+	QString localfile;
+
+	localfile = mp_currenttransfer->SrcSession()->WorkingDir() + '/' + file;
+	tls = (mp_siteinfo->GetTls() > 1);
+	
+	bool result = mp_ftpthread->Transfer_Put(localfile, file, tls);
+	if (result) mp_ftpthread->start();
+	else qWarning("ERROR: thread error, thread was still busy.");
 }
 
 #include "ftpsession.moc"
