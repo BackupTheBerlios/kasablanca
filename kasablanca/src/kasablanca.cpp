@@ -282,25 +282,25 @@ void Kasablanca::setupMenu()
 		menu->insertItem(i18n("Queue"), &m_rclickmenu_t);
 	}	
 	 
-	m_rclickmenu_a.insertItem("Transfer", Transfer);
-	m_rclickmenu_a.insertItem("Put in Queue", Queue);
+	m_rclickmenu_a.insertItem(i18n("Transfer"), Transfer);
+	m_rclickmenu_a.insertItem(i18n("Put in Queue"), Queue);
 	m_rclickmenu_a.insertSeparator();
-	m_rclickmenu_a.insertItem("Delete", Delete);
-	m_rclickmenu_a.insertItem("Rename", Rename);
+	m_rclickmenu_a.insertItem(i18n("Delete"), Delete);
+	m_rclickmenu_a.insertItem(i18n("Rename"), Rename);
 	m_rclickmenu_a.insertSeparator();
-	m_rclickmenu_a.insertItem("Mkdir", Mkdir);
+	m_rclickmenu_a.insertItem(i18n("Mkdir"), Mkdir);
 		
-	m_rclickmenu_b.insertItem("Transfer", Transfer);
-	m_rclickmenu_b.insertItem("Put in Queue", Queue);
+	m_rclickmenu_b.insertItem(i18n("Transfer"), Transfer);
+	m_rclickmenu_b.insertItem(i18n("Put in Queue"), Queue);
 	m_rclickmenu_b.insertSeparator();
-	m_rclickmenu_b.insertItem("Delete", Delete);
-	m_rclickmenu_b.insertItem("Rename", Rename);
+	m_rclickmenu_b.insertItem(i18n("Delete"), Delete);
+	m_rclickmenu_b.insertItem(i18n("Rename"), Rename);
 	m_rclickmenu_b.insertSeparator();
-	m_rclickmenu_b.insertItem("Mkdir", Mkdir);
+	m_rclickmenu_b.insertItem(i18n("Mkdir"), Mkdir);
 
-	m_rclickmenu_t.insertItem("Start Queue", Start);
+	m_rclickmenu_t.insertItem(i18n("Start Queue"), Start);
 	m_rclickmenu_t.insertSeparator();
-	m_rclickmenu_t.insertItem("Skip Item(s)", Skip);
+	m_rclickmenu_t.insertItem(i18n("Skip Item(s)"), Skip);
 	
 	connect(&m_rclickmenu_a, SIGNAL(activated(int)), mp_session_a, SLOT(SLOT_ActionMenu(int)));
 	connect(&m_bookmarksmenu_a, SIGNAL(activated(int)), mp_session_a, SLOT(SLOT_ConnectMenu(int)));     
@@ -354,8 +354,8 @@ int Kasablanca::initBookmarks()
     m_bookmarksmenu_a.clear();
     m_bookmarksmenu_b.clear();
     
-    m_bookmarksmenu_a.insertItem("Custom",0);
-    m_bookmarksmenu_b.insertItem("Custom",0);
+    m_bookmarksmenu_a.insertItem(i18n("Custom"),0);
+    m_bookmarksmenu_b.insertItem(i18n("Custom"),0);
     
     m_bookmarksmenu_a.insertSeparator();
     m_bookmarksmenu_b.insertSeparator();
@@ -438,7 +438,6 @@ void Kasablanca::SLOT_ClearQueue(FtpSession*)
 
 void Kasablanca::SLOT_ItemRightClickedT(QListViewItem *, const QPoint & point, int)
 {
-	qWarning("slot: SLOT_ItemRightClickedT()");
 	m_rclickmenu_t.exec(point);
 }
 

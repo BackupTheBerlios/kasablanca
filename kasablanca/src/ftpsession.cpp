@@ -335,7 +335,7 @@ void FtpSession::SLOT_ConnectButton()
 	{					
 		if (mp_currenttransfer) 
 		{
-			int answer = KMessageBox::warningYesNo(0, "Cancel transfer?");
+			int answer = KMessageBox::warningYesNo(0, i18n("Cancel transfer?"));
 			if (answer == KMessageBox::Yes)
 			{
 				FtpSession *srcsession = mp_currenttransfer->SrcSession();
@@ -866,11 +866,7 @@ int FtpSession::CheckFile(KbTransferItem *item)
 					return resume;
 					break;
 				case FileExistsDialog::rename:
-					#if KDE_IS_VERSION(3,2,0)
-					newname = KInputDialog::getText("Enter New Name", "Enter New Name:", kbi->File() + "_alt", &b);
-					#else
-					newname = KLineEditDlg::getText("Enter New Name:", kbi->File() + "_alt", &b);
-					#endif
+					newname = KInputDialog::getText(i18n("Enter New Name"), i18n("Enter New Name:"), kbi->File() + i18n("_alt"), &b);
 					if (!b) return skip;
 					else
 					{
