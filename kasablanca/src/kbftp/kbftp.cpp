@@ -303,7 +303,7 @@ int main(int, char *)
 				cout << "kb.fxpget" << endl;
 				cout << "kb.success" << endl;
 			}
-			else cout << "kb.failure.fatal" << endl;
+			else cout << "kb.failure.fxp.get" << endl;
 		}
 		else if (input == "fxpput")
 		{
@@ -317,7 +317,18 @@ int main(int, char *)
 				cout << "kb.fxpput" << endl;
 				cout << "kb.success" << endl;
 			}
-			else cout << "kb.failure.fatal" << endl;
+			else cout << "kb.failure.fxp.put" << endl;
+		}
+		else if (input == "abor")
+		{
+			cout << "kb.issue.abor" << endl;
+		
+			if (ftp.Abor())
+			{
+				cout << "kb.abor" << endl;
+				cout << "kb.success" << endl;
+			}
+			else cout << "kb.failure.fatal" << endl;	
 		}
 		else if (input == "fxpxferfinished")
 		{
@@ -328,7 +339,7 @@ int main(int, char *)
 				cout << "kb.fxpfinished" << endl;
 				cout << "kb.success" << endl;
 			}
-			else cout << "kb.failure.fatal" << endl;
+			else cout << "kb.failure.fxp.finished" << endl;
 		}
 		else if (input == "quit")
 		{

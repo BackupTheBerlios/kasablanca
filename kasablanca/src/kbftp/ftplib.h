@@ -149,6 +149,7 @@ public:
 	 int FxpGet(const char *path);
 	 int FxpPut(const char *path);
 	 int FxpXferFinished();
+	 int Abor();
 private:
     int FtpXfer(const char *localfile, const char *path, netbuf *nControl, int typ, int mode);
     int FtpOpenPasv(netbuf *nControl, netbuf **nData, int mode, int dir, char *cmd);

@@ -89,15 +89,15 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	//when developing you might want to change the following line to the kbftp path
 	//and disable the other two lines. */
 
-	//m_proc_a.addArgument("kbftp/kbftp");
-	//m_proc_b.addArgument("kbftp/kbftp");
+	m_proc_a.addArgument("kbftp/kbftp");
+	m_proc_b.addArgument("kbftp/kbftp");
 	
-	if (locate("exe", "kbftp") == QString::null) KMessageBox::error(0,"kbftp binary is not in kde binary path.");
+	/*if (locate("exe", "kbftp") == QString::null) KMessageBox::error(0,"kbftp binary is not in kde binary path.");
 	else 
 	{
 		m_proc_a.addArgument(locate("exe", "kbftp"));
 		m_proc_b.addArgument(locate("exe", "kbftp"));
-	}
+	}*/
 	
    TaskView->setSorting(-1);
 	BrowserA->setSorting(-1);
@@ -186,7 +186,7 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	
 	m_dcount = 0;
 	m_qstate = done;
-	m_fxpstate = 0;
+	m_fxpstate = stopped;
 	m_fxpportinfo = "";
 	
 	connect(&m_proc_a, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
@@ -361,7 +361,7 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			LogWindow->setColor(white);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
-			//connectbutton_other->setEnabled(false);
+			connectbutton_other->setEnabled(false);
 			connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
 			refreshbutton->setEnabled(false);
 			commandline->setEnabled(false);
@@ -370,9 +370,8 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			m_rclickmenu_t.setItemEnabled(Start, false);
 			m_rclickmenu_t.setItemEnabled(Skip, true);
 			rclickmenu->setEnabled(false);
-			break;
-    }
-	
+			break;			
+    }	
 }	
 
 void Kasablanca::SLOT_EditBookmarks()
@@ -470,6 +469,9 @@ void Kasablanca::SLOT_ConnectButtonA()
 	{
 		m_proc_a.tryTerminate();
 		m_proc_a.kill();
+		
+		while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
+		UpdateLocalDisplay(A);
 		SetGuiStatus(disconnected, A);
 		LogWindow->setColor(red);
 		LogWindow->append("killed ftp connection");
@@ -496,6 +498,10 @@ void Kasablanca::SLOT_ConnectButtonB()
 	{
 		m_proc_b.tryTerminate();
 		m_proc_b.kill();
+		
+		while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
+		UpdateLocalDisplay(B);
+				
 		SetGuiStatus(disconnected, B);
 		LogWindow->setColor(red);
 		LogWindow->append("killed ftp connection");
@@ -1098,6 +1104,7 @@ void Kasablanca::Xfer()
 
 	if (TaskView->childCount() == 0)
 	{
+		qWarning("boogie");
 		SLOT_RefreshBrowserA();
 		SLOT_RefreshBrowserB();
 		return;
@@ -1261,7 +1268,8 @@ void Kasablanca::Xfer()
 		{
 			/* the scan dir flag is set */
 
-			m_qstate = scanfxp;  
+			if (dir->type() == transferitem::fxp_a_to_b) m_qstate = scanfxpa;
+			else m_qstate = scanfxpb; 
 
 			/* cwd to new dir on src.  */
 			
@@ -1275,8 +1283,10 @@ void Kasablanca::Xfer()
 
 			proc_fxpdst->writeStdin("chdir " + dir->m_fifxpdst.fileName());
 			
-			if (dir->type() == transferitem::fxp_a_to_b) UpdateRemote(A);
-			else UpdateRemote(B);
+			/*if (dir->type() == transferitem::fxp_a_to_b) UpdateRemote(A);
+			else UpdateRemote(B);*/
+			UpdateRemote(A);
+			UpdateRemote(B);
 		}		
 	}
 	else if (item->rtti() == transferitem::file)
@@ -1294,39 +1304,37 @@ void Kasablanca::Xfer()
 		bool filepresent = false;
 
 		if ((file->type() == transferitem::fxp_a_to_b) || (file->type() == transferitem::fxp_b_to_a))
-		{		
-			/* if tls level is bigger-equal 2 then disable data encryption, fxp encryption doesn't work
-			the common way. */
-			
-			if (m_fxpstate == 0)
+		{					
+			if (m_fxpstate == stopped)
 			{
 				proc_fxpdst->writeStdin("fxpinit pasv");
 			}
-			else if (m_fxpstate == 1)
+			else if (m_fxpstate == initpasv)
 			{
 				proc_fxpsrc->writeStdin("fxpinit port " + m_fxpportinfo);
 			}
-			else if (m_fxpstate == 2)
+			else if (m_fxpstate == initport)
 			{
 				proc_fxpsrc->writeStdin("fxpget " + file->m_fifxpsrc.fileName());
 			}
-			else if (m_fxpstate == 3)
+			else if (m_fxpstate == get)
 			{
 				proc_fxpdst->writeStdin("fxpput " + file->m_fifxpdst.fileName());
 			}
-			else if (m_fxpstate == 4)
+			else if (m_fxpstate == put)
 			{		
 				proc_fxpsrc->writeStdin("fxpxferfinished");
 			}
-			else if (m_fxpstate == 5)
+			else if (m_fxpstate == waitsrc)
 			{		
 				proc_fxpdst->writeStdin("fxpxferfinished");
 			}
-			else if (m_fxpstate == 6)
+			else if (m_fxpstate == abort)
 			{
-				delete file;
-				m_fxpstate = 0;
-				Xfer();
+				proc_fxpsrc->writeStdin("abor");
+				//m_fxpstate = stopped;
+				//delete file;
+				//Xfer();	
 			}
 		}
 		else if ((file->type() == transferitem::upload_a_to_b) || (file->type() == transferitem::upload_b_to_a))
@@ -2030,11 +2038,11 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					m_xferresumesize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
 					m_timer.start();
 				}
-				/*else if (s.left(12) == "kb.issue.fxp")
+				else if (s.left(12) == "kb.issue.fxp")
 				{
 					SetGuiStatus(occupied, A);
 					SetGuiStatus(occupied, B);
-				}*/
+				}
 
 				SetGuiStatus(occupied, b);
 				LogWindow->setColor(white);
@@ -2052,20 +2060,21 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					/* on connection changes the task view has to be cleared */
 					while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
 				
-					UpdateLocalDisplay(A);
-					SetGuiStatus(disconnected, A);
-					UpdateLocalDisplay(B);
-					SetGuiStatus(disconnected, B);
-					
-					m_fxpstate = 0;
+					UpdateLocalDisplay(b);
+					SetGuiStatus(disconnected, b);
 				}
 				else if (s.left(14) == "kb.failure.fxp")
-				{					
-					if (s.left(19) == "kb.failure.fxp.init")		
-					{		
-						m_fxpstate = 4;
-						Xfer();
+				{		
+					//SetGuiStatus(connected, A);
+					//SetGuiStatus(connected, B);	
+					
+					if (s == "kb.failure.fxp.put") m_fxpstate = abort;
+					else 
+					{
+						m_fxpstate = stopped;
+						delete TaskView->firstChild();
 					}
+					Xfer();			
 				}
 				else
 				{
@@ -2122,7 +2131,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 									if (p == &m_proc_a) InsertMarkedItems(transferitem::upload_b_to_a);
 									else InsertMarkedItems(transferitem::upload_a_to_b);
 								}
-								else if (m_qstate == scanfxp)
+								/*else if (m_qstate == scanfxp)
 								{								
 									QListViewItemIterator it(browser);
 									while ( it.current() )
@@ -2132,6 +2141,26 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 									}
 									if (p == &m_proc_a) InsertMarkedItems(transferitem::fxp_a_to_b);
 									else InsertMarkedItems(transferitem::fxp_b_to_a);
+								}*/
+								else if (m_qstate == scanfxpb)
+								{								
+									QListViewItemIterator it(BrowserB);
+									while ( it.current() )
+									{
+										it.current()->setSelected(true);
+										++it;
+									}
+									InsertMarkedItems(transferitem::fxp_b_to_a);
+								}
+								else if (m_qstate == scanfxpa)
+								{								
+									QListViewItemIterator it(BrowserA);
+									while ( it.current() )
+									{
+										it.current()->setSelected(true);
+										++it;
+									}
+									InsertMarkedItems(transferitem::fxp_a_to_b);
 								}
 							}
 						}
@@ -2151,7 +2180,6 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 					/* delete current queue item */
 
 					delete TaskView->firstChild();
-					
 					Xfer();
 				}
 				else
@@ -2166,37 +2194,47 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 			}
 			else if (s.left(15) == "kb.fxpinit.pasv")
 			{
-				m_fxpstate = 1;
+				m_fxpstate = initpasv;
 				m_fxpportinfo = s.remove(0, 16);
 				Xfer();
 			}
 			else if (s.left(15) == "kb.fxpinit.port")
 			{
-				m_fxpstate = 2;
+				m_fxpstate = initport;
 				Xfer();
 			}
 			else if (s.left(9) == "kb.fxpget")
 			{
-				m_fxpstate = 3;
+				m_fxpstate = get;
 				Xfer();
 			}
 			else if (s.left(9) == "kb.fxpput")
 			{
-				m_fxpstate = 4;
+				m_fxpstate = put;
 				Xfer();
 			}
 			else if (s.left(14) == "kb.fxpfinished")
 			{
-				if (m_fxpstate == 4) 
+				if (m_fxpstate == put) 
 				{
-					m_fxpstate = 5;
+					m_fxpstate = waitsrc;
 					Xfer();
 				}
-				if (m_fxpstate == 5) 
+				if (m_fxpstate == waitsrc) 
 				{
-					m_fxpstate = 6;
+					SetGuiStatus(connected, A);
+					SetGuiStatus(connected, B);
+					
+					m_fxpstate = stopped;
+					delete TaskView->firstChild();
 					Xfer();
 				}
+			}
+			else if (s == "kb.abor")
+			{
+				m_fxpstate = stopped;
+				delete TaskView->firstChild();
+				Xfer();	
 			}
 			else if (s == "kb.quit")
 			{

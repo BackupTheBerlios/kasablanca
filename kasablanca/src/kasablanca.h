@@ -56,6 +56,17 @@ public:
 		Skip
 	};
 	
+	enum FxpState
+	{
+		stopped = 0,
+		initpasv,
+		initport,
+		get,
+		put,
+		waitsrc,
+		abort
+	};
+	
 	enum QueueState
 	{
 		done = 0,
@@ -63,7 +74,8 @@ public:
 		proceed,
 		scanremote,
 		scanlocal,
-		scanfxp
+		scanfxpa,
+		scanfxpb
 	};
 	
 	enum State
@@ -134,7 +146,7 @@ public slots:
 
 private:
 
-	int m_fxpstate;
+	FxpState m_fxpstate;
 	QString m_fxpportinfo;
 	int m_dcount;
 	int m_xferallsize;

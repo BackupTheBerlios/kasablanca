@@ -1408,6 +1408,12 @@ int ftplib::FxpPut(const char *path)
 	return 1;
 } 
 
+int ftplib::Abor()
+{
+	if ((!FtpSendCmd("ABOR",'2',mp_netbuf)) || (!readresp('2', mp_netbuf))) return 0;
+	else return 1;	
+}
+
 int ftplib::FxpXferFinished()
 {
 	return readresp('2', mp_netbuf);
