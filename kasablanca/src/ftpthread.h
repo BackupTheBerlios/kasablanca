@@ -25,6 +25,8 @@
 #include <list>
 #include <qthread.h>
 #include <qstringlist.h>
+#include <qvaluelist.h>
+#include <qvaluevector.h>
 #include "eventhandler.h"
 #include "kbfileinfo.h"
 
@@ -37,6 +39,7 @@ class KbDirInfo;
 
 typedef list<KbFileInfo> filist;
 typedef pair<unsigned long, bool> xferpair;
+typedef pair<filist, filist> dirpair;
 
 /**
 @author Magnus Kulke
@@ -56,7 +59,7 @@ public:
 	bool Pwd();
 	bool Chdir(QString path);
 	bool Cdup();
-	bool Dir();
+	bool Dir(bool force = false);
 	bool Scandir(KbDirInfo* dir);
 	bool Rm(QString name);
 	bool Rmdir(QString name);
@@ -141,12 +144,14 @@ private:
 	bool m_dataencrypted;
 	KbDirInfo* mp_scandir;
 	filist m_dirlist, m_filelist;
-	pair<filist, filist> m_dircontent;
+	dirpair m_dircontent;
 	QValueList<task> m_tasklist;
 	QStringList m_stringlist;
 	QValueList<int> m_intlist;
 	QValueList<unsigned long> m_ulonglist;
 	QValueList<FtpThread*> m_ftplist;
+	QValueVector<dirpair> m_cache_vector;
+	QStringList m_cache_list;
 public:
 	QString m_linebuffer;
 };

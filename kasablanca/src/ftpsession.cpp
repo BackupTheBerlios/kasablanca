@@ -441,7 +441,9 @@ void FtpSession::SLOT_RefreshButton()
 	if (Connected())
 	{	
 		Occupy();
-		RefreshBrowser();
+		mp_ftpthread->Pwd();
+		if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true);
+		mp_ftpthread->Dir(true);
 		mp_ftpthread->start();
 	}
 	else UpdateLocal();

@@ -8,290 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-16 18:50+0200\n"
+"POT-Creation-Date: 2004-07-13 21:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: Q_bookmarkdialog.cpp:145 rc.cpp:5
-msgid "New"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:146 rc.cpp:6
-msgid "Add a new bookmark entry."
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:148 rc.cpp:8
-msgid "Apply the changes to the bookmark entry."
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:150 rc.cpp:10
-msgid "Remove a bookmark entry."
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:152 Q_customconnectdialog.cpp:164 rc.cpp:12 rc.cpp:55
-msgid "Unencrypted"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:153 Q_customconnectdialog.cpp:165 rc.cpp:13 rc.cpp:56
-msgid "Level 1"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:154 Q_customconnectdialog.cpp:166 rc.cpp:14 rc.cpp:57
-msgid "Level 2"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:155 Q_customconnectdialog.cpp:167 rc.cpp:15 rc.cpp:58
-msgid "Level 3"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:156 Q_customconnectdialog.cpp:168 rc.cpp:16 rc.cpp:59
-msgid ""
-"There are 4 encryption levels available. Unencrypted leaves all traffic "
-"clear and without encryption. Most ftp servers allow only this mode. Level 1 "
-"encryption means that the traffic on the control connection is encrypted "
-"while data transfer remains clear. Level 2 is basically the same with the "
-"exception of directory information which is transfered on the data channel, "
-"but is encrypted too. Eventually Level 3 encrypts everything all "
-"communication and all data traffic."
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:157 Q_customconnectdialog.cpp:154 rc.cpp:17 rc.cpp:46
-msgid ""
-"The ftp Login Username. On open ftp servers you usually login using "
-"\"anonymous\"."
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:158 rc.cpp:18
-msgid "<p align=\"right\">Mode</p>"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:159 Q_customconnectdialog.cpp:153 rc.cpp:19 rc.cpp:45
-msgid ""
-"The user's password. Anonymous ftp servers ussually don't use passwords or "
-"accept passwords in the form of \"user@emailaddress.com\"."
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:160 rc.cpp:20
-msgid "<p align=\"right\">Username</p>"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:162 rc.cpp:22
-msgid ""
-"This information points to the the ftp server. HOST can either be a standard "
-"ip adress like 192.168.2.1 or a domain name. PORT is the port number on "
-"which the ftp server listens. In most cases this is 21. Both are seperated "
-"by a \":\" character. A legit input would be \"ftp.kde.org:21\"."
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:163 rc.cpp:23
-msgid "<p align=\"right\">Host:Port</p>"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:164 rc.cpp:24
-msgid "The ftp's name is entered here."
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:165 rc.cpp:25
-msgid "<p align=\"right\">Name</p>"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:166 rc.cpp:26
-msgid "<p align=\"right\">Encryption</p>"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:169 Q_customconnectdialog.cpp:171 rc.cpp:28 rc.cpp:61
-msgid "Active Mode"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:170 Q_customconnectdialog.cpp:170 rc.cpp:29 rc.cpp:60
-msgid "Passive Mode"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:171 Q_customconnectdialog.cpp:172 rc.cpp:30 rc.cpp:62
-msgid ""
-"The mode you are using for data transfer. This is quite important in case "
-"you're behind a firewall or a router. In these cases you depend on the "
-"passive mode, which makes the client connects to the ftp server for data "
-"transfer. Passive mode is the standard method today, while active mode is "
-"the old way to do data transfers, the client listens for the server to "
-"connect in active mode."
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:172 rc.cpp:31
-msgid "<p align=\"right\">Password</p>"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:173 Q_generalpreferencesdialog.cpp:117
-#: kasablanca.cpp:249 kasablanca.cpp:251 rc.cpp:11 rc.cpp:71
-msgid "General"
-msgstr ""
-
-#: Q_bookmarkdialog.cpp:174 rc.cpp:32
-msgid "Advanced"
-msgstr ""
-
-#: Q_colorspreferencesdialog.cpp:87 kasablanca.cpp:250 kasablanca.cpp:252
-#: rc.cpp:33
-msgid "Colors"
-msgstr ""
-
-#: Q_colorspreferencesdialog.cpp:88 rc.cpp:34
-msgid "Background:"
-msgstr ""
-
-#: Q_colorspreferencesdialog.cpp:91 rc.cpp:37
-msgid "Success Text:"
-msgstr ""
-
-#: Q_colorspreferencesdialog.cpp:93 rc.cpp:39
-msgid "Failure Text:"
-msgstr ""
-
-#: Q_colorspreferencesdialog.cpp:95 rc.cpp:41
-msgid "Local Text:"
-msgstr ""
-
-#: Q_customconnectdialog.cpp:150 rc.cpp:42
-msgid "Custom Connect"
-msgstr ""
-
-#: Q_customconnectdialog.cpp:151 rc.cpp:43
-msgid "Encryption"
-msgstr ""
-
-#: Q_customconnectdialog.cpp:152 rc.cpp:44
-msgid ""
-"This information points to the the ftp server. HOST can either be a standard "
-"ip adress like \"192.168.2.1\" or a domain name. PORT is the port number on "
-"which the ftp server listens. In most cases this is 21. Both are seperated "
-"by a \":\" character. A legit input would be \"ftp.kde.org:21\"."
-msgstr ""
-
-#: Q_customconnectdialog.cpp:155 rc.cpp:47
-msgid "Host:Port"
-msgstr ""
-
-#: Q_customconnectdialog.cpp:156 rc.cpp:48
-msgid "Username"
-msgstr ""
-
-#: Q_customconnectdialog.cpp:157 rc.cpp:49
-msgid "Password"
-msgstr ""
-
-#: Q_customconnectdialog.cpp:158 rc.cpp:50
-msgid "Mode"
-msgstr ""
-
-#: Q_customconnectdialog.cpp:161 rc.cpp:53
-msgid "Cancel the connection attempt."
-msgstr ""
-
-#: Q_customconnectdialog.cpp:162 rc.cpp:54
-msgid "Anonymous"
-msgstr ""
-
-#: Q_customconnectdialog.cpp:175 rc.cpp:65
-msgid "Accept the entrys and try connecting to the ftp server."
-msgstr ""
-
-#: Q_fileexistsdialog.cpp:84 rc.cpp:66
-msgid "File Exists"
-msgstr ""
-
-#: Q_fileexistsdialog.cpp:85 Q_generalpreferencesdialog.cpp:129 rc.cpp:67
-#: rc.cpp:83
-msgid "Skip"
-msgstr ""
-
-#: Q_fileexistsdialog.cpp:86 rc.cpp:68
-msgid "Resume"
-msgstr ""
-
-#: Q_fileexistsdialog.cpp:87 kasablanca.cpp:299 kasablanca.cpp:307 rc.cpp:69
-msgid "Rename"
-msgstr ""
-
-#: Q_fileexistsdialog.cpp:88 Q_generalpreferencesdialog.cpp:131 rc.cpp:70
-#: rc.cpp:85
-msgid "Overwrite"
-msgstr ""
-
-#: Q_generalpreferencesdialog.cpp:118 rc.cpp:72
-msgid "Skiplist:"
-msgstr ""
-
-#: Q_generalpreferencesdialog.cpp:119 rc.cpp:73
-msgid "On queue finished:"
-msgstr ""
-
-#: Q_generalpreferencesdialog.cpp:120 rc.cpp:74
-msgid ""
-"This field can hold an executable and its arguments which will be run, when "
-"last item of in queue has finished transferring. For Example, on KDE "
-"desktops the entry \"dcop ksmserver ksmserver logout 0 0 0\" would shutdown "
-"the computer automatically."
-msgstr ""
-
-#: Q_generalpreferencesdialog.cpp:121 rc.cpp:75
-msgid ""
-"Here you can enter a Regular Expression. Transfer items which match this "
-"Regular Expression are skipped. For example a value of \"^\\.\" excludes "
-"every entry beginning with \".\" from transfer."
-msgstr ""
-
-#: Q_generalpreferencesdialog.cpp:122 Q_generalpreferencesdialog.cpp:123
-#: Q_generalpreferencesdialog.cpp:125 rc.cpp:76 rc.cpp:77 rc.cpp:79
-msgid "Enabled"
-msgstr ""
-
-#: Q_generalpreferencesdialog.cpp:124 rc.cpp:78
-msgid "On file exist:"
-msgstr ""
-
-#: Q_generalpreferencesdialog.cpp:127 rc.cpp:81
-msgid "Resume (if possible)"
-msgstr ""
-
-#: Q_generalpreferencesdialog.cpp:128 Q_generalpreferencesdialog.cpp:130
-#: Q_generalpreferencesdialog.cpp:132 rc.cpp:82 rc.cpp:84 rc.cpp:86
-msgid ""
-"These Radio Buttons indicate how the application should proceed if a file to "
-"be transfered already exists on the destination. Usually the user is asked "
-"by the application how to proceed if this occurs, in case you aren't present "
-"during the transfer you can enable this feature."
-msgstr ""
-
-#: Q_mainwindow.cpp:92 Q_mainwindow.cpp:102 Q_mainwindow.cpp:184
-#: Q_mainwindow.cpp:187 rc.cpp:94 rc.cpp:97
-msgid "Name"
-msgstr ""
-
-#: Q_mainwindow.cpp:93 Q_mainwindow.cpp:103 Q_mainwindow.cpp:185
-#: Q_mainwindow.cpp:188 rc.cpp:95 rc.cpp:98
-msgid "Size"
-msgstr ""
-
-#: Q_mainwindow.cpp:94 Q_mainwindow.cpp:104 Q_mainwindow.cpp:186
-#: Q_mainwindow.cpp:189 rc.cpp:96 rc.cpp:99
-msgid "Date"
-msgstr ""
-
-#: Q_mainwindow.cpp:114 Q_mainwindow.cpp:190 rc.cpp:100
-msgid "Task"
-msgstr ""
-
-#: Q_mainwindow.cpp:116 Q_mainwindow.cpp:191 rc.cpp:101
-msgid "Progress"
-msgstr ""
-
-#: Q_mainwindow.cpp:177 rc.cpp:87
-msgid "Kasablanca x"
-msgstr ""
 
 #: _translatorinfo.cpp:1
 msgid ""
@@ -305,108 +28,160 @@ msgid ""
 "Your emails"
 msgstr ""
 
-#: customconnectdialog.cpp:38
+#: bookmarkdialog.cpp:46
+msgid "New"
+msgstr ""
+
+#: bookmarkdialog.cpp:196
+msgid "Enter sitename"
+msgstr ""
+
+#: bookmarkdialog.cpp:197
+msgid "Enter username"
+msgstr ""
+
+#: bookmarkdialog.cpp:198
+msgid "Enter hostname"
+msgstr ""
+
+#: customconnectdialog.cpp:30 customconnectdialog.cpp:45 rc.cpp:42
 msgid "Custom Site"
 msgstr ""
 
-#: ftpsession.cpp:137
+#: ftpsession.cpp:139
 msgid "Enter directory name"
 msgstr ""
 
-#: ftpsession.cpp:137
+#: ftpsession.cpp:139
 msgid "Enter directory name:"
 msgstr ""
 
-#: ftpsession.cpp:163 ftpsession.cpp:183
+#: ftpsession.cpp:165 ftpsession.cpp:185
 msgid "Delete this item?"
 msgstr ""
 
-#: ftpsession.cpp:207 ftpsession.cpp:224
+#: ftpsession.cpp:208 ftpsession.cpp:230
 msgid "Enter new name"
 msgstr ""
 
-#: ftpsession.cpp:207 ftpsession.cpp:224
+#: ftpsession.cpp:208 ftpsession.cpp:230
 msgid "Enter new name:"
 msgstr ""
 
-#: ftpsession.cpp:254
+#: ftpsession.cpp:253
+msgid "Enter bookmark name"
+msgstr ""
+
+#: ftpsession.cpp:253
+msgid "Enter bookmark name:"
+msgstr ""
+
+#: ftpsession.cpp:274
 msgid "That site information is not legit."
 msgstr ""
 
-#: ftpsession.cpp:338
+#: ftpsession.cpp:365
 msgid "Cancel transfer?"
 msgstr ""
 
-#: ftpsession.cpp:378
+#: ftpsession.cpp:410
 msgid "Aborted ftp operation"
 msgstr ""
 
-#: ftpsession.cpp:491
+#: ftpsession.cpp:526
 msgid "connection failed"
 msgstr ""
 
-#: ftpsession.cpp:582 ftpsession.cpp:606
+#: ftpsession.cpp:625
 msgid "Occupied"
 msgstr ""
 
-#: ftpsession.cpp:592 ftpsession.cpp:621
+#: ftpsession.cpp:636 ftpsession.cpp:674
 msgid "Disconnected"
 msgstr ""
 
-#: ftpsession.cpp:620
-msgid "Connected"
+#: ftpsession.cpp:652 ftpsession.cpp:653 ftpsession.cpp:655
+msgid " is occupied"
 msgstr ""
 
-#: ftpsession.cpp:880
+#: ftpsession.cpp:671 ftpsession.cpp:672
+msgid "Connected to "
+msgstr ""
+
+#: ftpsession.cpp:935
 msgid "Enter New Name"
 msgstr ""
 
-#: ftpsession.cpp:880
+#: ftpsession.cpp:935
 msgid "Enter New Name:"
 msgstr ""
 
-#: ftpsession.cpp:880
+#: ftpsession.cpp:935
 msgid "_alt"
 msgstr ""
 
-#: kasablanca.cpp:84
-msgid "Could not open Kasablanca bookmark xml."
+#: kasablanca.cpp:269 kasablanca.cpp:272 rc.cpp:6 rc.cpp:43 rc.cpp:73
+msgid "General"
 msgstr ""
 
-#: kasablanca.cpp:282 kasablanca.cpp:290
+#: kasablanca.cpp:270 kasablanca.cpp:273 rc.cpp:33
+msgid "Colors"
+msgstr ""
+
+#: kasablanca.cpp:271 kasablanca.cpp:274 rc.cpp:110
+msgid "User Interface"
+msgstr ""
+
+#: kasablanca.cpp:304 kasablanca.cpp:312
 msgid "Session A"
 msgstr ""
 
-#: kasablanca.cpp:283 kasablanca.cpp:291
+#: kasablanca.cpp:305 kasablanca.cpp:313
 msgid "Session B"
 msgstr ""
 
-#: kasablanca.cpp:292
+#: kasablanca.cpp:314
 msgid "Queue"
 msgstr ""
 
-#: kasablanca.cpp:295 kasablanca.cpp:303
+#: kasablanca.cpp:317 kasablanca.cpp:326
 msgid "Transfer"
 msgstr ""
 
-#: kasablanca.cpp:296 kasablanca.cpp:304
-msgid "Put in Queue"
+#: kasablanca.cpp:318 kasablanca.cpp:327
+msgid "Put in queue"
 msgstr ""
 
-#: kasablanca.cpp:301 kasablanca.cpp:309
+#: kasablanca.cpp:321 kasablanca.cpp:330 rc.cpp:71
+msgid "Rename"
+msgstr ""
+
+#: kasablanca.cpp:322 kasablanca.cpp:331
 msgid "Mkdir"
 msgstr ""
 
-#: kasablanca.cpp:311
+#: kasablanca.cpp:324 kasablanca.cpp:333
+msgid "Bookmark site"
+msgstr ""
+
+#: kasablanca.cpp:335
 msgid "Start Queue"
 msgstr ""
 
-#: kasablanca.cpp:313
+#: kasablanca.cpp:337
 msgid "Skip Item(s)"
 msgstr ""
 
-#: kasablanca.cpp:367 kasablanca.cpp:368
+#: kasablanca.cpp:392 kasablanca.cpp:393
 msgid "Custom"
+msgstr ""
+
+#: kbtaskview.cpp:26
+msgid "Task"
+msgstr ""
+
+#: kbtaskview.cpp:27
+msgid "Progress"
 msgstr ""
 
 #: main.cpp:13
@@ -425,22 +200,283 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
-#: rc.cpp:104
+#: rc.cpp:5 rc.cpp:102 rc.cpp:105
+msgid "Name"
+msgstr ""
+
+#: rc.cpp:7 rc.cpp:46
+msgid ""
+"The user's password. Anonymous ftp servers ussually don't use passwords or "
+"accept passwords in the form of \"user@emailaddress.com\"."
+msgstr ""
+
+#: rc.cpp:8 rc.cpp:45
+msgid ""
+"The ftp Login Username. On open ftp servers you usually login using "
+"\"anonymous\"."
+msgstr ""
+
+#: rc.cpp:10
+msgid ""
+"This information points to the the ftp server. HOST can either be a standard "
+"ip adress like 192.168.2.1 or a domain name. PORT is the port number on "
+"which the ftp server listens. In most cases this is 21. Both are seperated "
+"by a \":\" character. A legit input would be \"ftp.kde.org:21\"."
+msgstr ""
+
+#: rc.cpp:11
+msgid "The ftp's name is entered here."
+msgstr ""
+
+#: rc.cpp:12 rc.cpp:49
+msgid "Username:"
+msgstr ""
+
+#: rc.cpp:13
+msgid "Name:"
+msgstr ""
+
+#: rc.cpp:14 rc.cpp:51
+msgid "Encryption:"
+msgstr ""
+
+#: rc.cpp:16 rc.cpp:50
+msgid "Host:Port:"
+msgstr ""
+
+#: rc.cpp:17 rc.cpp:44
+msgid "Password:"
+msgstr ""
+
+#: rc.cpp:18 rc.cpp:52
+msgid "Mode:"
+msgstr ""
+
+#: rc.cpp:19 rc.cpp:60
+msgid "Active Mode"
+msgstr ""
+
+#: rc.cpp:20 rc.cpp:59
+msgid "Passive Mode"
+msgstr ""
+
+#: rc.cpp:21 rc.cpp:61
+msgid ""
+"The mode you are using for data transfer. This is quite important in case "
+"you're behind a firewall or a router. In these cases you depend on the "
+"passive mode, which makes the client connects to the ftp server for data "
+"transfer. Passive mode is the standard method today, while active mode is "
+"the old way to do data transfers, the client listens for the server to "
+"connect in active mode."
+msgstr ""
+
+#: rc.cpp:22 rc.cpp:54
+msgid "Unencrypted"
+msgstr ""
+
+#: rc.cpp:23 rc.cpp:55
+msgid "Level 1"
+msgstr ""
+
+#: rc.cpp:24 rc.cpp:56
+msgid "Level 2"
+msgstr ""
+
+#: rc.cpp:25 rc.cpp:57
+msgid "Level 3"
+msgstr ""
+
+#: rc.cpp:26 rc.cpp:58
+msgid ""
+"There are 4 encryption levels available. Unencrypted leaves all traffic "
+"clear and without encryption. Most ftp servers allow only this mode. Level 1 "
+"encryption means that the traffic on the control connection is encrypted "
+"while data transfer remains clear. Level 2 is basically the same with the "
+"exception of directory information which is transfered on the data channel, "
+"but is encrypted too. Eventually Level 3 encrypts everything all "
+"communication and all data traffic."
+msgstr ""
+
+#: rc.cpp:27 rc.cpp:62
+msgid "Advanced"
+msgstr ""
+
+#: rc.cpp:28 rc.cpp:67
+msgid "Default directory:"
+msgstr ""
+
+#: rc.cpp:29 rc.cpp:63
+msgid "Alternative fxp:"
+msgstr ""
+
+#: rc.cpp:30 rc.cpp:31 rc.cpp:64 rc.cpp:66 rc.cpp:76 rc.cpp:79 rc.cpp:81
+#: rc.cpp:82 rc.cpp:83 rc.cpp:114 rc.cpp:115 rc.cpp:116
+msgid "Enabled"
+msgstr ""
+
+#: rc.cpp:32 rc.cpp:65
+msgid "Correct pasv responses:"
+msgstr ""
+
+#: rc.cpp:34
+msgid "Background:"
+msgstr ""
+
+#: rc.cpp:35
+msgid "Success Text:"
+msgstr ""
+
+#: rc.cpp:36
+msgid "Failure Text:"
+msgstr ""
+
+#: rc.cpp:37
+msgid "Local Text:"
+msgstr ""
+
+#: rc.cpp:48
+msgid ""
+"This information points to the the ftp server. HOST can either be a standard "
+"ip adress like \"192.168.2.1\" or a domain name. PORT is the port number on "
+"which the ftp server listens. In most cases this is 21. Both are seperated "
+"by a \":\" character. A legit input would be \"ftp.kde.org:21\"."
+msgstr ""
+
+#: rc.cpp:53
+msgid "Anonymous"
+msgstr ""
+
+#: rc.cpp:68
+msgid "File Exists"
+msgstr ""
+
+#: rc.cpp:69 rc.cpp:90
+msgid "Skip"
+msgstr ""
+
+#: rc.cpp:70
+msgid "Resume"
+msgstr ""
+
+#: rc.cpp:72 rc.cpp:92
+msgid "Overwrite"
+msgstr ""
+
+#: rc.cpp:74
+msgid ""
+"Directory caching means that once you browsed a folder on a ftp session the "
+"content of that folder is cached, and will be loaded from there in case you "
+"enter it again. This can speed up browsing especially with large dirs. If "
+"you want a fresh representation of the dir content, you can press the "
+"refresh button."
+msgstr ""
+
+#: rc.cpp:75
+msgid "On file exist:"
+msgstr ""
+
+#: rc.cpp:77
+msgid ""
+"Here you can enter a Regular Expression. Transfer items which match this "
+"Regular Expression are skipped. For example a value of \"^\\.\" excludes "
+"every entry beginning with \".\" from transfer."
+msgstr ""
+
+#: rc.cpp:78
+msgid "Skiplist:"
+msgstr ""
+
+#: rc.cpp:80
+msgid ""
+"This Field contains a regular expression, which queues the items matching "
+"this regular expression before the items which don't. For example, \".sfv\" "
+"would make the common checksum files with this fileending transfer first."
+msgstr ""
+
+#: rc.cpp:84
+msgid "Priority list:"
+msgstr ""
+
+#: rc.cpp:85
+msgid "Directory caching:"
+msgstr ""
+
+#: rc.cpp:86
+msgid ""
+"This field can hold an executable and its arguments which will be run, when "
+"last item of in queue has finished transferring. For Example, on KDE "
+"desktops the entry \"dcop ksmserver ksmserver logout 0 0 0\" would shutdown "
+"the computer automatically."
+msgstr ""
+
+#: rc.cpp:88
+msgid "Resume (if possible)"
+msgstr ""
+
+#: rc.cpp:89 rc.cpp:91 rc.cpp:93
+msgid ""
+"These Radio Buttons indicate how the application should proceed if a file to "
+"be transfered already exists on the destination. Usually the user is asked "
+"by the application how to proceed if this occurs, in case you aren't present "
+"during the transfer you can enable this feature."
+msgstr ""
+
+#: rc.cpp:94
+msgid "On queue finished:"
+msgstr ""
+
+#: rc.cpp:95
+msgid "Kasablanca x"
+msgstr ""
+
+#: rc.cpp:103 rc.cpp:106
+msgid "Size"
+msgstr ""
+
+#: rc.cpp:104 rc.cpp:107
+msgid "Date"
+msgstr ""
+
+#: rc.cpp:111
+msgid "Show system tray icon:"
+msgstr ""
+
+#: rc.cpp:112
+msgid "Show command lines:"
+msgstr ""
+
+#: rc.cpp:113
+msgid "Hide hidden files from view:"
+msgstr ""
+
+#: rc.cpp:117
+msgid "Logwindow Font:"
+msgstr ""
+
+#: rc.cpp:118
 msgid "A RegExp which describes the items to skip at transfer."
 msgstr ""
 
-#: rc.cpp:105
+#: rc.cpp:119
+msgid "A RegExp which describes the items to transfer first."
+msgstr ""
+
+#: rc.cpp:120
+msgid "The font for the logwindow."
+msgstr ""
+
+#: rc.cpp:121
 msgid "The color value for local messages on the logging window."
 msgstr ""
 
-#: rc.cpp:106
+#: rc.cpp:122
 msgid "The color value for successful remote messages on the logging window."
 msgstr ""
 
-#: rc.cpp:107
+#: rc.cpp:123
 msgid "The color value for the background on the logging window."
 msgstr ""
 
-#: rc.cpp:108
+#: rc.cpp:124
 msgid "The color value for failed remote messages on the logging window."
 msgstr ""

@@ -1,19 +1,15 @@
-[v 0.4 pre4]
+[v 0.4.1]
 
+-configurable timer
 -extend bookmarks
 -add waiting window
 -bookmark hotkeys
-
-[v 0.4]
-
+-reconnect
 -make queues saveable
 -add retries
--configurable timer
 -check freebsd patches
 -add translations
 -get rid of eventhandler stuff
--update FormatFileList(), make it use qt stuff instead of c
--remember dirlistings (caching)
 -kb/s for fxp transfers
 
 [v 0.5]

@@ -1,5 +1,7 @@
-[v 0.4 pre4]
+[v 0.4]
 
+-added german translation
+-directory caching added
 -added documentation and help buttons
 -option to hide hidden files from view
 -added bookmark current site option

@@ -17,19 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ftpthread.h"
 
 #include <kstandarddirs.h>
-#include <list>
-#include "ftplib.h"
-#include "kbdirinfo.h"
+
 #include <qapplication.h>
 #include <qevent.h>
+#include <qdir.h>
+
+#include <iostream>
+#include <list>
+
+#include "kbconfig.h"
+#include "ftplib.h"
+#include "kbdirinfo.h"
 #include "eventhandler.h"
 #include "kbfileinfo.h"
-#include <qdir.h>
-#include <iostream>
-
+#include "ftpthread.h"
 
 using namespace std;
 
@@ -69,6 +72,8 @@ void FtpThread::InitInternals()
 	m_ulonglist.clear();
 	m_pwd = "";
 	m_dataencrypted = false;
+	m_cache_vector.clear();
+	m_cache_list.clear();
 }
 
 /* callback function for the transfer */
@@ -325,11 +330,12 @@ bool FtpThread::Cdup()
 
 /* retrieve dir contents */
 
-bool FtpThread::Dir()
+bool FtpThread::Dir(bool force)
 {
 	if (running()) return false;
 	else
 	{
+		m_intlist.append(force);
 		m_tasklist.append(FtpThread::dir);
 		return true;
 	}
@@ -887,14 +893,25 @@ void FtpThread::Dir_thread()
 {
 	int result;
 	QString dirname;
-	 
-	//dirname = QDir::homeDirPath() + 
-	//	"/.kasablanca/" +
-	//	QString::number((int) time(NULL) & 0xffff) + 
-	//	".dir";
+	int cacheindex = -1;
 	
+	int force = m_intlist.front();
+	m_intlist.pop_front();
+	 	
 	dirname = locateLocal("appdata", QString::number(rand()) + ".dir");
 	
+	if (KbConfig::dirCachingIsEnabled())
+	{
+		cacheindex = m_cache_list.findIndex(m_pwd);
+	
+		if ((cacheindex != -1) && (!force))
+		{
+			m_dircontent = m_cache_vector.at(cacheindex);
+			Event(EventHandler::dir_success, &m_dircontent);
+			return;
+		}
+	}
+				
 	result = mp_ftp->Dir(dirname.latin1(), "");
 
 	if (result) 
@@ -904,6 +921,18 @@ void FtpThread::Dir_thread()
 		FormatFilelist(dirname.latin1(), m_pwd, &m_dirlist, &m_filelist); 
 		m_dircontent.first = m_dirlist;
 		m_dircontent.second = m_filelist;
+		m_cache_vector.push_back(m_dircontent);
+		m_cache_list.push_back(m_pwd);
+		
+		if (KbConfig::dirCachingIsEnabled())
+		{	
+			if (cacheindex == -1)
+			{
+				m_cache_vector.push_back(m_dircontent);
+				m_cache_list.push_back(m_pwd);
+			}
+			else m_cache_vector.at(cacheindex) = m_dircontent;
+		}
 		Event(EventHandler::dir_success, &m_dircontent);
 	}
 	else 
@@ -1241,7 +1270,6 @@ bool FtpThread::Scandir_recurse(KbDirInfo *dir, QString path)
 	}
 	else Event(EventHandler::misc_success);
 	
-	//dirname = QDir::homeDirPath() + "/.kasablanca/" + QString::number((int) time(NULL) & 0xffff) + ".dir";
 	dirname = locateLocal("appdata", QString::number(rand()) + ".dir");
 	
 	result = mp_ftp->Dir(dirname.latin1(), "");
