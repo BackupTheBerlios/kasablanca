@@ -254,6 +254,63 @@ int main(int, char *)
 			cout << "kb.xfer.done" << endl;
 			ftp.SetCallbackXferFunction(NULL);
 		}
+		else if (input == "fxpinit")
+		{
+			string flag;
+			unsigned int v[6];
+			
+			cin >> flag;
+			cout << "kb.issue.fxpinit" << endl;
+			if (flag == "pasv")
+			{
+				if (ftp.FxpInitPasv(v))
+				{	
+					cout << "kb.fxpinit.pasv." 
+						<< v[0] << "."
+						<< v[1] << "."
+						<< v[2] << "."
+						<< v[3] << "."
+						<< v[4] << "."
+						<< v[5] << endl;
+					cout << "kb.success" << endl;
+				}
+				else cout << "kb.failure" << endl;
+			}
+			else if (flag == "port")
+			{
+				string ipport;
+				
+				cin >> ipport;
+				sscanf(ipport.c_str(),"%u.%u.%u.%u.%u.%u",&v[0],&v[1],&v[2],&v[3],&v[4],&v[5]);
+				if (ftp.FxpInitPort(v))
+				{
+				 	cout << "kb.fxpinit.port" << endl;
+					cout << "kb.success" << endl;
+				}
+				else cout << "kb.failure" << endl;
+			}
+			else cout << "kb.failure" << endl;
+		}
+		else if (input == "fxpget")
+		{
+			string file;
+						
+			cin >> file;
+			cout << "kb.issue.fxpget" << endl;
+			
+			if (ftp.FxpGet(file.c_str())) cout << "kb.fxpget.done" << endl;
+			else cout << "kb.failure" << endl;
+		}
+		else if (input == "fxpput")
+		{
+			string file;
+						
+			cin >> file;
+			cout << "kb.issue.fxpput" << endl;
+			
+			if (ftp.FxpPut(file.c_str())) cout << "kb.fxpput.done" << endl;
+			else cout << "kb.failure" << endl;
+		}
 		else if (input == "quit")
 		{
 			cout << "kb.issue.quit" << endl;

@@ -40,14 +40,17 @@ public:
 		  download_a_to_b = 1001,
 		  download_b_to_a,
 		  upload_a_to_b,
-		  upload_b_to_a
+		  upload_b_to_a,
+		  fxp_a_to_b,
+		  fxp_b_to_a
     };
 	transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
 	transferitem(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
+	transferitem(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type);
    ~transferitem();
 
 	QFileInfo m_filocal;
-	RemoteFileInfo m_firemote;
+	RemoteFileInfo m_firemote, m_fifxpsrc, m_fifxpdst;
 	int type();
 private:
 	transfertype m_type;

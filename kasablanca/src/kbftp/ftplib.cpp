@@ -1330,13 +1330,78 @@ int ftplib::Quit()
  *
  * return 1 if successful, 0 otherwise
  */
+ 
+int ftplib::FxpInitPasv(unsigned int* v)
+{
+	char *cp;
+
+	if (!FtpSendCmd("PASV",'2',mp_netbuf)) return 0;
+	cp= strchr(mp_netbuf->response,'(');
+	if (cp == NULL) return 0;
+	cp++;
+	sscanf(cp,"%u,%u,%u,%u,%u,%u",&v[0],&v[1],&v[2],&v[3],&v[4],&v[5]);
+		
+	return 1;
+}
+
+int ftplib::FxpInitPort(unsigned int* v)
+{
+	char buf[256];
+			
+	sprintf(buf, "PORT %d,%d,%d,%d,%d,%d", v[0],v[1],v[2],v[3],v[4],v[5]);
+	if (!FtpSendCmd(buf,'2',mp_netbuf)) return 0;
+	
+	return 1;
+}
+
+int ftplib::FxpGet(const char *path)
+{	
+	char buf[256];
+
+	sprintf(buf, "TYPE %c", ftplib::image);
+	if (!FtpSendCmd(buf,'2',mp_netbuf)) return 0;
+	
+	strcpy(buf,"RETR");
+	if (path != NULL)
+	{
+		int i = strlen(buf);
+		buf[i++] = ' ';
+		if ((strlen(path) + i) >= sizeof(buf)) return 0;
+		strcpy(&buf[i],path);
+	}
+	else return 0;
+	
+	if (!FtpSendCmd(buf, '1', mp_netbuf)) return 0;
+	return 1;
+} 
+
+int ftplib::FxpPut(const char *path)
+{	
+	char buf[256];
+
+	sprintf(buf, "TYPE %c", ftplib::image);
+	if (!FtpSendCmd(buf,'2',mp_netbuf)) return 0;
+	
+	strcpy(buf,"STOR");
+	if (path != NULL)
+	{
+		int i = strlen(buf);
+		buf[i++] = ' ';
+		if ((strlen(path) + i) >= sizeof(buf)) return 0;
+		strcpy(&buf[i],path);
+	}
+	else return 0;
+	if (!FtpSendCmd(buf, '1', mp_netbuf)) return 0;
+	return 1;
+} 
+
 int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method)
 {
 	char *cp;
 	unsigned int v[6];
 	char buf[256];
 	int retval = 0;
-
+	
 	sprintf(buf, "TYPE %c", mode);
 	if (!dst->FtpSendCmd(buf,'2',dst->mp_netbuf)) return -1;
 	if (!src->FtpSendCmd(buf,'2',src->mp_netbuf)) return -1;

@@ -144,6 +144,10 @@ public:
     int FtpWrite(void *buf, int len, netbuf *nData);
     int FtpAccess(const char *path, int typ, int mode, netbuf *nControl, netbuf **nData);
     int FtpClose(netbuf *nData);
+	 int FxpInitPasv(unsigned int* v);
+	 int FxpInitPort(unsigned int* v);
+	 int FxpGet(const char *path);
+	 int FxpPut(const char *path);
 private:
     int FtpXfer(const char *localfile, const char *path, netbuf *nControl, int typ, int mode);
     int FtpOpenPasv(netbuf *nControl, netbuf **nData, int mode, int dir, char *cmd);

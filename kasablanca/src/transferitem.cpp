@@ -45,6 +45,17 @@ transferitem::transferitem(QListView* taskview, QListViewItem* after, QFileInfo 
 	if (type == transferitem::upload_b_to_a) setText(0, "upload " + firemote.fileName() + " <<");
 }
 
+transferitem::transferitem(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type) : QListViewItem(taskview, after)
+{
+	m_type = type;
+	m_fifxpsrc = fifxpsrc;
+	m_fifxpdst = fifxpdst;
+
+	if (type == transferitem::fxp_a_to_b) setText(0, "fxp" + fifxpsrc.fileName() + " >>");
+	if (type == transferitem::fxp_b_to_a) setText(0, "fxp " + fifxpsrc.fileName() + " <<");
+}
+
+
 transferitem::~transferitem()
 {
 }
