@@ -3,7 +3,7 @@
   <general>
     <author>Magnus Kulke</author>
     <email>mkulke@magnusmachine</email>
-    <version>0.4.0-pre2</version>
+    <version>0.4.0-pre3</version>
     <projectmanagement>KDevKDEAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <keywords>

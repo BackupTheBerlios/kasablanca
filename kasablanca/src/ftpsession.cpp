@@ -582,7 +582,8 @@ void FtpSession::PrintLog(bool)
 		else
 		{
 			mp_logwindow->setColor(m_colorlocal);
-			mp_logwindow->append((*i).first);
+			if (line.startsWith("PASS")) mp_logwindow->append("PASS *");
+			else mp_logwindow->append(line);
 		}	
 	}	
 	m_loglist.clear();
@@ -972,7 +973,6 @@ void FtpSession::Transfer(KbTransferItem *item)
 				if (item->DstSession()->Connected())
 				{
 					item->SrcSession()->FxpFile(item, result);
-					// FXP Copy
 				}
 				else item->SrcSession()->GetFile(item, result);
 			}
