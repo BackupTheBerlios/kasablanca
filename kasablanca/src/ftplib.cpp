@@ -793,7 +793,7 @@ int ftplib::FtpOpenPasv(netbuf *nControl, netbuf **nData, int mode, int dir, cha
 	int on=1;
 	netbuf *ctrl;
 	char *cp;
-	unsigned int v[6];
+	unsigned char v[6];
 	int ret;
 
 	if (nControl->dir != FTPLIB_CONTROL) return -1;
@@ -815,7 +815,7 @@ int ftplib::FtpOpenPasv(netbuf *nControl, netbuf **nData, int mode, int dir, cha
 	cp = strchr(nControl->response,'(');
 	if (cp == NULL) return -1;
 	cp++;
-	sscanf(cp,"%u,%u,%u,%u,%u,%u",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+	sscanf(cp,"%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
 	if (nControl->correctpasv) if (!CorrectPasvResponse(v)) return -1;
 	sin.sa.sa_data[2] = v[2];
 	sin.sa.sa_data[3] = v[3];
@@ -1127,6 +1127,8 @@ int ftplib::FtpXfer(const char *localfile, const char *path, netbuf *nControl, i
 
 	if (localfile != NULL)
 	{
+		printf("localfile: -%s-", localfile);
+	
 		//local = fopen(localfile, (typ == FTPLIB_FILE_WRITE) ? "r" : "w");
 		char ac[3] = "  ";
 		if ((typ == FTPLIB_DIR) || (typ == FTPLIB_DIR_VERBOSE)) { ac[0] = 'w'; ac[1] = '\0'; }
@@ -1333,7 +1335,7 @@ int ftplib::Quit()
 int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method)
 {
 	char *cp;
-	unsigned int v[6];
+	unsigned char v[6];
 	char buf[256];
 	int retval = 0;
 	
@@ -1349,12 +1351,12 @@ int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathD
 		cp = strchr(dst->mp_netbuf->response,'(');
 		if (cp == NULL) return -1;
 		cp++;
-		sscanf(cp,"%u,%u,%u,%u,%u,%u",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+		sscanf(cp,"%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
 		if (dst->mp_netbuf->correctpasv) if (!dst->CorrectPasvResponse(v)) return -1;
 
 		// PORT src
 
-		sprintf(buf, "PORT %d,%d,%d,%d,%d,%d", v[2],v[3],v[4],v[5],v[0],v[1]);
+		sprintf(buf, "PORT %hhu,%hhu,%hhu,%hhu,%hhu,%hhu", v[2],v[3],v[4],v[5],v[0],v[1]);
 		if (!src->FtpSendCmd(buf,'2',src->mp_netbuf)) return -1;
 
 		// RETR src
@@ -1403,12 +1405,12 @@ int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathD
 		cp = strchr(src->mp_netbuf->response,'(');
 		if (cp == NULL) return -1;
 		cp++;
-		sscanf(cp,"%u,%u,%u,%u,%u,%u",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+		sscanf(cp,"%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
 		if (src->mp_netbuf->correctpasv) if (!src->CorrectPasvResponse(v)) return -1;
 
 		// PORT dst
 
-		sprintf(buf, "PORT %d,%d,%d,%d,%d,%d", v[2],v[3],v[4],v[5],v[0],v[1]);
+		sprintf(buf, "PORT %hhu,%hhu,%hhu,%hhu,%hhu,%hhu", v[2],v[3],v[4],v[5],v[0],v[1]);
 		if (!dst->FtpSendCmd(buf,'2',dst->mp_netbuf)) return -1;
 
 		// STOR dest
@@ -1539,10 +1541,10 @@ void ftplib::ClearNetbuf()
 	mp_netbuf->handle = 0;
 	mp_netbuf->logcb = NULL;
 	mp_netbuf->xfercb = NULL;
-	mp_netbuf->correctpasv = true;
+	mp_netbuf->correctpasv = false;
 }
 
-int ftplib::CorrectPasvResponse(unsigned int *v)
+int ftplib::CorrectPasvResponse(unsigned char *v)
 {
 	struct sockaddr ipholder;
 	unsigned int ipholder_size = sizeof(ipholder);

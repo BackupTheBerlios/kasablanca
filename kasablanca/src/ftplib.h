@@ -155,7 +155,7 @@ private:
     int writeline(char *buf, int len, netbuf *nData);
     int readresp(char c, netbuf *nControl);
 	 void ClearNetbuf();
-	 int CorrectPasvResponse(unsigned int *v);
+	 int CorrectPasvResponse(unsigned char *v);
 };
 
 #endif

@@ -64,7 +64,7 @@ void KbTransferFile::ShowProgress(KbStatusTip *statustip)
 
 	off_t currentsize = (m_xfered + mp_dst->Size()) >> 10;
 	off_t wholesize = mp_src->Size() >> 10;
-	int percentage = ((m_xfered + mp_dst->Size())* 100 ) / (mp_src->Size() + 1);
+	off_t percentage = ((currentsize * 100 ) / (wholesize + 1));
 	int speed = xfer_dif / time_dif;
 	
 	setText(1, "[" + QString::number(currentsize) + "kb of " 
@@ -76,7 +76,7 @@ void KbTransferFile::ShowProgress(KbStatusTip *statustip)
 	m_xfered_old = m_xfered;
 	
 	statustip->ShowStatus(mp_src->fileName()
-		+ "," + QString::number(percentage) + "%," + QString::number(speed) + "kb/s");
+		+ "," + QString::number(percentage) + "%d," + QString::number(speed) + "kb/s");
 	
 	//QToolTip::add(systemtray, mp_src->fileName() 
 	//+ "," + QString::number(percentage) + "%," + QString::number(speed) + "kb/s");
