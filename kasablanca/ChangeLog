@@ -6,3 +6,9 @@
 [3.26.2003]
 
 -big user interface changes. both browser windows can be switched on or offline
+
+[3.27.2003]
+
+-fixed xfer/rename bug
+-fixed tab order on dialogs
+

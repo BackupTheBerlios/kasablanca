@@ -1,6 +1,5 @@
 v 0.3.1
 
--when renaming, check if file_alt is there too
 -repair spaces xfer bug, changes in kbftp probably, local files are sent to the client using the path to the file. if there are spaces in it it will fail.
 -recursive delete
 -slow down update cycle, transfer info should only be refreshed every 100msec or something.
