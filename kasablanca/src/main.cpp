@@ -12,7 +12,7 @@
 static const char description[] =
     I18N_NOOP("A KDE Ftp Client");
 
-static const char version[] = "0.4-pre1b";
+static const char version[] = "0.4-pre2";
 
 static KCmdLineOptions options[] =
 {
