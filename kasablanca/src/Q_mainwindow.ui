@@ -358,7 +358,7 @@
 <customwidgets>
     <customwidget>
         <class>KbTaskView</class>
-        <header location="global">/home/mkulke/Development/kasablanca/src/kbtaskview.h</header>
+        <header location="global">kbtaskview.h</header>
         <sizehint>
             <width>-1</width>
             <height>-1</height>
