@@ -42,7 +42,6 @@
 #include <qpushbutton.h>
 #include <qheader.h>
 #include <qtoolbutton.h>
-#include <qtooltip.h>
 
 #include "Q_colorspreferencesdialog.h"
 #include "Q_generalpreferencesdialog.h"
@@ -58,6 +57,7 @@
 #include "kbconfig.h"
 #include "kbtaskview.h"
 #include "kasablanca.h"
+#include "kbstatustip.h"
 
 using namespace std;
 
@@ -67,6 +67,8 @@ Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new Kasablanc
 	mp_systemtray = new KSystemTray(this);
 	mp_systemtray->setPixmap( KSystemTray::loadIcon( "kasablanca" ) );
 	if ( KbConfig::systrayIsEnabled() ) mp_systemtray->show();
+	
+	mp_statustip = new KbStatusTip(mp_systemtray);
 	
 	mp_session_a = new FtpSession(this, "session a");
 	mp_session_b = new FtpSession(this, "session b");
@@ -581,7 +583,7 @@ void Kasablanca::QueueFinished()
 		p->start();
 	}
 	if (KbConfig::systrayIsEnabled()) KPassivePopup::message("Transfer is finished.", mp_systemtray);
-	QToolTip::remove(mp_systemtray);
+	//QToolTip::remove(mp_systemtray);
 }
 
 QListViewItem* Kasablanca::NextTransfer(QListViewItem* item)

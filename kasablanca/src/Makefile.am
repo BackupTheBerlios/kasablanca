@@ -2,7 +2,7 @@
 INCLUDES = $(all_includes)
 
 # these are the headers for your project
-noinst_HEADERS = kasablanca.h bookmarkdialog.h customconnectdialog.h fileexistsdialog.h kbitem.h ftplib.h ftpsession.h kbfileinfo.h kbdirinfo.h kbtransferitem.h kbtransferdir.h kbtransferfile.h kbtaskview.h kbbookmarkitem.h kbsiteinfo.h importdialog.h
+noinst_HEADERS = kasablanca.h bookmarkdialog.h customconnectdialog.h fileexistsdialog.h kbitem.h ftplib.h ftpsession.h kbfileinfo.h kbdirinfo.h kbtransferitem.h kbtransferdir.h kbtransferfile.h kbtaskview.h kbbookmarkitem.h kbsiteinfo.h importdialog.h kbstatustip.h
 
 # let automoc handle all of the meta source files (moc)
 METASOURCES = AUTO
@@ -20,7 +20,7 @@ KDE_ICON = kasablanca
 bin_PROGRAMS = kasablanca
 
 # the application source, library search path, and link libraries
-kasablanca_SOURCES = main.cpp kasablanca.cpp bookmarkdialog.cpp customconnectdialog.cpp fileexistsdialog.cpp kbitem.cpp Q_bookmarkdialog.ui Q_fileexistsdialog.ui Q_mainwindow.ui eventhandler.cpp ftpthread.cpp ftplib.cpp ftpsession.cpp kbfileinfo.cpp kbdirinfo.cpp kbdir.cpp kbfile.cpp kbtransferitem.cpp kbtransferdir.cpp kbtransferfile.cpp kbconfig.kcfgc Q_colorspreferencesdialog.ui Q_generalpreferencesdialog.ui kbtaskview.cpp Q_userinterfacepreferencesdialog.ui kbbookmarkitem.cpp kbsiteinfo.cpp Q_customconnectdialog.ui Q_importdialog.ui importdialog.cpp
+kasablanca_SOURCES = main.cpp kasablanca.cpp bookmarkdialog.cpp customconnectdialog.cpp fileexistsdialog.cpp kbitem.cpp Q_bookmarkdialog.ui Q_fileexistsdialog.ui Q_mainwindow.ui eventhandler.cpp ftpthread.cpp ftplib.cpp ftpsession.cpp kbfileinfo.cpp kbdirinfo.cpp kbdir.cpp kbfile.cpp kbtransferitem.cpp kbtransferdir.cpp kbtransferfile.cpp kbconfig.kcfgc Q_colorspreferencesdialog.ui Q_generalpreferencesdialog.ui kbtaskview.cpp Q_userinterfacepreferencesdialog.ui kbbookmarkitem.cpp kbsiteinfo.cpp Q_customconnectdialog.ui Q_importdialog.ui importdialog.cpp kbstatustip.cpp
 kasablanca_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 kasablanca_LDADD = -lssl $(LIB_KDEUI)
 

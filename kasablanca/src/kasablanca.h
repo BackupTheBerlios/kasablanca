@@ -31,6 +31,7 @@ class QCloseEvent;
 class QLabel;
 class QPixmap;
 class FtpSession;
+class KbStatusTip;
 
 #include <kapplication.h>
 #include <klistview.h>
@@ -75,6 +76,7 @@ public:
 	QString m_version;
 	list<KbSiteInfo> m_bookmarks;
 	KSystemTray* systemTray() const { return mp_systemtray; }
+	KbStatusTip* statusTip() const { return mp_statustip; }
 	void InitBookmarks();
 
 public slots:
@@ -122,6 +124,7 @@ private:
 	bool m_skiplistenabled, m_onqueuefinishedenabled;
 	QString m_onqueuefinished;
 	KSystemTray* mp_systemtray;
+	KbStatusTip *mp_statustip;
 };
 
 #endif

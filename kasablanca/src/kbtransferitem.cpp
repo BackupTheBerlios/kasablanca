@@ -58,7 +58,7 @@ void KbTransferItem::Info()
 {
 }
 
-void KbTransferItem::ShowProgress(KSystemTray*)
+void KbTransferItem::ShowProgress(KbStatusTip *)
 {
 }
 

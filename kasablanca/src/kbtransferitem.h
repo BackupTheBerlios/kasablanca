@@ -29,7 +29,7 @@
 #include "kbfileinfo.h"
 
 class FtpSession;
-class KSystemTray;
+class KbStatusTip;
 
 /**
 @author Magnus Kulke
@@ -47,7 +47,7 @@ public:
    ~KbTransferItem();
 
 	virtual void Info();
-	virtual void ShowProgress(KSystemTray *systemtray);
+	virtual void ShowProgress(KbStatusTip *statustip);
 	void Finish();
 	void IncrementStatus() { m_status = m_status + 1; };
 	void Init();

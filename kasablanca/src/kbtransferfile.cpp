@@ -17,11 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
-#include <qtooltip.h>
- 
-#include <ksystemtray.h> 
- 
+  
+#include "kbstatustip.h"
 #include "kbsiteinfo.h"
 
 #include "kbtransferfile.h"
@@ -58,7 +55,7 @@ void KbTransferFile::Info()
 	qWarning("INFO: mp_dst->dirPath() = %s", mp_dst->dirPath(true).latin1());
 }
 
-void KbTransferFile::ShowProgress(KSystemTray *systemtray)
+void KbTransferFile::ShowProgress(KbStatusTip *statustip)
 {
 	int time = m_time.elapsed();
 	int time_dif = time - m_time_old;
@@ -78,8 +75,11 @@ void KbTransferFile::ShowProgress(KSystemTray *systemtray)
 	m_time_old = time;
 	m_xfered_old = m_xfered;
 	
-	QToolTip::add(systemtray, mp_src->fileName() 
-	+ "," + QString::number(percentage) + "%," + QString::number(speed) + "kb/s");
+	statustip->ShowStatus(mp_src->fileName()
+		+ "," + QString::number(percentage) + "%," + QString::number(speed) + "kb/s");
+	
+	//QToolTip::add(systemtray, mp_src->fileName() 
+	//+ "," + QString::number(percentage) + "%," + QString::number(speed) + "kb/s");
 }
 
 

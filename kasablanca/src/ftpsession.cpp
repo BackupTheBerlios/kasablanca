@@ -1147,7 +1147,7 @@ void FtpSession::PutFile(KbTransferItem *item, filecheck fc)
 
 void FtpSession::timerEvent(QTimerEvent*)
 {
-	if (mp_currenttransfer) mp_currenttransfer->ShowProgress(static_cast<Kasablanca*>(parent())->systemTray());
+	if (mp_currenttransfer) mp_currenttransfer->ShowProgress(static_cast<Kasablanca*>(parent())->statusTip());
 }
 
 void FtpSession::EnableCmdLine(bool b) 
