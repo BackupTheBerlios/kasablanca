@@ -31,7 +31,9 @@
 #include <kstandarddirs.h>
 #include <kstatusbar.h>
 #include <kstdaction.h>
+#include <ksystemtray.h>
 #include <kconfigdialog.h>
+#include <kpassivepopup.h>
 
 #include <qtextedit.h>
 #include <qlineedit.h>
@@ -43,6 +45,7 @@
 
 #include "Q_colorspreferencesdialog.h"
 #include "Q_generalpreferencesdialog.h"
+#include "Q_userinterfacepreferencesdialog.h"
 #include "customconnectdialog.h"
 #include "fileexistsdialog.h"
 #include "bookmarks.h"
@@ -59,6 +62,12 @@ using namespace std;
 
 Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new KasablancaMainWindow(this))
 {
+
+	//first, load the system tray icon
+	mp_systemtray = new KSystemTray(this);
+	mp_systemtray->setPixmap( KSystemTray::loadIcon( "kasablanca" ) );
+	if ( KbConfig::systrayIsEnabled() ) mp_systemtray->show();
+
 	mp_session_a = new FtpSession(this, "session a");
 	mp_session_b = new FtpSession(this, "session b");
 	mp_sessionlist = new list<FtpSession*>;
@@ -177,7 +186,12 @@ void Kasablanca::applyConfig()
 		(*i)->SetColors(KbConfig::localColor(), KbConfig::successColor(), KbConfig::failureColor(), KbConfig::backgroundColor());
 		(*i)->SetOnFileExistsDefault(def);
 		(*i)->SetCorrectPasv(correctpasv);
+		(*i)->EnableCmdLine(KbConfig::commandLineIsEnabled());
 	}
+	
+	// make the system tray switch on/off when settings are changed
+	if ( KbConfig::systrayIsEnabled() ) mp_systemtray->show();
+	else mp_systemtray->hide();
 } 
 
 void Kasablanca::saveSettings() 
@@ -253,8 +267,10 @@ void Kasablanca::optionsPreferences()
 		
 	KasablancaGeneralPreferencesDialog *general = new KasablancaGeneralPreferencesDialog(0, i18n("General"));
 	KasablancaColorsPreferencesDialog *colors = new KasablancaColorsPreferencesDialog(0, i18n("Colors")); 
+	KasablancaUserInterfacePreferencesDialog *ui = new KasablancaUserInterfacePreferencesDialog(0, i18n("User Interface"));
 	dialog->addPage(general, i18n("General"), "kasablanca");
 	dialog->addPage(colors, i18n("Colors"), "colors"); 
+	dialog->addPage(ui, i18n("User Interface"), "winprops"); 
 	connect(dialog, SIGNAL(settingsChanged()), this, SLOT(applyConfig()));
 	dialog->show();
 }
@@ -530,6 +546,7 @@ void Kasablanca::QueueFinished()
 		connect(p, SIGNAL(processExited(KProcess*)), SLOT(SLOT_LocalProcessExited(KProcess*)));
 		p->start();
 	}
+	if (KbConfig::systrayIsEnabled()) KPassivePopup::message("Transfer is finished.", mp_systemtray);
 }
 
 QListViewItem* Kasablanca::NextTransfer(QListViewItem* item)

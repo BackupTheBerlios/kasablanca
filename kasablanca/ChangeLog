@@ -1,9 +1,10 @@
 [v 0.4 pre3]
 
--fixed bug when cancelling rename
--added an option to correct wrong pasv replies
--password is masked in log window
+-added systray support [bochi]
 -added drag and drop movement in queue
+-password is masked in log window
+-added an option to correct wrong pasv replies
+-fixed bug when cancelling rename
 
 [v 0.4 pre2]
 

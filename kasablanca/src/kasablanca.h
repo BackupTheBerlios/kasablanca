@@ -25,6 +25,7 @@
 class KbDir;
 class KbFile;
 class KToggleAction;
+class KSystemTray;
 class QWidget;
 class QCloseEvent;
 class QLabel;
@@ -71,6 +72,8 @@ public:
     QString m_version;
 	 vector<siteinfo> m_bookmarks;
 
+    KSystemTray* systemTray() const { return mp_systemtray; }
+
 public slots:
     void SLOT_EditBookmarks();
     void SLOT_ItemRightClickedT(QListViewItem * item, const QPoint & point, int col );
@@ -116,6 +119,8 @@ private:
 	 list<FtpSession*> *mp_sessionlist;
 	 bool m_skiplistenabled, m_onqueuefinishedenabled;
 	 QString m_onqueuefinished;
+    KSystemTray* mp_systemtray;
+    
 };
 
 #endif

@@ -86,6 +86,7 @@ public:
 	siteinfo* SiteInfo() { return mp_siteinfo; };
 	void SetColors(QColor local, QColor success, QColor failure, QColor background);
 	void SetOnFileExistsDefault(filecheck onfileexistsdefault) {m_onfileexistsdefault = onfileexistsdefault; };
+	void EnableCmdLine(bool b);
 private:
 	FtpThread *mp_ftpthread;
 	EventHandler *mp_eventhandler;

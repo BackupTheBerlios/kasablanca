@@ -1064,4 +1064,10 @@ void FtpSession::SetCorrectPasv(bool correctpasv)
 	mp_ftpthread->Ftp()->SetCorrectPasv(correctpasv); 
 }
 
+void FtpSession::EnableCmdLine(bool b) 
+{ 
+	if (b) mp_cmdline->show();
+	else mp_cmdline->hide();
+}
+
 #include "ftpsession.moc"
