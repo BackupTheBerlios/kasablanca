@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <kdeversion.h>
 #include <kstandarddirs.h>
 #include <qstatusbar.h>
 #include <qtextedit.h>
@@ -40,7 +41,6 @@
 #include <qeventloop.h>
 #include <qdom.h>
 #include <kmessagebox.h>
-#include <klineeditdlg.h>
 #include <qaction.h>
 #include <kmainwindow.h>
 #include <kprocio.h>
@@ -48,7 +48,12 @@
 #include <qtoolbutton.h>
 #include <qcursor.h>
 #include <kapp.h>
+
+#if KDE_IS_VERSION(3,2,0)
 #include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
+#endif
 
 #include "diritem.h"
 #include "fileitem.h"
@@ -1203,7 +1208,11 @@ void Kasablanca::Xfer()
 							
 							while ((filepresent) || (!b))
 							{
+								#if KDE_IS_VERSION(3,2,0)
 								remotename = KInputDialog::getText("Enter New Name:", "Enter New Name:", remotename + "_alt", &b, this);
+								#else
+								remotename = KLineEditDlg::getText("Enter New Name:", remotename + "_alt", &b, this);
+								#endif
 								filepresent = false;
 												
 								QListViewItemIterator it(remoteview);
@@ -1279,7 +1288,12 @@ void Kasablanca::Xfer()
 						while ((filepresent) or (!b))
 						//while ((localname.lower() == file->m_firemote.fileName().lower()) || (!b))
 						{
+							#if KDE_IS_VERSION(3,2,0)
 							localname = KInputDialog::getText("Enter New Name:", "Enter New Name:", localname + "_alt", &b, this);
+							#else
+							localname = KLineEditDlg::getText("Enter New Name:", localname + "_alt", &b, this);
+							#endif
+	
 							filepresent = false;
 							QFileInfo fi(file->m_filocal.dirPath() + "/" + localname);
 							if ((fi.isFile() == true) or (fi.isDir() == true)) filepresent = true;
@@ -1509,8 +1523,12 @@ void Kasablanca::SLOT_MkdirA()
 	bool b;
 	QString name;
 
+	#if KDE_IS_VERSION(3,2,0)
 	name = KInputDialog::getText("Enter Directory Name:", "Enter Directory Name:", "", &b, this);
-	
+	#else
+	name = KLineEditDlg::getText("Enter Directory Name:", "", &b, this);	
+	#endif
+		
 	if (m_status_a == connected)
 	{		
 		if (!b) return;
@@ -1530,7 +1548,11 @@ void Kasablanca::SLOT_MkdirB()
 	bool b;
 	QString name;
 
+	#if KDE_IS_VERSION(3,2,0)
 	name = KInputDialog::getText("Enter Directory Name:", "Enter Directory Name:", "", &b, this);
+	#else
+	name = KLineEditDlg::getText("Enter Directory Name:", "", &b, this);	
+	#endif
 
 	if (m_status_b == connected)
 	{
@@ -1984,8 +2006,12 @@ void Kasablanca::SLOT_RenameA()
 	
 	if (!item) return;
 	
+	#if KDE_IS_VERSION(3,2,0)
 	name = KInputDialog::getText("Enter New Name:", "Enter New Name:", item->text(0), &b, this);
-
+	#else
+	name = KLineEditDlg::getText("Enter New Name:", item->text(0), &b, this);	
+	#endif
+	
 	if (!b) return;
 	
 	if (m_status_a == connected)
@@ -2019,8 +2045,12 @@ void Kasablanca::SLOT_RenameB()
 	
 	if (!item) return;
 	
+	#if KDE_IS_VERSION(3,2,0)
 	name = KInputDialog::getText("Enter New Name:", "Enter New Name:", item->text(0), &b, this);
-
+	#else
+	name = KLineEditDlg::getText("Enter New Name:", item->text(0), &b, this);	
+	#endif
+	
 	if (!b) return;
 	
 	if (m_status_b == connected)
