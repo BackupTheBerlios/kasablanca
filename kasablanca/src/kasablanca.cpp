@@ -18,6 +18,7 @@
 #include <kaboutdialog.h>
 #include <kaction.h>
 #include <kapp.h>
+#include <kapplication.h>
 #include <kdeversion.h>
 #include <kedittoolbar.h>
 #include <kglobal.h>
@@ -909,6 +910,8 @@ void Kasablanca::closeEvent( QCloseEvent * e )
 	}
 	
 	if ((m_status_a == disconnected) && (m_status_b == disconnected)) e->accept();
+
+    kapp->exit();
 }
 
 void Kasablanca::SLOT_DeleteB()

@@ -181,7 +181,7 @@ private:
     void setupGUI();
     void setupActions();
     void timerEvent(QTimerEvent* e);
-    void closeEvent(QCloseEvent * e);
+    void closeEvent(QCloseEvent*);
 
     KasablancaMainWindow *m_view;
     kbprocess m_proc_a, m_proc_b;
