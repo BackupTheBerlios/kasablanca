@@ -40,7 +40,7 @@
 #include <qeventloop.h>
 #include <qdom.h>
 #include <kmessagebox.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <qaction.h>
 #include <kmainwindow.h>
 #include <kprocio.h>
@@ -374,7 +374,7 @@ void Kasablanca::SLOT_ConnectButtonB()
 	return;
 }
 
-void Kasablanca::SLOT_ConnectB(int i)
+void Kasablanca::SLOT_ConnectB(int)
 {
 	return;
 }
@@ -555,17 +555,17 @@ void Kasablanca::UpdateLocalDisplay()
 	TransferButtonB->setEnabled(false);
 }
 
-void Kasablanca::SLOT_ItemRightClickedB(QListViewItem * item, const QPoint & point, int col )
+void Kasablanca::SLOT_ItemRightClickedB(QListViewItem *, const QPoint & point, int )
 {
     m_rclickmenu_b.exec(point);
 }
 
-void Kasablanca::SLOT_ItemRightClickedA(QListViewItem * item, const QPoint & point, int col )
+void Kasablanca::SLOT_ItemRightClickedA(QListViewItem *, const QPoint & point, int )
 {
     m_rclickmenu_a.exec(point);
 }
 
-void Kasablanca::SLOT_ItemRightClickedT(QListViewItem * item, const QPoint & point, int col )
+void Kasablanca::SLOT_ItemRightClickedT(QListViewItem *, const QPoint & point, int)
 {
     m_rclickmenu_t.exec(point);
 }
@@ -873,7 +873,7 @@ void Kasablanca::Xfer()
 							bool b = false;
 							while ((remotename.lower() == file->m_firemote.fileName().lower()) || (!b))
 							{
-								remotename = KLineEditDlg::getText("Enter New Name:", remotename + "_alt", &b, this);
+								remotename = KInputDialog::getText("Enter New Name:", "Enter New Name:", remotename + "_alt", &b, this);
 							}
 							break;
 					}
@@ -935,7 +935,7 @@ void Kasablanca::Xfer()
 						bool b = false;
 						while ((localname.lower() == file->m_firemote.fileName().lower()) || (!b))
 						{
-							localname = KLineEditDlg::getText("Enter New Name:", localname + "_alt", &b, this);
+							localname = KInputDialog::getText("Enter New Name:", "Enter New Name:", localname + "_alt", &b, this);
 						}
 						break;
 					}
@@ -1079,7 +1079,7 @@ void Kasablanca::SLOT_MkdirA()
 	bool b;
 	QString name;
 
-	name = KLineEditDlg::getText("Enter Directory Name:", "", &b, this);
+	name = KInputDialog::getText("Enter Directory Name:", "Enter Directory Name:", "", &b, this);
 	if (!b) return;
 	m_proc.writeStdin("mkdir " + name);
 	UpdateRemote();
@@ -1090,7 +1090,7 @@ void Kasablanca::SLOT_MkdirB()
 	bool b;
 	QString name;
 
-	name = KLineEditDlg::getText("Enter Directory Name:", "", &b, this);
+	name = KInputDialog::getText("Enter Directory Name:", "Enter Directory Name:", "", &b, this);
 
 	if (!b) return;
 
@@ -1152,8 +1152,8 @@ void Kasablanca::UpdateRemoteDisplay(QString dirfile)
 
 int Kasablanca::FormatFilelist(const char *filename, QString current, vector<RemoteFileInfo> *filetable, vector<RemoteFileInfo> *dirtable)
 {
-	int i, blocks, space;
-	unsigned int loc, fileloc, datebegin, sizebegin;
+	int i, blocks, space, month_int = 0;
+	unsigned int loc, fileloc, datebegin, sizebegin = 0;
 	string buffer, filestring;
 
 	RemoteFileInfo fi;
@@ -1167,8 +1167,6 @@ int Kasablanca::FormatFilelist(const char *filename, QString current, vector<Rem
 		"... ", "Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ",
 		"Sep ", "Oct ", "Nov ", "Dec "
 	};
-
-	int month_int;
 
 	dirfile = fopen(filename, "r");
 	if (dirfile == NULL)
@@ -1492,7 +1490,7 @@ void Kasablanca::SLOT_RenameA()
 
 	if (!item) return;
 
-	name = KLineEditDlg::getText("Enter New Name:", item->text(0), &b, this);
+	name = KInputDialog::getText("Enter New Name:", "Enter New Name:", item->text(0), &b, this);
 
 	if (!b) return;
 
@@ -1519,7 +1517,7 @@ void Kasablanca::SLOT_RenameB()
 
 	if (!item) return;
 
-	name = KLineEditDlg::getText("Enter New Name:", item->text(0), &b, this);
+	name = KInputDialog::getText("Enter New Name:", "Enter New Name:", item->text(0), &b, this);
 
 	if (!b) return;
 

@@ -13,7 +13,7 @@ void CallbackLog(char* str, void* arg);
 int CallbackDir(int xfered, void *arg);
 int CallbackXfer(int xfered, void *arg);
 
-int main(int argc, char *argv[])
+int main(int, char *)
 {
 	ftplib ftp;
 	string input;
@@ -266,18 +266,18 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
-void CallbackLog(char* str, void* arg)
+void CallbackLog(char* str, void *)
 {
 	cout << str;
 }
 
-int CallbackDir(int xfered, void *arg)
+int CallbackDir(int xfered, void *)
 {
 	cout << "kb.dir." << xfered << endl;
 	return 1;
 }
 
-int CallbackXfer(int xfered, void *arg)
+int CallbackXfer(int xfered, void *)
 {
 	cout << "kb.xfer." << xfered << endl;
 	return 1;
