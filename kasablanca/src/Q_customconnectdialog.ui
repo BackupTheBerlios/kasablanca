@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>396</width>
+            <width>263</width>
             <height>264</height>
         </rect>
     </property>
@@ -27,7 +27,7 @@
         </size>
     </property>
     <property name="caption">
-        <string>Connect to Custom Site</string>
+        <string>Custom Connect</string>
     </property>
     <property name="sizeGripEnabled">
         <bool>false</bool>

@@ -78,15 +78,16 @@ public:
 public slots:
 	void SLOT_MkdirA();
 	void SLOT_MkdirB();
-	void SLOT_ConnectCustom();
+
 	void SLOT_EnterCommandA();
 	void SLOT_EnterCommandB();
 	void SLOT_EnterCwdA();
 	void SLOT_EnterCwdB();
-	void SLOT_ConnectA();
-	void SLOT_ConnectB();
+	void SLOT_ConnectA(int i);
+	void SLOT_ConnectB(int i);
+	void SLOT_ConnectButtonA();
+	void SLOT_ConnectButtonB();
 	void SLOT_EditBookmarks();
-	void SLOT_ConnectBookmark(int n);
 	void SLOT_ItemClickedA(QListViewItem * item);
 	void SLOT_ItemClickedB(QListViewItem * item);
 	void SLOT_ItemRightClickedA(QListViewItem * item, const QPoint & point, int col );
@@ -100,7 +101,7 @@ public slots:
 	void SLOT_QueueB();
 	void SLOT_SelectionChanged();
 	void SLOT_StartQueue();
-	void SkipTasks();
+	void SLOT_SkipTasks();
 	void SLOT_UpdateA();
 	void SLOT_UpdateB();
 	void SLOT_KbftpReadReady();
@@ -124,12 +125,16 @@ private:
 	void SetGuiStatus(State);
    void UpdateRemote();
    void UpdateRemoteDisplay(QString dirfile);
-
+	void ConnectCustom();
+	void ConnectBookmark(int n);
+	
+	
 	kbprocess m_proc;
 	State m_status;
 	QDir m_currentlocaldir;
 	QString m_currentremotedir_a;
-	QPopupMenu m_bookmarksmenu;
+	QPopupMenu m_bookmarksmenu_a;
+	QPopupMenu m_bookmarksmenu_b;
 	QPopupMenu m_rclickmenu_a;
 	QPopupMenu m_rclickmenu_b;
 	QPopupMenu m_rclickmenu_t;

@@ -325,7 +325,6 @@
         <cstring>menubar</cstring>
     </property>
     <item text="Start" name="PopupMenu">
-        <action name="ActionConnectCustom"/>
         <action name="ActionQuit"/>
     </item>
     <item text="Edit" name="EditMenu">
@@ -338,17 +337,6 @@
 <toolbars>
 </toolbars>
 <actions>
-    <action>
-        <property name="name">
-            <cstring>ActionConnectCustom</cstring>
-        </property>
-        <property name="text">
-            <string>Connect to Custom Site</string>
-        </property>
-        <property name="menuText">
-            <string>Connect to Custom Site</string>
-        </property>
-    </action>
     <action>
         <property name="name">
             <cstring>ActionEditBookmarks</cstring>
@@ -384,12 +372,6 @@
     </action>
 </actions>
 <connections>
-    <connection>
-        <sender>ActionConnectCustom</sender>
-        <signal>activated()</signal>
-        <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_ConnectCustom()</slot>
-    </connection>
     <connection>
         <sender>CommandLineA</sender>
         <signal>returnPressed()</signal>
@@ -484,13 +466,13 @@
         <sender>ConnectButtonA</sender>
         <signal>clicked()</signal>
         <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_ConnectA()</slot>
+        <slot>SLOT_ConnectButtonA()</slot>
     </connection>
     <connection>
         <sender>ConnectButtonB</sender>
         <signal>clicked()</signal>
         <receiver>KasablancaMainWindow</receiver>
-        <slot>SLOT_ConnectB()</slot>
+        <slot>SLOT_ConnectButtonB()</slot>
     </connection>
 </connections>
 <tabstops>
@@ -503,9 +485,6 @@
     <tabstop>TaskView</tabstop>
     <tabstop>LogWindow</tabstop>
 </tabstops>
-<includes>
-    <include location="local" impldecl="in implementation">Q_mainwindow.ui.h</include>
-</includes>
 <slots>
     <slot>SLOT_DisconnectA()</slot>
     <slot>SLOT_EnterCommandA()</slot>
@@ -522,8 +501,8 @@
     <slot>SLOT_TransferA()</slot>
     <slot>SLOT_TransferB()</slot>
     <slot>SLOT_UpdateB()</slot>
-    <slot>SLOT_ConnectA()</slot>
-    <slot>SLOT_ConnectB()</slot>
+    <slot>SLOT_ConnectButtonA()</slot>
+    <slot>SLOT_ConnectButtonB()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

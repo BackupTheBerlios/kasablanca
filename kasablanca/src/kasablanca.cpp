@@ -46,6 +46,7 @@
 #include <kprocio.h>
 #include <vector>
 #include <qtoolbutton.h>
+#include <qcursor.h>
 
 #include "customconnectdialog.h"
 #include "fileexistsdialog.h"
@@ -63,12 +64,24 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	so the destructers of kbprocesses are called. */
 
 	setWFlags(WDestructiveClose);
-
-	menubar->insertItem("Connect To",  &m_bookmarksmenu, 1001, 2);
-
+	
+	QPopupMenu* m = new QPopupMenu();
+	
+	/* currently the right bookmarkmenu is disabled. */
+	
+	m_bookmarksmenu_b.setEnabled(false);
+	
+	/* both bookmarkmenus are inserted into a Connect entry */
+	
+	menubar->insertItem("Connect",  m, 1001, 2);
+	m->insertItem("Left Window",  &m_bookmarksmenu_a, 1001);
+	m->insertItem("Right Window", &m_bookmarksmenu_b, 1002);
+	
+	/* if parsebookmarks returns false, an error box appears */
+	
 	if (ParseBookmarks() != 1) KMessageBox::error(0,"could not open kasablanca bookmark xml.");
 
-	//when developing change the following line to the kbftp path
+	//when developing you might want to change the following line to the kbftp path
 	//and disable the other two lines. */
 
 	//m_proc.addArgument("/home/mkulke/Apps/kasablanca-0.3/debug/src/kbftp/kbftp");
@@ -116,18 +129,20 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
    m_rclickmenu_t.insertSeparator();
    m_rclickmenu_t.insertItem("Skip", 1002);
 
-   UpdateLocalDisplay();
-
-   connect( &m_bookmarksmenu, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectBookmark(int) ) );
-
+   connect( &m_bookmarksmenu_a, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectA(int) ) );
+	connect( &m_bookmarksmenu_b, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectA(int) ) );
+	
    connect( BrowserA, SIGNAL (doubleClicked(QListViewItem*) ), this, SLOT ( SLOT_ItemClickedA(QListViewItem*) ) );
    connect( BrowserB, SIGNAL (doubleClicked(QListViewItem*) ), this, SLOT ( SLOT_ItemClickedB(QListViewItem*) ) );
-   connect( BrowserB, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
-		SLOT (SLOT_ItemRightClickedB(QListViewItem *, const QPoint &, int )));
+  
    connect( BrowserA, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
 		SLOT (SLOT_ItemRightClickedA(QListViewItem *, const QPoint &, int )));
-   connect( TaskView, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
+  	connect( BrowserB, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
+		SLOT (SLOT_ItemRightClickedB(QListViewItem *, const QPoint &, int )));
+	
+	connect( TaskView, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
 		SLOT (SLOT_ItemRightClickedT(QListViewItem *, const QPoint &, int )));
+	
 	connect( mp_header_b, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderBClicked(int)));
 	connect( mp_header_a, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderAClicked(int)));
 
@@ -148,7 +163,7 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 
    m_rclickmenu_t.connectItem(1001, this, SLOT(SLOT_StartQueue()));
 
-	m_rclickmenu_t.connectItem(1002, this, SLOT(SkipTasks()));
+	m_rclickmenu_t.connectItem(1002, this, SLOT(SLOT_SkipTasks()));
 
 	m_rclickmenu_a.setItemEnabled(1001, false);
 	m_rclickmenu_a.setItemEnabled(1002, false);
@@ -158,14 +173,14 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	m_rclickmenu_b.setItemEnabled(1001, false);
 	m_rclickmenu_b.setItemEnabled(1002, false);
 	m_rclickmenu_b.setItemEnabled(1004, false);
-	//m_rclickmenu_b.setItemEnabled(1005, false);
+	m_rclickmenu_b.setItemEnabled(1005, false);
 	m_rclickmenu_t.setItemEnabled(1001, false);
-
+	
 	m_dcount = 0;
 	m_qstate = done;
-
 	connect(&m_proc, SIGNAL(readyReadStdout()), this, SLOT(SLOT_KbftpReadReady()));
 
+	UpdateLocalDisplay();
    SetGuiStatus(disconnected);
 }
 
@@ -187,7 +202,7 @@ void Kasablanca::SLOT_ProcessExited(KProcess *proc)
 	UpdateLocalDisplay();
 }
 
-void Kasablanca::SLOT_ConnectCustom()
+void Kasablanca::ConnectCustom()
 {
    CustomConnectDialog dlg;
 
@@ -229,8 +244,8 @@ void Kasablanca::SetGuiStatus(State s)
 			RefreshButtonA->setEnabled(true);
 			CommandLineA->setEnabled(true);
 			CwdLineA->setEnabled(true);
-			m_bookmarksmenu.setEnabled(false);
-			ActionConnectCustom->setEnabled(false);
+			m_bookmarksmenu_a.setEnabled(false);
+			//ActionConnectCustom->setEnabled(false);
 			m_rclickmenu_t.setItemEnabled(1001, true);
 			m_rclickmenu_t.setItemEnabled(1002, true);
 			m_rclickmenu_a.setItemEnabled(1003, true);
@@ -245,13 +260,13 @@ void Kasablanca::SetGuiStatus(State s)
 			LogWindow->setColor(white);
 			TransferButtonA->setEnabled(false);
 			TransferButtonB->setEnabled(false);
-			ConnectButtonA->setEnabled(false);
+			ConnectButtonA->setEnabled(true);
 			ConnectButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
 			RefreshButtonA->setEnabled(false);
 			CommandLineA->setEnabled(false);
 			CwdLineA->setEnabled(false);
-			m_bookmarksmenu.setEnabled(true);
-			ActionConnectCustom->setEnabled(true);
+			m_bookmarksmenu_a.setEnabled(true);
+			//ActionConnectCustom->setEnabled(true);
 			m_rclickmenu_t.setItemEnabled(1001, false);
 			m_rclickmenu_t.setItemEnabled(1002, false);
 			m_rclickmenu_a.setItemEnabled(1003, false);
@@ -270,8 +285,8 @@ void Kasablanca::SetGuiStatus(State s)
 			RefreshButtonA->setEnabled(false);
 			CommandLineA->setEnabled(false);
 			CwdLineA->setEnabled(false);
-			m_bookmarksmenu.setEnabled(false);
-			ActionConnectCustom->setEnabled(false);
+			m_bookmarksmenu_a.setEnabled(false);
+			//ActionConnectCustom->setEnabled(false);
 			m_rclickmenu_t.setItemEnabled(1001, false);
 			m_rclickmenu_t.setItemEnabled(1002, true);
 			m_rclickmenu_a.setItemEnabled(1003, false);
@@ -289,7 +304,7 @@ void Kasablanca::SLOT_EditBookmarks()
 	}
 }
 
-void Kasablanca::SLOT_ConnectBookmark(int n)
+void Kasablanca::ConnectBookmark(int n)
 {
 	m_site_a.Clear();
 
@@ -328,9 +343,13 @@ void Kasablanca::SLOT_EnterCwdA()
 	UpdateRemote();
 }
 
-void Kasablanca::SLOT_ConnectA()
+void Kasablanca::SLOT_ConnectButtonA()
 {
-	if (m_status == occupied)
+	if (m_status == disconnected)
+	{
+		m_bookmarksmenu_a.exec(QCursor::pos());
+	}
+	else if (m_status == occupied)
 	{
 		m_proc.tryTerminate();
 		m_proc.kill();
@@ -341,7 +360,21 @@ void Kasablanca::SLOT_ConnectA()
 	else m_proc.writeStdin("quit");
 }
 
-void Kasablanca::SLOT_ConnectB()
+void Kasablanca::SLOT_ConnectA(int i)
+{	
+	/* if the identifier is 0 call the Custom Connect Dialog,
+	otherwise connect to a bookmark. */
+
+	if (i == 0) ConnectCustom();
+	else ConnectBookmark(i-1);
+}
+
+void Kasablanca::SLOT_ConnectButtonB()
+{
+	return;
+}
+
+void Kasablanca::SLOT_ConnectB(int i)
 {
 	return;
 }
@@ -412,10 +445,19 @@ int Kasablanca::ParseBookmarks()
 		curNode = curNode.nextSibling();
 	}
 
-	m_bookmarksmenu.clear();
+	m_bookmarksmenu_a.clear();
+	m_bookmarksmenu_b.clear();
+	
+	m_bookmarksmenu_a.insertItem("Custom",0);
+	m_bookmarksmenu_b.insertItem("Custom",0);
+	
+	m_bookmarksmenu_a.insertSeparator();
+	m_bookmarksmenu_b.insertSeparator();
+	
 	for (int i = 0; i < static_cast<int>(m_bookmarks.size()); i++)
    {
-   	m_bookmarksmenu.insertItem(m_bookmarks.at(i).GetName(),i);
+		m_bookmarksmenu_a.insertItem(m_bookmarks.at(i).GetName(),i + 1);
+   	m_bookmarksmenu_b.insertItem(m_bookmarks.at(i).GetName(),i + 1);
    }
 
    return 1;
@@ -528,7 +570,7 @@ void Kasablanca::SLOT_ItemRightClickedT(QListViewItem * item, const QPoint & poi
     m_rclickmenu_t.exec(point);
 }
 
-void Kasablanca::SkipTasks()
+void Kasablanca::SLOT_SkipTasks()
 {
     QListViewItemIterator it(TaskView);
     while ( it.current() )
@@ -1403,25 +1445,11 @@ void Kasablanca::SLOT_KbftpReadReady()
 				else
 				{
 					int xfered = s.remove(0, 8).toInt();
-
+					
 					TaskView->firstChild()->setText(1, QString::number(xfered >> 10)
 						+ " of " + QString::number(m_xferallsize >> 10) + " kb transfered"
 						+ "(" + QString::number(xfered / m_timer.elapsed()) + " kb/s) "
 						+ "(" + QString::number(((xfered + m_xferresumesize)* 100 ) / m_xferallsize) + "%) ");
-
-					//	kbxferinfo* x = static_cast<kbxferinfo*>(arg);
-					//	int y = x->resumesize + xfered;
-
-					//	x->item->setText(1,
-					//	QString::number(y >> 10) + " of " + QString::number(x->size >> 10) + " kb transfered "
-					//+ "(" + QString::number(xfered / x->time.elapsed()) + " kb/s) "
-					//+ "(" + QString::number((y * 100 ) / x->size) + "%) ");
-
-					//qApp->eventLoop()->processEvents(QEventLoop::AllEvents);
-
-
-
-					//statusBar()->message(s.remove(0, 8) + "kb received");
 				}
 			}
 			else if (s == "kb.quit")
@@ -1436,10 +1464,13 @@ void Kasablanca::SLOT_KbftpReadReady()
 void Kasablanca::SLOT_About()
 {
 	QPixmap p(locate("appdata", "about.png"));
+	
 	KAboutDialog d;
+	
 	d.setLogo(p);
 	d.setVersion(m_version);
-	d.exec();
+	d.setAuthor("", "sikor_sxe@radicalapproach.de", "http://kasablanca.berlios.de", "");  		
+	d.exec();	
 }
 
 void Kasablanca::SLOT_RenameA()
