@@ -62,7 +62,7 @@ using namespace std;
   *@author mkulke
   */
 
-typedef int (*FtpCallbackXfer)(int xfered, void *arg);
+typedef int (*FtpCallbackXfer)(unsigned long xfered, void *arg);
 typedef int (*FtpCallbackIdle)(void *arg);
 typedef void (*FtpCallbackLog)(char *str, void* arg, bool out);
 
@@ -81,9 +81,9 @@ struct netbuf {
 	FtpCallbackIdle idlecb;
 	FtpCallbackLog logcb;
 	void *cbarg;
-	int xfered;
+	unsigned long xfered;
 	int cbbytes;
-	int xfered1;
+	unsigned long xfered1;
 	char response[256];
 	SSL* ssl;
 	SSL_CTX* ctx;

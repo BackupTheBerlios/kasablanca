@@ -105,7 +105,7 @@ private:
 	
 public slots:
 	void SLOT_Log(QString log, bool out);
-	void SLOT_Xfered(int xfered, bool encrypted);
+	void SLOT_Xfered(unsigned long xfered, bool encrypted);
 	void SLOT_ActionMenu(int i);
 	void SLOT_ConnectMenu(int i);
 	void SLOT_HeaderClicked(int section);

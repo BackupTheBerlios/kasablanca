@@ -71,7 +71,7 @@ void FtpThread::InitInternals()
 
 /* callback function for the transfer */
 
-int FtpThread::CallbackXfer(int xfered, void *arg)
+int FtpThread::CallbackXfer(unsigned long xfered, void *arg)
 {
 	FtpThread* ftp = static_cast<FtpThread*>(arg);
 		

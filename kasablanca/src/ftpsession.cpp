@@ -71,7 +71,7 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_log(QString, bool)), SLOT(SLOT_Log(QString, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_connect(bool)), SLOT(SLOT_Connect(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
-	connect(mp_eventhandler, SIGNAL(ftp_xfered(int, bool)), SLOT(SLOT_Xfered(int, bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_xfered(unsigned long, bool)), SLOT(SLOT_Xfered(unsigned long, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_quit(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_chdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_raw(bool)), SLOT(SLOT_Misc(bool)));
@@ -102,7 +102,7 @@ void FtpSession::SLOT_Log(QString log, bool out)
 	else m_loglist.push_back(make_pair(log, false));
 }
 
-void FtpSession::SLOT_Xfered(int xfered, bool encrypted)
+void FtpSession::SLOT_Xfered(unsigned long xfered, bool encrypted)
 {
 	if (encrypted) mp_encryptionicon->setPixmap(m_iconencrypted);
 	else mp_encryptionicon->setPixmap(m_iconunencrypted);	
@@ -859,6 +859,7 @@ int FtpSession::CheckFile(KbTransferItem *item)
 			switch (dlg.exec())
 			{
 				case FileExistsDialog::overwrite:
+					item->DstFileInfo()->SetSize(0);
 					return clear;
 					break;
 				case FileExistsDialog::resume:

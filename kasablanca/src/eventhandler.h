@@ -101,7 +101,7 @@ private:
 signals:
 	void ftp_error(QString error);
 	void ftp_log(QString log, bool out);
-	void ftp_xfered(int xfered, bool encrypted);
+	void ftp_xfered(unsigned long xfered, bool encrypted);
 	void ftp_misc(bool success);
 	void ftp_finished();
 	void ftp_connect(bool success);

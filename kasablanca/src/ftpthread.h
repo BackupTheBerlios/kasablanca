@@ -36,7 +36,7 @@ class QObject;
 class KbDirInfo;
 
 typedef list<KbFileInfo> filist;
-typedef pair<int, bool> xferpair;
+typedef pair<unsigned long, bool> xferpair;
 
 /**
 @author Magnus Kulke
@@ -47,7 +47,7 @@ public:
    FtpThread();
    ~FtpThread();
 	static void CallbackLog(char *log, void *arg, bool out);
-	static int CallbackXfer(int xfered, void *arg);
+	static int CallbackXfer(unsigned long xfered, void *arg);
 	void SetEventReceiver(QObject* eventreceiver);
 	void ClearQueue();
 	bool Connect(QString host);
