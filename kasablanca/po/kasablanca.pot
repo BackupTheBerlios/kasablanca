@@ -1,8 +1,14 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-12 22:40+0200\n"
+"POT-Creation-Date: 2004-06-16 18:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,8 +125,8 @@ msgstr ""
 msgid "<p align=\"right\">Password</p>"
 msgstr ""
 
-#: Q_bookmarkdialog.cpp:173 Q_generalpreferencesdialog.cpp:71
-#: kasablanca.cpp:239 kasablanca.cpp:241 rc.cpp:11 rc.cpp:71
+#: Q_bookmarkdialog.cpp:173 Q_generalpreferencesdialog.cpp:117
+#: kasablanca.cpp:249 kasablanca.cpp:251 rc.cpp:11 rc.cpp:71
 msgid "General"
 msgstr ""
 
@@ -128,7 +134,7 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: Q_colorspreferencesdialog.cpp:87 kasablanca.cpp:240 kasablanca.cpp:242
+#: Q_colorspreferencesdialog.cpp:87 kasablanca.cpp:250 kasablanca.cpp:252
 #: rc.cpp:33
 msgid "Colors"
 msgstr ""
@@ -197,7 +203,8 @@ msgstr ""
 msgid "File Exists"
 msgstr ""
 
-#: Q_fileexistsdialog.cpp:85 rc.cpp:67
+#: Q_fileexistsdialog.cpp:85 Q_generalpreferencesdialog.cpp:129 rc.cpp:67
+#: rc.cpp:83
 msgid "Skip"
 msgstr ""
 
@@ -205,58 +212,84 @@ msgstr ""
 msgid "Resume"
 msgstr ""
 
-#: Q_fileexistsdialog.cpp:87 kasablanca.cpp:289 kasablanca.cpp:297 rc.cpp:69
+#: Q_fileexistsdialog.cpp:87 kasablanca.cpp:299 kasablanca.cpp:307 rc.cpp:69
 msgid "Rename"
 msgstr ""
 
-#: Q_fileexistsdialog.cpp:88 rc.cpp:70
+#: Q_fileexistsdialog.cpp:88 Q_generalpreferencesdialog.cpp:131 rc.cpp:70
+#: rc.cpp:85
 msgid "Overwrite"
 msgstr ""
 
-#: Q_generalpreferencesdialog.cpp:72 rc.cpp:72
+#: Q_generalpreferencesdialog.cpp:118 rc.cpp:72
 msgid "Skiplist:"
 msgstr ""
 
-#: Q_generalpreferencesdialog.cpp:73 rc.cpp:73
+#: Q_generalpreferencesdialog.cpp:119 rc.cpp:73
+msgid "On queue finished:"
+msgstr ""
+
+#: Q_generalpreferencesdialog.cpp:120 rc.cpp:74
+msgid ""
+"This field can hold an executable and its arguments which will be run, when "
+"last item of in queue has finished transferring. For Example, on KDE "
+"desktops the entry \"dcop ksmserver ksmserver logout 0 0 0\" would shutdown "
+"the computer automatically."
+msgstr ""
+
+#: Q_generalpreferencesdialog.cpp:121 rc.cpp:75
 msgid ""
 "Here you can enter a Regular Expression. Transfer items which match this "
-"Regular Expression are skipped."
+"Regular Expression are skipped. For example a value of \"^\\.\" excludes "
+"every entry beginning with \".\" from transfer."
 msgstr ""
 
-#: Q_generalpreferencesdialog.cpp:74 rc.cpp:74
-msgid "Example:"
+#: Q_generalpreferencesdialog.cpp:122 Q_generalpreferencesdialog.cpp:123
+#: Q_generalpreferencesdialog.cpp:125 rc.cpp:76 rc.cpp:77 rc.cpp:79
+msgid "Enabled"
 msgstr ""
 
-#: Q_generalpreferencesdialog.cpp:75 rc.cpp:75
+#: Q_generalpreferencesdialog.cpp:124 rc.cpp:78
+msgid "On file exist:"
+msgstr ""
+
+#: Q_generalpreferencesdialog.cpp:127 rc.cpp:81
+msgid "Resume (if possible)"
+msgstr ""
+
+#: Q_generalpreferencesdialog.cpp:128 Q_generalpreferencesdialog.cpp:130
+#: Q_generalpreferencesdialog.cpp:132 rc.cpp:82 rc.cpp:84 rc.cpp:86
 msgid ""
-"Use \"^\\.\" to exclude files or dirs\n"
-"beginning with \".\" from transfer."
+"These Radio Buttons indicate how the application should proceed if a file to "
+"be transfered already exists on the destination. Usually the user is asked "
+"by the application how to proceed if this occurs, in case you aren't present "
+"during the transfer you can enable this feature."
 msgstr ""
 
 #: Q_mainwindow.cpp:92 Q_mainwindow.cpp:102 Q_mainwindow.cpp:184
-#: Q_mainwindow.cpp:187 rc.cpp:83 rc.cpp:86
+#: Q_mainwindow.cpp:187 rc.cpp:94 rc.cpp:97
 msgid "Name"
 msgstr ""
 
 #: Q_mainwindow.cpp:93 Q_mainwindow.cpp:103 Q_mainwindow.cpp:185
-#: Q_mainwindow.cpp:188 rc.cpp:84 rc.cpp:87
+#: Q_mainwindow.cpp:188 rc.cpp:95 rc.cpp:98
 msgid "Size"
 msgstr ""
 
 #: Q_mainwindow.cpp:94 Q_mainwindow.cpp:104 Q_mainwindow.cpp:186
-#: Q_mainwindow.cpp:189 rc.cpp:85 rc.cpp:88
+#: Q_mainwindow.cpp:189 rc.cpp:96 rc.cpp:99
 msgid "Date"
 msgstr ""
 
-#: Q_mainwindow.cpp:114 Q_mainwindow.cpp:190 rc.cpp:89
+#: Q_mainwindow.cpp:114 Q_mainwindow.cpp:190 rc.cpp:100
 msgid "Task"
 msgstr ""
 
-#: Q_mainwindow.cpp:116 Q_mainwindow.cpp:191 rc.cpp:90
+#: Q_mainwindow.cpp:116 Q_mainwindow.cpp:191 rc.cpp:101
 msgid "Progress"
 msgstr ""
 
-#: Q_mainwindow.cpp:177 rc.cpp:76
+#: Q_mainwindow.cpp:177 rc.cpp:87
 msgid "Kasablanca x"
 msgstr ""
 
@@ -324,15 +357,15 @@ msgstr ""
 msgid "Connected"
 msgstr ""
 
-#: ftpsession.cpp:869
+#: ftpsession.cpp:880
 msgid "Enter New Name"
 msgstr ""
 
-#: ftpsession.cpp:869
+#: ftpsession.cpp:880
 msgid "Enter New Name:"
 msgstr ""
 
-#: ftpsession.cpp:869
+#: ftpsession.cpp:880
 msgid "_alt"
 msgstr ""
 
@@ -340,39 +373,39 @@ msgstr ""
 msgid "Could not open Kasablanca bookmark xml."
 msgstr ""
 
-#: kasablanca.cpp:272 kasablanca.cpp:280
+#: kasablanca.cpp:282 kasablanca.cpp:290
 msgid "Session A"
 msgstr ""
 
-#: kasablanca.cpp:273 kasablanca.cpp:281
+#: kasablanca.cpp:283 kasablanca.cpp:291
 msgid "Session B"
 msgstr ""
 
-#: kasablanca.cpp:282
+#: kasablanca.cpp:292
 msgid "Queue"
 msgstr ""
 
-#: kasablanca.cpp:285 kasablanca.cpp:293
+#: kasablanca.cpp:295 kasablanca.cpp:303
 msgid "Transfer"
 msgstr ""
 
-#: kasablanca.cpp:286 kasablanca.cpp:294
+#: kasablanca.cpp:296 kasablanca.cpp:304
 msgid "Put in Queue"
 msgstr ""
 
-#: kasablanca.cpp:291 kasablanca.cpp:299
+#: kasablanca.cpp:301 kasablanca.cpp:309
 msgid "Mkdir"
 msgstr ""
 
-#: kasablanca.cpp:301
+#: kasablanca.cpp:311
 msgid "Start Queue"
 msgstr ""
 
-#: kasablanca.cpp:303
+#: kasablanca.cpp:313
 msgid "Skip Item(s)"
 msgstr ""
 
-#: kasablanca.cpp:357 kasablanca.cpp:358
+#: kasablanca.cpp:367 kasablanca.cpp:368
 msgid "Custom"
 msgstr ""
 
@@ -392,22 +425,22 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
-#: rc.cpp:93
+#: rc.cpp:104
 msgid "A RegExp which describes the items to skip at transfer."
 msgstr ""
 
-#: rc.cpp:94
+#: rc.cpp:105
 msgid "The color value for local messages on the logging window."
 msgstr ""
 
-#: rc.cpp:95
+#: rc.cpp:106
 msgid "The color value for successful remote messages on the logging window."
 msgstr ""
 
-#: rc.cpp:96
+#: rc.cpp:107
 msgid "The color value for the background on the logging window."
 msgstr ""
 
-#: rc.cpp:97
+#: rc.cpp:108
 msgid "The color value for failed remote messages on the logging window."
 msgstr ""
