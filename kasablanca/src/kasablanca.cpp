@@ -2434,9 +2434,9 @@ void Kasablanca::timerEvent(QTimerEvent*)
 		"kb of " +
 		QString::number(m_xferallsize >> 10) +
 		"kb] [" +
-		QString::number(((m_xfered + m_xferresumesize)* 100 ) / m_xferallsize) + 
+		QString::number(((m_xfered + m_xferresumesize)* 100 ) / (m_xferallsize + 1)) + 
 		"%] [" +
-		QString::number(m_xfered / m_time.elapsed()) +
+		QString::number(m_xfered / (m_time.elapsed() + 1)) +
 		" kb/s]"
 	);
 }
