@@ -36,8 +36,8 @@ public slots:
     void accept();
     void SLOT_AnonymousToggled();
 private:
-    string m_user;
-    string m_pass;
+    QString m_user;
+    QString m_pass;
 };
 
 #endif
