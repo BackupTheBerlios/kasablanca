@@ -25,7 +25,6 @@
 #include <qapplication.h>
 #include <qevent.h>
 #include "eventhandler.h"
-#include <qmutex.h>
 #include "remotefileinfo.h"
 #include <qdir.h>
 #include <iostream>
@@ -39,15 +38,12 @@ the class accepts ftp operations by public methods. when such a method is called
 a certain type value is appended to a list. in the threads main loop (triggered when 
 start() is called) the list is processed by calling the ftplibpp functions. depending
 on the result of an operation a certain event is posted to the eventreceiver. when
-there is a value to be returned, it's named out_. before the out-variable is assigned 
-a value mp_mutex has to be locked. it is unlocked when the event is processed in the
-eventhandler.
+there is a value to be returned, it's named out_. 
 */
 
 
-FtpThread::FtpThread(QMutex* mutex) : QThread()
+FtpThread::FtpThread() : QThread()
 {
-	mp_mutex = mutex;
 	mp_eventreceiver = NULL;
 	mp_ftp = new ftplib();
 	
@@ -71,7 +67,7 @@ FtpThread::~FtpThread()
 void FtpThread::CallbackLog(char *log, void *arg)
 {
 	FtpThread* ftp = static_cast<FtpThread*>(arg);
-	
+		
 	ftp->out_log+=log;
 	
 	if (ftp->out_log.endsWith("\r\n")) 
@@ -693,6 +689,7 @@ void FtpThread::run()
 				break;
 		}
 	}
+	Event(EventHandler::finished);
 }
 
 /* event is posted to the eventreceiver */

@@ -19,7 +19,6 @@
  ***************************************************************************/
 
 #include <qevent.h>
-#include <qmutex.h>
 
 #include "ftpthread.h"
 #include "eventhandler.h"
@@ -28,19 +27,16 @@
 class description:
 
 the class transforms the events posted by an ftp thread into signals. the signals
-are composed from the type of the arrived event and in certain cases an out_variable. when
-an out_variable is part of the signal to emit, it is important that the mutex is unlocked,
-in order to make it possible for the thread to process other operations. 
+are composed from the type of the arrived event and in certain cases an out_variable.
 */
 
 /* constructor */
 
-EventHandler::EventHandler(QMutex* mutex, QObject *parent, const char *name)
+EventHandler::EventHandler(QObject *parent, const char *name)
  : QObject(parent, name)
 {
 	installEventFilter(this);
 
-	mp_mutex = mutex;
 	mp_thread = NULL;
 }
 
@@ -73,6 +69,11 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
 	{   
 		emit ftp_log(mp_thread->out_log);
 		mp_thread->out_log = "";
+      return TRUE; 
+   }
+	else if (type == finished) 
+	{   
+		emit ftp_finished();
       return TRUE; 
    }	
 	else if (type == connectionlost) 

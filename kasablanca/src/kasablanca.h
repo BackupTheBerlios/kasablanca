@@ -29,9 +29,7 @@ class QWidget;
 class QCloseEvent;
 class QLabel;
 class QPixmap;
-class FtpThread;
-class EventHandler;
-class QMutex;
+class FtpSession;
 
 #include <kapplication.h>
 #include <klistview.h>
@@ -208,11 +206,15 @@ private:
 	 
 	 /* new stuff */
 	 
-	 FtpThread* mp_ftpthread_a;
+	 FtpSession* mp_session_a;
+	 
+	 /*FtpThread* mp_ftpthread_a;
 	 FtpThread* mp_ftpthread_b;
 	 EventHandler* mp_eventhandler_a;
 	 EventHandler* mp_eventhandler_b;
-	 QMutex* mp_mutex;	 
+	 siteinfo mp_siteinfo_a;
+	 siteinfo mp_siteinfo_b;
+	 QMutex* mp_mutex;*/	 
 };
 
 #endif

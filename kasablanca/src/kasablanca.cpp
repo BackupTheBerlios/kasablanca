@@ -60,7 +60,7 @@
 #include <qaction.h>
 #include <qtoolbutton.h>
 #include <qcursor.h>
-#include <qmutex.h>
+//#include <qmutex.h>
 
 #include <vector>
 
@@ -75,8 +75,9 @@
 #include "transferfile.h"
 #include "kbprocess.h"
 
-#include "eventhandler.h"
-#include "ftpthread.h"
+#include "ftpsession.h"
+//#include "eventhandler.h"
+//#include "ftpthread.h"
 
 #include "kasablanca.h"
 
@@ -84,6 +85,11 @@ Kasablanca::Kasablanca()
     : KMainWindow( 0, "Kasablanca" ),
       m_view(new KasablancaMainWindow(this))
 {
+
+	/* new stuff */
+	mp_session_a = new FtpSession(this, "session a");
+	/* / new stuff */
+	
     setAcceptDrops(true);
     setCentralWidget(m_view);
     setupGUI();
@@ -91,7 +97,7 @@ Kasablanca::Kasablanca()
     setupStatusBar();
     setupMenu();
     statusBar()->show();
-    toolBar()->show();
+    //toolBar()->show();
     
     UpdateLocalDisplay(A);
     UpdateLocalDisplay(B);
@@ -107,7 +113,7 @@ Kasablanca::Kasablanca()
                     
     /* if initbookmarks returns false, an error box appears */
     
-    if (initBookmarks() != 1) KMessageBox::error(0, i18n("could not open kasablanca bookmark xml."));
+    if (initBookmarks() != 1) KMessageBox::error(0, i18n("Could not open Kasablanca bookmark xml."));
 
     //when developing you might want to change the following line to the kbftp path
     //and disable the other two lines. */
@@ -129,7 +135,7 @@ Kasablanca::Kasablanca()
 
     connect(&m_proc_a, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
     connect(&m_proc_b, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
-    connect(m_view->ConnectButtonA, SIGNAL(clicked()), SLOT(SLOT_ConnectButtonA()));
+	 //connect(m_view->ConnectButtonA, SIGNAL(clicked()), SLOT(SLOT_ConnectButtonA()));
     connect(m_view->CommandLineA, SIGNAL(returnPressed()), SLOT(SLOT_EnterCommandA()));
     connect(m_view->CwdLineA, SIGNAL(returnPressed()), SLOT(SLOT_EnterCwdA()));
     connect(m_view->CommandLineB, SIGNAL(returnPressed()), SLOT(SLOT_EnterCommandB()));
@@ -140,16 +146,19 @@ Kasablanca::Kasablanca()
     connect(m_view->TransferButtonA, SIGNAL(clicked()), SLOT(SLOT_TransferA()));
     connect(m_view->TransferButtonB, SIGNAL(clicked()), SLOT(SLOT_TransferB()));
     connect(m_view->RefreshButtonB, SIGNAL(clicked()), SLOT(SLOT_RefreshBrowserB()));
-    connect(m_view->RefreshButtonA, SIGNAL(clicked()), SLOT(SLOT_RefreshBrowserA()));
+    //connect(m_view->RefreshButtonA, SIGNAL(clicked()), SLOT(SLOT_RefreshBrowserA()));
     connect(m_view->ConnectButtonB, SIGNAL(clicked()), SLOT(SLOT_ConnectButtonB()));
 	 
-	 mp_mutex = new QMutex();
-	 mp_eventhandler_a = new EventHandler(mp_mutex, this);
-	 mp_eventhandler_b = new EventHandler(mp_mutex, this);
-	 mp_ftpthread_a = new FtpThread(mp_mutex);
-	 mp_ftpthread_b = new FtpThread(mp_mutex);
-	 mp_eventhandler_a->SetFtpThread(mp_ftpthread_a);
-	 mp_eventhandler_b->SetFtpThread(mp_ftpthread_b);
+	 /* new stuff */
+	 
+	 mp_session_a->SetLogWindow(m_view->LogWindowA);
+	 mp_session_a->SetBrowser(m_view->BrowserA);
+	 mp_session_a->SetConnectButton(m_view->ConnectButtonA);
+	 
+	 connect(m_view->RefreshButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_RefreshButton()));
+	 
+	 /* /new stuff */
+	
 }
 
 void Kasablanca::setupGUI() 
@@ -171,21 +180,26 @@ void Kasablanca::setupGUI()
 
 void Kasablanca::setupActions()
 {
-    KStdAction::quit(kapp, SLOT(quit()), actionCollection());
+	KStdAction::quit(kapp, SLOT(quit()), actionCollection());
 
-    m_toolbarAction = KStdAction::showToolbar(this, SLOT(optionsShowToolbar()), actionCollection());
-    m_statusbarAction = KStdAction::showStatusbar(this, SLOT(optionsShowStatusbar()), actionCollection());
+	//m_toolbarAction = KStdAction::showToolbar(this, SLOT(optionsShowToolbar()), actionCollection());
+	m_statusbarAction = KStdAction::showStatusbar(this, SLOT(optionsShowStatusbar()), actionCollection());
 
-    KStdAction::keyBindings(this, SLOT(optionsConfigureKeys()), actionCollection());
-    KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
-    KStdAction::preferences(this, SLOT(optionsPreferences()), actionCollection());
+	KStdAction::keyBindings(this, SLOT(optionsConfigureKeys()), actionCollection());
+	//KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
+	//KStdAction::preferences(this, SLOT(optionsPreferences()), actionCollection());
 
-    // this doesn't do anything useful.  it's just here to illustrate
-    // how to insert a custom menu and menu item
-    KAction *custom = new KAction(i18n("Cus&tom Menuitem"), 0,
-                                  this, SLOT(optionsPreferences()),
-                                  actionCollection(), "custom_action");
-    createGUI();
+	/*
+	// this doesn't do anything useful.  it's just here to illustrate
+	// how to insert a custom menu and menu item
+	KAction *custom = new KAction(i18n("Cus&tom Menuitem"), 0,
+											this, SLOT(optionsPreferences()),
+											actionCollection(), "custom_action");
+	*/									 
+	
+	new KAction(i18n("Edit"), CTRL+Key_E, this, SLOT(SLOT_EditBookmarks()), actionCollection(), "edit bookmarks action");
+											
+	createGUI();
 }
 
 void Kasablanca::optionsShowToolbar()
@@ -206,7 +220,7 @@ void Kasablanca::optionsShowStatusbar()
 
 void Kasablanca::optionsConfigureKeys()
 {
-    KKeyDialog::configureKeys(actionCollection(), "kasablancaui.rc");
+    KKeyDialog::configure(actionCollection(), m_view);
 }
 
 void Kasablanca::optionsConfigureToolbars()
@@ -253,95 +267,100 @@ void Kasablanca::newToolbarConfig()
 }
 
 void Kasablanca::setupMenu()
-{
-    QPopupMenu* bookmarks = new QPopupMenu();
-    QPopupMenu* actions = new QPopupMenu();
-    QPopupMenu* edit = new QPopupMenu();
-    KMenuBar* menubar = menuBar();
-    
-    menubar->insertItem("Edit", edit, 1002, 1);
-    edit->insertItem( "Bookmarks",  this, SLOT(SLOT_EditBookmarks()), CTRL+Key_B );
-    
-    menubar->insertItem("Connect",  bookmarks, 1003, 2);
-    bookmarks->insertItem("Left Window",  &m_bookmarksmenu_a, 1004);
-    bookmarks->insertItem("Right Window", &m_bookmarksmenu_b, 1005);
-    
-    menubar->insertItem("Action",  actions, 1006, 3);
-    
-    m_rclickmenu_a.insertItem("Transfer", Transfer);
-    m_rclickmenu_a.insertItem("Put in Queue", Queue);
-    m_rclickmenu_a.insertSeparator();
-    m_rclickmenu_a.insertItem("Delete", Delete);
-    m_rclickmenu_a.insertItem("Rename", Rename);
-    m_rclickmenu_a.insertSeparator();
-    m_rclickmenu_a.insertItem("Mkdir", Mkdir);
-        
-    m_rclickmenu_b.insertItem("Transfer", Transfer);
-    m_rclickmenu_b.insertItem("Put in Queue", Queue);
-    m_rclickmenu_b.insertSeparator();
-    m_rclickmenu_b.insertItem("Delete", Delete);
-    m_rclickmenu_b.insertItem("Rename", Rename);
-    m_rclickmenu_b.insertSeparator();
-    m_rclickmenu_b.insertItem("Mkdir", Mkdir);
+{	
+	QWidget *w;
+	w = factory()->container("connect menu", this);
+	if (w == NULL) qWarning("ERROR: 'connect menu' not found in .ui file");
+	else
+	{
+		QPopupMenu *menu = static_cast<QPopupMenu *>(w);
+		
+		menu->insertItem(i18n("Session A"),  &m_bookmarksmenu_a);
+		menu->insertItem(i18n("Session B"), &m_bookmarksmenu_b);
+	}
+	w = factory()->container("action menu", this);
+	if (w == NULL) qWarning("ERROR: 'action menu' not found in .ui file");
+	else
+	{
+		QPopupMenu *menu = static_cast<QPopupMenu *>(w);
+		
+		menu->insertItem(i18n("Session A"),  &m_rclickmenu_a);
+		menu->insertItem(i18n("Session B"), &m_rclickmenu_b);
+		menu->insertItem(i18n("Queue"), &m_rclickmenu_t);
+	}	
+	 
+	m_rclickmenu_a.insertItem("Transfer", Transfer);
+	m_rclickmenu_a.insertItem("Put in Queue", Queue);
+	m_rclickmenu_a.insertSeparator();
+	m_rclickmenu_a.insertItem("Delete", Delete);
+	m_rclickmenu_a.insertItem("Rename", Rename);
+	m_rclickmenu_a.insertSeparator();
+	m_rclickmenu_a.insertItem("Mkdir", Mkdir);
+		
+	m_rclickmenu_b.insertItem("Transfer", Transfer);
+	m_rclickmenu_b.insertItem("Put in Queue", Queue);
+	m_rclickmenu_b.insertSeparator();
+	m_rclickmenu_b.insertItem("Delete", Delete);
+	m_rclickmenu_b.insertItem("Rename", Rename);
+	m_rclickmenu_b.insertSeparator();
+	m_rclickmenu_b.insertItem("Mkdir", Mkdir);
 
-    m_rclickmenu_t.insertItem("Start Queue", Start);
-    m_rclickmenu_t.insertSeparator();
-    m_rclickmenu_t.insertItem("Skip Item(s)", Skip);
+	m_rclickmenu_t.insertItem("Start Queue", Start);
+	m_rclickmenu_t.insertSeparator();
+	m_rclickmenu_t.insertItem("Skip Item(s)", Skip);
+   
+	connect( &m_bookmarksmenu_a, SIGNAL( activated(int) ), mp_session_a, SLOT( SLOT_ConnectMenu(int) ) );     
+	
+	//connect( &m_bookmarksmenu_a, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectA(int) ) );
+	connect( &m_bookmarksmenu_b, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectB(int) ) );
+		
+	connect( m_view->BrowserA, SIGNAL (doubleClicked(QListViewItem*) ), this, SLOT ( SLOT_ItemClickedA(QListViewItem*) ) );
+	connect( m_view->BrowserB, SIGNAL (doubleClicked(QListViewItem*) ), this, SLOT ( SLOT_ItemClickedB(QListViewItem*) ) );
 
-    actions->insertItem("Left Window", &m_rclickmenu_a, 1001);
-    actions->insertItem("Right Window", &m_rclickmenu_b, 1002);
-    actions->insertItem("Queues", &m_rclickmenu_t, 1003);
-        
-    connect( &m_bookmarksmenu_a, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectA(int) ) );
-    connect( &m_bookmarksmenu_b, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectB(int) ) );
-        
-    connect( m_view->BrowserA, SIGNAL (doubleClicked(QListViewItem*) ), this, SLOT ( SLOT_ItemClickedA(QListViewItem*) ) );
-    connect( m_view->BrowserB, SIGNAL (doubleClicked(QListViewItem*) ), this, SLOT ( SLOT_ItemClickedB(QListViewItem*) ) );
+	connect( m_view->BrowserA, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
+			SLOT (SLOT_ItemRightClickedA(QListViewItem *, const QPoint &, int )));
+	connect( m_view->BrowserB, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
+			SLOT (SLOT_ItemRightClickedB(QListViewItem *, const QPoint &, int )));
+		
+	connect( m_view->TaskView, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
+			SLOT (SLOT_ItemRightClickedT(QListViewItem *, const QPoint &, int )));
+		
+	connect( mp_header_b, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderBClicked(int)));
+	connect( mp_header_a, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderAClicked(int)));
 
-    connect( m_view->BrowserA, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
-            SLOT (SLOT_ItemRightClickedA(QListViewItem *, const QPoint &, int )));
-    connect( m_view->BrowserB, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
-            SLOT (SLOT_ItemRightClickedB(QListViewItem *, const QPoint &, int )));
-        
-    connect( m_view->TaskView, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
-            SLOT (SLOT_ItemRightClickedT(QListViewItem *, const QPoint &, int )));
-        
-    connect( mp_header_b, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderBClicked(int)));
-    connect( mp_header_a, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderAClicked(int)));
+	m_rclickmenu_a.connectItem(Transfer, this, SLOT(SLOT_TransferA()));
+	m_rclickmenu_b.connectItem(Transfer, this, SLOT(SLOT_TransferB()));
 
-    m_rclickmenu_a.connectItem(Transfer, this, SLOT(SLOT_TransferA()));
-    m_rclickmenu_b.connectItem(Transfer, this, SLOT(SLOT_TransferB()));
+	m_rclickmenu_a.connectItem(Queue, this, SLOT(SLOT_QueueA()));
+	m_rclickmenu_b.connectItem(Queue, this, SLOT(SLOT_QueueB()));
 
-    m_rclickmenu_a.connectItem(Queue, this, SLOT(SLOT_QueueA()));
-    m_rclickmenu_b.connectItem(Queue, this, SLOT(SLOT_QueueB()));
+	m_rclickmenu_a.connectItem(Delete, this, SLOT(SLOT_DeleteA()));
+	m_rclickmenu_b.connectItem(Delete, this, SLOT(SLOT_DeleteB()));
 
-    m_rclickmenu_a.connectItem(Delete, this, SLOT(SLOT_DeleteA()));
-    m_rclickmenu_b.connectItem(Delete, this, SLOT(SLOT_DeleteB()));
+	m_rclickmenu_a.connectItem(Rename, this, SLOT(SLOT_RenameA()));
+	m_rclickmenu_b.connectItem(Rename, this, SLOT(SLOT_RenameB()));
 
-    m_rclickmenu_a.connectItem(Rename, this, SLOT(SLOT_RenameA()));
-    m_rclickmenu_b.connectItem(Rename, this, SLOT(SLOT_RenameB()));
+	m_rclickmenu_a.connectItem(Mkdir, this, SLOT(SLOT_MkdirA()));
+	m_rclickmenu_b.connectItem(Mkdir, this, SLOT(SLOT_MkdirB()));
 
-    m_rclickmenu_a.connectItem(Mkdir, this, SLOT(SLOT_MkdirA()));
-    m_rclickmenu_b.connectItem(Mkdir, this, SLOT(SLOT_MkdirB()));
+	m_rclickmenu_t.connectItem(Start, this, SLOT(SLOT_StartQueue()));
 
-    m_rclickmenu_t.connectItem(Start, this, SLOT(SLOT_StartQueue()));
+	m_rclickmenu_t.connectItem(Skip, this, SLOT(SLOT_SkipTasks()));
 
-    m_rclickmenu_t.connectItem(Skip, this, SLOT(SLOT_SkipTasks()));
-
-    m_rclickmenu_a.setItemEnabled(Transfer, false);
-    m_rclickmenu_a.setItemEnabled(Queue, false);
-    m_rclickmenu_a.setItemEnabled(Delete, false);
-    m_rclickmenu_a.setItemEnabled(Rename, false);
-    m_rclickmenu_a.setItemEnabled(Mkdir, false);
-    
-    m_rclickmenu_b.setItemEnabled(Transfer, false);
-    m_rclickmenu_b.setItemEnabled(Queue, false);
-    m_rclickmenu_b.setItemEnabled(Delete, false);
-    m_rclickmenu_b.setItemEnabled(Rename, false);
-    m_rclickmenu_b.setItemEnabled(Mkdir, false);
-    
-    m_rclickmenu_t.setItemEnabled(Start, false);
-    m_rclickmenu_t.setItemEnabled(Skip, false);
+	m_rclickmenu_a.setItemEnabled(Transfer, false);
+	m_rclickmenu_a.setItemEnabled(Queue, false);
+	m_rclickmenu_a.setItemEnabled(Delete, false);
+	m_rclickmenu_a.setItemEnabled(Rename, false);
+	m_rclickmenu_a.setItemEnabled(Mkdir, false);
+	
+	m_rclickmenu_b.setItemEnabled(Transfer, false);
+	m_rclickmenu_b.setItemEnabled(Queue, false);
+	m_rclickmenu_b.setItemEnabled(Delete, false);
+	m_rclickmenu_b.setItemEnabled(Rename, false);
+	m_rclickmenu_b.setItemEnabled(Mkdir, false);
+	
+	m_rclickmenu_t.setItemEnabled(Start, false);
+	m_rclickmenu_t.setItemEnabled(Skip, false);	 
 }
 
 void Kasablanca::setupStatusBar()
@@ -369,7 +388,7 @@ Kasablanca::~Kasablanca()
 
 void Kasablanca::SLOT_ProcessExited(KProcess *proc)
 {
-    qWarning(i18n("local process exited"));	
+    qWarning("local process exited");	
 
     delete proc;
 }
@@ -571,7 +590,7 @@ void Kasablanca::ConnectBookmark(int n, Browser b)
 		site = &m_site_b;
 		proc = &m_proc_b;
 	}
-
+	
 	/* on connection changes the task view has to be cleared */
 
 	while (QListViewItem* tmpviewitem = m_view->TaskView->firstChild()) delete tmpviewitem;
