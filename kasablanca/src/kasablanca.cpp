@@ -136,7 +136,7 @@ Kasablanca::Kasablanca()
     connect(&m_proc_a, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
     connect(&m_proc_b, SIGNAL(readyToRead(kbprocess*)), this, SLOT(SLOT_KbftpReadReady(kbprocess*)));
 	 //connect(m_view->ConnectButtonA, SIGNAL(clicked()), SLOT(SLOT_ConnectButtonA()));
-    connect(m_view->CommandLineA, SIGNAL(returnPressed()), SLOT(SLOT_EnterCommandA()));
+    //connect(m_view->CommandLineA, SIGNAL(returnPressed()), SLOT(SLOT_EnterCommandA()));
     //connect(m_view->CwdLineA, SIGNAL(returnPressed()), SLOT(SLOT_EnterCwdA()));
     connect(m_view->CommandLineB, SIGNAL(returnPressed()), SLOT(SLOT_EnterCommandB()));
     connect(m_view->BrowserB, SIGNAL(selectionChanged()), SLOT(SLOT_SelectionChanged()));
@@ -160,10 +160,12 @@ Kasablanca::Kasablanca()
 	 mp_session_a->SetBookmarksMenu(&m_bookmarksmenu_a);
 	 mp_session_a->SetStatusLine(mp_statusline_a);
 	 mp_session_a->SetEncryptionIcon(mp_encryptionicon_a);
+	 mp_session_a->SetRclickMenu(&m_rclickmenu_a);
 	 
 	 connect(m_view->RefreshButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_RefreshButton()));
 	 connect(m_view->ConnectButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_ConnectButton()));
 	 connect(m_view->CwdLineA, SIGNAL(returnPressed()), mp_session_a, SLOT(SLOT_CwdLine()));
+	 connect(m_view->CommandLineA, SIGNAL(returnPressed()), mp_session_a, SLOT(SLOT_CmdLine()));
 	 
 	 /* /new stuff */
 	
@@ -317,16 +319,24 @@ void Kasablanca::setupMenu()
 	m_rclickmenu_t.insertSeparator();
 	m_rclickmenu_t.insertItem("Skip Item(s)", Skip);
    
-	connect( &m_bookmarksmenu_a, SIGNAL( activated(int) ), mp_session_a, SLOT( SLOT_ConnectMenu(int) ) );     
+	/* new stuff */
+	
+	connect(&m_rclickmenu_a, SIGNAL(activated(int)), mp_session_a, SLOT(SLOT_ActionMenu(int)));
+	connect(&m_bookmarksmenu_a, SIGNAL(activated(int)), mp_session_a, SLOT(SLOT_ConnectMenu(int)));     
+	connect(m_view->BrowserA, SIGNAL(doubleClicked(QListViewItem*)), mp_session_a, SLOT(SLOT_ItemClicked(QListViewItem*)));
+	connect(m_view->BrowserA, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)), 
+		mp_session_a, SLOT(SLOT_ItemRClicked(QListViewItem *, const QPoint &, int)));
+	
+	/* /new stuff */
 	
 	//connect( &m_bookmarksmenu_a, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectA(int) ) );
 	connect( &m_bookmarksmenu_b, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectB(int) ) );
 		
-	connect( m_view->BrowserA, SIGNAL (doubleClicked(QListViewItem*) ), this, SLOT ( SLOT_ItemClickedA(QListViewItem*) ) );
+	//connect( m_view->BrowserA, SIGNAL (doubleClicked(QListViewItem*) ), this, SLOT ( SLOT_ItemClickedA(QListViewItem*) ) );
 	connect( m_view->BrowserB, SIGNAL (doubleClicked(QListViewItem*) ), this, SLOT ( SLOT_ItemClickedB(QListViewItem*) ) );
 
-	connect( m_view->BrowserA, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
-			SLOT (SLOT_ItemRightClickedA(QListViewItem *, const QPoint &, int )));
+	//connect( m_view->BrowserA, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
+	//		SLOT (SLOT_ItemRightClickedA(QListViewItem *, const QPoint &, int )));
 	connect( m_view->BrowserB, SIGNAL (rightButtonPressed( QListViewItem *, const QPoint &, int )), this,
 			SLOT (SLOT_ItemRightClickedB(QListViewItem *, const QPoint &, int )));
 		
@@ -336,30 +346,30 @@ void Kasablanca::setupMenu()
 	connect( mp_header_b, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderBClicked(int)));
 	connect( mp_header_a, SIGNAL (clicked (int )), this, SLOT (SLOT_HeaderAClicked(int)));
 
-	m_rclickmenu_a.connectItem(Transfer, this, SLOT(SLOT_TransferA()));
+	//m_rclickmenu_a.connectItem(Transfer, this, SLOT(SLOT_TransferA()));
 	m_rclickmenu_b.connectItem(Transfer, this, SLOT(SLOT_TransferB()));
 
-	m_rclickmenu_a.connectItem(Queue, this, SLOT(SLOT_QueueA()));
+	//m_rclickmenu_a.connectItem(Queue, this, SLOT(SLOT_QueueA()));
 	m_rclickmenu_b.connectItem(Queue, this, SLOT(SLOT_QueueB()));
 
-	m_rclickmenu_a.connectItem(Delete, this, SLOT(SLOT_DeleteA()));
+	//m_rclickmenu_a.connectItem(Delete, this, SLOT(SLOT_DeleteA()));
 	m_rclickmenu_b.connectItem(Delete, this, SLOT(SLOT_DeleteB()));
 
-	m_rclickmenu_a.connectItem(Rename, this, SLOT(SLOT_RenameA()));
+	//m_rclickmenu_a.connectItem(Rename, this, SLOT(SLOT_RenameA()));
 	m_rclickmenu_b.connectItem(Rename, this, SLOT(SLOT_RenameB()));
 
-	m_rclickmenu_a.connectItem(Mkdir, this, SLOT(SLOT_MkdirA()));
+	//m_rclickmenu_a.connectItem(Mkdir, this, SLOT(SLOT_MkdirA()));
 	m_rclickmenu_b.connectItem(Mkdir, this, SLOT(SLOT_MkdirB()));
 
 	m_rclickmenu_t.connectItem(Start, this, SLOT(SLOT_StartQueue()));
 
 	m_rclickmenu_t.connectItem(Skip, this, SLOT(SLOT_SkipTasks()));
 
-	m_rclickmenu_a.setItemEnabled(Transfer, false);
-	m_rclickmenu_a.setItemEnabled(Queue, false);
-	m_rclickmenu_a.setItemEnabled(Delete, false);
-	m_rclickmenu_a.setItemEnabled(Rename, false);
-	m_rclickmenu_a.setItemEnabled(Mkdir, false);
+	//m_rclickmenu_a.setItemEnabled(Transfer, false);
+	//m_rclickmenu_a.setItemEnabled(Queue, false);
+	//m_rclickmenu_a.setItemEnabled(Delete, false);
+	//m_rclickmenu_a.setItemEnabled(Rename, false);
+	//m_rclickmenu_a.setItemEnabled(Mkdir, false);
 	
 	m_rclickmenu_b.setItemEnabled(Transfer, false);
 	m_rclickmenu_b.setItemEnabled(Queue, false);
@@ -1730,12 +1740,12 @@ void Kasablanca::SLOT_SelectionChanged()
    	if (itb.current()->isSelected()) counter_b++;
    	++itb;
  	}
+	
+	//flag = ((counter_a != 0) && ((m_status_a == connected) || (m_status_b == connected)));
 
-	flag = ((counter_a != 0) && ((m_status_a == connected) || (m_status_b == connected)));
-
-	m_rclickmenu_a.setItemEnabled(Transfer, flag);
-	m_rclickmenu_a.setItemEnabled(Queue, flag);
-	m_view->TransferButtonA->setEnabled(flag);
+	m_rclickmenu_a.setItemEnabled(Transfer, false);
+	m_rclickmenu_a.setItemEnabled(Queue, false);
+	m_view->TransferButtonA->setEnabled(false);
 	
 	/* when exactly 1 item is selected then rename is enabled,
 	when at least one item is selected, Delete is enabled. */

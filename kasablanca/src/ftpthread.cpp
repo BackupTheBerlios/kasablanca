@@ -946,7 +946,7 @@ bool FtpThread::Scandir_recurse(kbdirectory* dir)
 	}
 	else Event(EventHandler::misc_success);
 	
-	if(!FormatFilelist(dirname.latin1(), "", &filelist, &dirlist)) return false; 
+	if(!FormatFilelist(dirname.latin1(), "", &dirlist, &filelist)) return false; 
 	
 	QFile::remove(dirname);
 	
@@ -1017,7 +1017,7 @@ bool FtpThread::Delete_recurse(QString name)
 	}
 	else Event(EventHandler::misc_success);
 	
-	if(!FormatFilelist(dirname.latin1(), "", &filelist, &dirlist)) return false; 
+	if(!FormatFilelist(dirname.latin1(), "", &dirlist, &filelist)) return false; 
 	
 	QFile::remove(dirname);
 	

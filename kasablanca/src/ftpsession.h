@@ -34,6 +34,7 @@ class QPopupMenu;
 class QLineEdit;
 class QLabel;
 class QPixmap;
+class QPoint;
 
 typedef pair<QString, bool> logentries;
 
@@ -55,6 +56,7 @@ public:
 	void SetStatusLine(QLabel* statusline) { mp_statusline = statusline; };
 	void SetEncryptionIcon(QLabel* encryptionicon) { mp_encryptionicon = encryptionicon; };
 	void SetBookmarksMenu(QPopupMenu *bookmarksmenu) { mp_bookmarksmenu = bookmarksmenu; };
+	void SetRclickMenu(QPopupMenu *rclickmenu) { mp_rclickmenu = rclickmenu; };
 	bool Connected() { return m_connected; };
 	void Disconnect();
 	void Connect();
@@ -70,7 +72,7 @@ private:
 	QTextEdit *mp_logwindow;
 	QToolButton *mp_connectbutton, *mp_refreshbutton;
 	QLineEdit *mp_cwdline, *mp_cmdline;
-	QPopupMenu* mp_bookmarksmenu;
+	QPopupMenu* mp_bookmarksmenu, *mp_rclickmenu;
 	QListView *mp_browser;
 	QLabel *mp_statusline, *mp_encryptionicon;
 	QString m_remoteworkingdir;
@@ -80,17 +82,22 @@ private:
 	
 public slots:
 	void SLOT_Log(QString log, bool out);
+	void SLOT_ActionMenu(int i);
 	void SLOT_ConnectMenu(int i);
+	void SLOT_ItemClicked(QListViewItem*);
+	void SLOT_ItemRClicked(QListViewItem * item, const QPoint & point, int col);
 	void SLOT_Connect(bool success);
 	void SLOT_Login(bool success);
 	void SLOT_Quit(bool success);
 	void SLOT_Pwd(bool success, QString pwd);
 	void SLOT_Chdir(bool success);
+	void SLOT_Misc(bool success);
 	void SLOT_EncryptData(bool success, bool enabled);
 	void SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist);
 	void SLOT_ConnectButton();
 	void SLOT_RefreshButton();
 	void SLOT_CwdLine();
+	void SLOT_CmdLine();
 	void SLOT_Finish();
 	void SLOT_ConnectionLost();
 	

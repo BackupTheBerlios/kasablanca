@@ -14,6 +14,7 @@
 #include <kglobal.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
+#include <kinputdialog.h>
 #include <qtextedit.h>
 #include <qtoolbutton.h>
 #include <qpopupmenu.h>
@@ -49,12 +50,14 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	m_iconencrypted = KGlobal::iconLoader()->loadIconSet("encrypted",KIcon::Small).pixmap(QIconSet::Small,QIconSet::Normal);
    m_iconunencrypted = KGlobal::iconLoader()->loadIconSet("encrypted",KIcon::Small).pixmap(QIconSet::Small,QIconSet::Disabled);
 	
-	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_log(QString, bool)), SLOT(SLOT_Log(QString, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_connect(bool)), SLOT(SLOT_Connect(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_quit(bool)), SLOT(SLOT_Quit(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_chdir(bool)), SLOT(SLOT_Chdir(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_raw(bool)), SLOT(SLOT_Misc(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_misc(bool)), SLOT(SLOT_Misc(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_mkdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_pwd(bool, QString)), SLOT(SLOT_Pwd(bool, QString)));
 	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)), 
 		SLOT(SLOT_Dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)));
@@ -71,6 +74,46 @@ void FtpSession::SLOT_Log(QString log, bool out)
 { 
 	if (out) m_loglist.push_back(make_pair(log, true));
 	else m_loglist.push_back(make_pair(log, false));
+}
+
+void FtpSession::SLOT_ActionMenu(int i)
+{
+	if (i == Kasablanca::Mkdir)
+	{
+		bool b;
+		QString name = KInputDialog::getText("Enter Directory Name:", "Enter Directory Name:", "", &b);
+		if (!b) return;
+		if (Occupied()) 
+		{	
+			qWarning("ERROR: mkdir action while occupied");
+			return;
+		}
+		else if (Connected())
+		{
+			Occupy();
+			mp_ftpthread->Mkdir(name);
+			RefreshBrowser();
+			mp_ftpthread->start();
+		}
+		else qWarning("WARNING: local mkdir not yet implemented");
+	}
+	else if (i == Kasablanca::Delete)
+	{
+		Occupy();
+		QListViewItemIterator it(mp_browser);
+		while (it.current())
+		{
+			if (it.current()->isSelected())
+			{
+				QListViewItem* item = it.current();
+				if (item->rtti() == kbitem::dir) mp_ftpthread->Rmdir(static_cast<diritem*>(item)->m_file);
+				else if (item->rtti() == kbitem::file) mp_ftpthread->Rm(static_cast<fileitem*>(item)->m_file);
+			}
+			it++;
+		}
+		RefreshBrowser();
+		mp_ftpthread->start();
+	}
 }
 
 void FtpSession::SLOT_ConnectMenu(int i)
@@ -99,6 +142,7 @@ void FtpSession::SLOT_ConnectMenu(int i)
 	if (mp_siteinfo->GetPasv() > 0) mp_ftpthread->Pasv(true);
 	else mp_ftpthread->Pasv(false);
 	mp_ftpthread->Login(mp_siteinfo->GetUser(), mp_siteinfo->GetPass());
+	RefreshBrowser();
 	mp_ftpthread->start();
 }
 
@@ -107,6 +151,52 @@ void FtpSession::SLOT_Finish()
 	qWarning("INFO: gui freed");
 	Free();
 }
+
+void FtpSession::SLOT_ItemClicked(QListViewItem * item)
+{
+	if (Occupied()) 
+	{	
+		qWarning("ERROR: item clicked while occupied");
+		return;
+	}
+	if (item->rtti() == kbitem::file) return;
+	else if (Connected())
+	{
+		Occupy();
+		if (item->text(0) == "..") mp_ftpthread->Cdup();
+		else mp_ftpthread->Chdir(item->text(0));
+		RefreshBrowser();
+		mp_ftpthread->start();
+	}
+	else 
+	{
+		while (QListViewItem* tmpviewitem = mp_browser->firstChild()) delete tmpviewitem;
+		qWarning("WARNING: local browsing not yet implemented");
+	}
+}
+
+void FtpSession::SLOT_ItemRClicked(QListViewItem *, const QPoint & point, int)
+{
+	mp_rclickmenu->exec(point);
+}
+
+void FtpSession::SLOT_CmdLine()
+{
+	if (Occupied()) 
+	{	
+		qWarning("ERROR: entered command while occupied");
+		return;
+	}
+	else if (Connected())
+	{
+		Occupy();
+		mp_ftpthread->Raw(mp_cmdline->text());
+		mp_cmdline->setText("");
+		mp_ftpthread->start();
+	}
+	else qWarning("WARNING: local commands not yet implemented");
+}
+
 void FtpSession::SLOT_ConnectButton()
 {
 	/* this button is also an abort button */
@@ -141,7 +231,7 @@ void FtpSession::SLOT_CwdLine()
 {
 	if (Occupied()) 
 	{	
-		qWarning("ERROR: refresh button pressed while occupied");
+		qWarning("ERROR: entered cwd while occupied");
 		return;
 	}
 	if (Connected())
@@ -194,6 +284,11 @@ void FtpSession::SLOT_Chdir(bool success)
 	PrintLog(success);
 }	
 
+void FtpSession::SLOT_Misc(bool success)
+{
+	PrintLog(success);
+}
+
 void FtpSession::SLOT_Login(bool success)
 {
 	PrintLog(success);	
@@ -222,7 +317,8 @@ void FtpSession::SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<Remot
 		dirup->setSelectable(false);	
 		list<RemoteFileInfo>::iterator i;
 		for (i = dirlist.begin(); i != dirlist.end(); i++) new diritem(&*i, mp_browser, mp_browser->lastItem());	
-		for (i = filelist.begin(); i != filelist.end(); i++) new fileitem(&*i, mp_browser, mp_browser->lastItem());
+		for (i = filelist.begin(); i != filelist.end(); i++) new fileitem(&*i, mp_browser, mp_browser->lastItem());	
+		static_cast<Kasablanca*>(parent())->SLOT_SelectionChanged();
 	}
 }
 
@@ -274,6 +370,7 @@ void FtpSession::Disconnect()
 
 void FtpSession::Occupy()
 {
+	mp_rclickmenu->setEnabled(false);
 	mp_browser->setEnabled(false);
 	mp_cmdline->setEnabled(false);
 	mp_cwdline->setEnabled(false);
@@ -284,6 +381,7 @@ void FtpSession::Occupy()
 
 void FtpSession::Free()
 {
+	mp_rclickmenu->setEnabled(true);
 	mp_browser->setEnabled(true);
 	mp_cmdline->setEnabled(true);
 	mp_cwdline->setEnabled(true);

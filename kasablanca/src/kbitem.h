@@ -22,6 +22,11 @@ class RemoteFileInfo;
 class kbitem : public QListViewItem
 {
 public:
+	enum entrytype
+	{
+		dir = 1001,
+		file
+	};
 	kbitem(RemoteFileInfo *rfi, QListView* parent, QListViewItem* after);
 	kbitem(QListView* parent, QListViewItem* after);
 	int compare (QListViewItem * i, int col, bool ascending) const;
