@@ -377,11 +377,11 @@ void FtpThread::Dataencoff_thread()
 	
 	result = mp_ftp->SetDataEncryption(ftplib::unencrypted);
 
-	if (result) Event(EventHandler::encryptdata_success);
+	if (result) Event(EventHandler::encryptdataoff_success);
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
-		else Event(EventHandler::encryptdata_failure);
+		else Event(EventHandler::encryptdataoff_failure);
 	}
 }
 
@@ -391,11 +391,11 @@ void FtpThread::Dataencon_thread()
 	
 	result = mp_ftp->SetDataEncryption(ftplib::secure);
 
-	if (result) Event(EventHandler::encryptdata_success);
+	if (result) Event(EventHandler::encryptdataon_success);
 	else 
 	{
 		if (ConnectionLost()) Event(EventHandler::connectionlost);
-		else Event(EventHandler::encryptdata_failure);
+		else Event(EventHandler::encryptdataon_failure);
 	}
 }
 

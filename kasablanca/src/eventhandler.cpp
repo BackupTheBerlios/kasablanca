@@ -208,14 +208,24 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
 		emit ftp_rmdir(false);
       return TRUE; 
    }
-	else if (type == encryptdata_success) 
+	else if (type == encryptdataon_success) 
 	{   
-		emit ftp_encryptdata(true);
+		emit ftp_encryptdata(true, true);
       return TRUE; 
    }
-	else if (type == encryptdata_failure) 
+	else if (type == encryptdataon_failure) 
 	{   
-		emit ftp_encryptdata(false);
+		emit ftp_encryptdata(false, true);
+      return TRUE; 
+   }
+	else if (type == encryptdataoff_success) 
+	{   
+		emit ftp_encryptdata(true, false);
+      return TRUE; 
+   }
+	else if (type == encryptdataoff_failure) 
+	{   
+		emit ftp_encryptdata(false, false);
       return TRUE; 
    }
 	else if (type == get_success) 

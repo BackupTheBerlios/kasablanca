@@ -20,6 +20,8 @@
 #include <qwidget.h>
 #include <qlineedit.h>
 #include <qlistview.h>
+#include <qlabel.h>
+#include <qpixmap.h>
 
 #include "customconnectdialog.h"
 #include "ftpthread.h"
@@ -44,6 +46,9 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	mp_eventhandler->SetFtpThread(mp_ftpthread); 
 	mp_ftpthread->SetEventReceiver(mp_eventhandler);
 
+	m_iconencrypted = KGlobal::iconLoader()->loadIconSet("encrypted",KIcon::Small).pixmap(QIconSet::Small,QIconSet::Normal);
+   m_iconunencrypted = KGlobal::iconLoader()->loadIconSet("encrypted",KIcon::Small).pixmap(QIconSet::Small,QIconSet::Disabled);
+	
 	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_log(QString, bool)), SLOT(SLOT_Log(QString, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_connect(bool)), SLOT(SLOT_Connect(bool)));
@@ -53,7 +58,9 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_pwd(bool, QString)), SLOT(SLOT_Pwd(bool, QString)));
 	connect(mp_eventhandler, SIGNAL(ftp_dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)), 
 		SLOT(SLOT_Dir(bool, list<RemoteFileInfo>, list<RemoteFileInfo>)));
+	connect(mp_eventhandler, SIGNAL(ftp_encryptdata(bool, bool)), SLOT(SLOT_EncryptData(bool, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_finished()), SLOT(SLOT_Finish()));
+	connect(mp_eventhandler, SIGNAL(ftp_connectionlost()), SLOT(SLOT_ConnectionLost()));
 }
 
 FtpSession::~FtpSession()
@@ -141,8 +148,7 @@ void FtpSession::SLOT_CwdLine()
 	{	
 		Occupy();
 		mp_ftpthread->Chdir(mp_cwdline->text());
-		mp_ftpthread->Pwd();
-		mp_ftpthread->Dir();
+		RefreshBrowser();
 		mp_ftpthread->start();
 	}
 	else qWarning("WARNING: local browsing not yet implemented"); 		
@@ -158,9 +164,7 @@ void FtpSession::SLOT_RefreshButton()
 	if (Connected())
 	{	
 		Occupy();
-		mp_ftpthread->Pwd();
-		if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true);
-		mp_ftpthread->Dir();
+		RefreshBrowser();
 		mp_ftpthread->start();
 	}
 	else 
@@ -180,6 +184,16 @@ void FtpSession::SLOT_Connect(bool success)
 	PrintLog(success);	
 }
 
+void FtpSession::SLOT_EncryptData(bool success, bool enabled)
+{
+	PrintLog(success);
+	if (success)
+	{
+		if (enabled) mp_encryptionicon->setPixmap(m_iconencrypted);
+		else mp_encryptionicon->setPixmap(m_iconunencrypted);
+	} 	
+}
+	
 void FtpSession::SLOT_Chdir(bool success)
 {
 	PrintLog(success);
@@ -194,6 +208,12 @@ void FtpSession::SLOT_Login(bool success)
 void FtpSession::SLOT_Quit(bool success)
 {
 	PrintLog(success);	
+}
+
+void FtpSession::SLOT_ConnectionLost()
+{
+	PrintLog(false);	
+	Disconnect();
 }
 
 void FtpSession::SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist)
@@ -245,6 +265,7 @@ void FtpSession::Connect()
 {
 	mp_bookmarksmenu->setEnabled(false);
 	mp_connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
+	mp_statusline->setText(i18n("Occupied"));
 	m_connected = true;
 }
 
@@ -252,6 +273,7 @@ void FtpSession::Disconnect()
 {
 	mp_bookmarksmenu->setEnabled(true);
 	mp_connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
+	mp_statusline->setText(i18n("Disconnected"));
 	m_connected = false;
 }
 
@@ -261,6 +283,7 @@ void FtpSession::Occupy()
 	mp_cmdline->setEnabled(false);
 	mp_cwdline->setEnabled(false);
 	mp_refreshbutton->setEnabled(false);
+	mp_statusline->setText(i18n("Occupied"));
 	m_occupied = true;
 }
 
@@ -270,6 +293,19 @@ void FtpSession::Free()
 	mp_cmdline->setEnabled(true);
 	mp_cwdline->setEnabled(true);
 	mp_refreshbutton->setEnabled(true);
+	if (m_connected) mp_statusline->setText(i18n("Connected"));
+	else mp_statusline->setText(i18n("Disconnected"));	
+	if ((mp_siteinfo->GetTls() > 0) && (m_connected)) mp_encryptionicon->setPixmap(m_iconencrypted);
+	else mp_encryptionicon->setPixmap(m_iconunencrypted);	
 	m_occupied = false;
 }
+
+void FtpSession::RefreshBrowser()
+{
+	mp_ftpthread->Pwd();
+	if (mp_siteinfo->GetTls() > 1) mp_ftpthread->EncryptData(true);
+	else if (mp_siteinfo->GetTls() > 0) mp_encryptionicon->setPixmap(m_iconunencrypted);
+	mp_ftpthread->Dir();
+}
+
 #include "ftpsession.moc"

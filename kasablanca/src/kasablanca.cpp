@@ -158,6 +158,8 @@ Kasablanca::Kasablanca()
 	 mp_session_a->SetCmdLine(m_view->CommandLineA);
 	 mp_session_a->SetCwdLine(m_view->CwdLineA);
 	 mp_session_a->SetBookmarksMenu(&m_bookmarksmenu_a);
+	 mp_session_a->SetStatusLine(mp_statusline_a);
+	 mp_session_a->SetEncryptionIcon(mp_encryptionicon_a);
 	 
 	 connect(m_view->RefreshButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_RefreshButton()));
 	 connect(m_view->ConnectButtonA, SIGNAL(clicked()), mp_session_a, SLOT(SLOT_ConnectButton()));

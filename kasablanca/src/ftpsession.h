@@ -32,6 +32,8 @@ class QListView;
 class siteinfo;
 class QPopupMenu;
 class QLineEdit;
+class QLabel;
+class QPixmap;
 
 typedef pair<QString, bool> logentries;
 
@@ -50,6 +52,8 @@ public:
 	void SetBrowser(QListView* browser) { mp_browser = browser; };
 	void SetCwdLine(QLineEdit* cwdline) { mp_cwdline = cwdline; };
 	void SetCmdLine(QLineEdit* cmdline) { mp_cmdline = cmdline; };
+	void SetStatusLine(QLabel* statusline) { mp_statusline = statusline; };
+	void SetEncryptionIcon(QLabel* encryptionicon) { mp_encryptionicon = encryptionicon; };
 	void SetBookmarksMenu(QPopupMenu *bookmarksmenu) { mp_bookmarksmenu = bookmarksmenu; };
 	bool Connected() { return m_connected; };
 	void Disconnect();
@@ -68,9 +72,11 @@ private:
 	QLineEdit *mp_cwdline, *mp_cmdline;
 	QPopupMenu* mp_bookmarksmenu;
 	QListView *mp_browser;
+	QLabel *mp_statusline, *mp_encryptionicon;
 	QString m_remoteworkingdir;
 	bool m_connected, m_occupied;
 	list<logentries> m_loglist;
+	QPixmap m_iconencrypted, m_iconunencrypted;
 	
 public slots:
 	void SLOT_Log(QString log, bool out);
@@ -80,14 +86,17 @@ public slots:
 	void SLOT_Quit(bool success);
 	void SLOT_Pwd(bool success, QString pwd);
 	void SLOT_Chdir(bool success);
+	void SLOT_EncryptData(bool success, bool enabled);
 	void SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist);
 	void SLOT_ConnectButton();
 	void SLOT_RefreshButton();
 	void SLOT_CwdLine();
 	void SLOT_Finish();
+	void SLOT_ConnectionLost();
 	
 private:
 	void PrintLog(bool success);
+	void RefreshBrowser();
 		
 };
 
