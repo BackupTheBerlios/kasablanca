@@ -1,0 +1,75 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>KasablancaGeneralPreferencesDialog</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>KasablancaGeneralPreferencesDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>344</width>
+            <height>91</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>General</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Skiplist:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="1">
+            <property name="name">
+                <cstring>kcfg_Skiplist</cstring>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Here you can enter a Regular Expression. Transfer items which match this Regular Expression are skipped.</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel1_3</cstring>
+            </property>
+            <property name="text">
+                <string>Example:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="1" rowspan="2" colspan="1">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Use "^\." to exclude files or dirs
+beginning with "." from transfer.</string>
+            </property>
+        </widget>
+        <spacer row="2" column="0">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>21</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
