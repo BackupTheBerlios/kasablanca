@@ -32,6 +32,9 @@
             <property name="text">
                 <string>&lt;p align="right"&gt;Encryption&lt;/p&gt;</string>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string></string>
+            </property>
         </widget>
         <widget class="QLabel" row="0" column="3">
             <property name="name">
@@ -73,10 +76,16 @@
             <property name="name">
                 <cstring>EncryptionComboBox</cstring>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string>There are 4 encryption levels available. Unencrypted leaves all traffic clear and without encryption. Most ftp servers allow only this mode. Level 1 encryption means that the traffic on the control connection is encrypted while data transfer remains clear. Level 2 is basically the same with the exception of directory information which is transfered on the data channel, but is encrypted too. Eventually Level 3 encrypts everything all communication and all data traffic.</string>
+            </property>
         </widget>
         <widget class="QLineEdit" row="2" column="4" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>UserEdit</cstring>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>The ftp Login Username. On open ftp servers you usually login using "anonymous".</string>
             </property>
         </widget>
         <widget class="QComboBox" row="5" column="4" rowspan="1" colspan="2">
@@ -92,6 +101,9 @@
             </item>
             <property name="name">
                 <cstring>ModeComboBox</cstring>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>The mode you are using for data transfer. This is quite important in case you're behind a firewall or a router. In these cases you depend on the passive mode, which makes the client connects to the ftp server for data transfer. Passive mode is the standard method today, while active mode is the old way to do data transfers, the client listens for the server to connect in active mode.</string>
             </property>
         </widget>
         <widget class="QLabel" row="3" column="3">
@@ -114,6 +126,9 @@
             <property name="name">
                 <cstring>InfoEdit</cstring>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string>This information points to the the ftp server. IP can either be a standard ip adress like 192.168.2.1 or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".</string>
+            </property>
         </widget>
         <widget class="QLabel" row="1" column="3">
             <property name="name">
@@ -135,6 +150,9 @@
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string>The ftp's name is entered here.</string>
+            </property>
         </widget>
         <widget class="QListBox" row="0" column="0" rowspan="6" colspan="3">
             <property name="name">
@@ -146,6 +164,9 @@
             <property name="vScrollBarMode">
                 <enum>Auto</enum>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string>Select the bookmark you want to edit.</string>
+            </property>
         </widget>
         <widget class="QLineEdit" row="3" column="4" rowspan="1" colspan="2">
             <property name="name">
@@ -153,6 +174,9 @@
             </property>
             <property name="echoMode">
                 <enum>Password</enum>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>The user's password. Anonymous ftp servers ussually don't use passwords or accept passwords in the form of "user@emailaddress.com".</string>
             </property>
         </widget>
         <widget class="QPushButton" row="7" column="0">
@@ -162,6 +186,9 @@
             <property name="text">
                 <string>New</string>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string>Add a new bookmark entry.</string>
+            </property>
         </widget>
         <widget class="QPushButton" row="7" column="5">
             <property name="name">
@@ -170,6 +197,9 @@
             <property name="text">
                 <string>Done</string>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string>Accept changes and close the bookmark dialog.</string>
+            </property>
         </widget>
         <widget class="QPushButton" row="7" column="1">
             <property name="name">
@@ -177,6 +207,9 @@
             </property>
             <property name="text">
                 <string>Remove</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Remove a bookmark entry.</string>
             </property>
         </widget>
         <spacer row="7" column="3" rowspan="1" colspan="2">
@@ -202,6 +235,9 @@
             </property>
             <property name="text">
                 <string>Apply</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Apply the changes to the bookmark entry.</string>
             </property>
         </widget>
         <widget class="Line" row="6" column="0" rowspan="1" colspan="6">
