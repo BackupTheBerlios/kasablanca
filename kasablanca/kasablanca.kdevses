@@ -1,23 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="3" >
-  <Doc0 NumberOfViews="1" URL="file:/home/mkulke/Apps/kasablanca-0.3/src/kasablanca.cpp" >
-   <View0 line="96" Type="???" >
-    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="675" Left="2" MinMaxMode="0" />
-   </View0>
-  </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:/home/mkulke/Apps/kasablanca-0.3/TODO" >
-   <View0 line="7" Type="???" >
-    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="675" Left="2" MinMaxMode="0" />
-   </View0>
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:/home/mkulke/Apps/kasablanca-0.3/src/kasablanca.h" >
-   <View0 line="42" Type="???" >
-    <AdditionalSettings Top="2" Width="1201" Attach="1" Height="675" Left="2" MinMaxMode="0" />
-   </View0>
-  </Doc2>
- </DocsAndViews>
+ <DocsAndViews NumberOfDocuments="0" />
  <pluginList>
   <kdevvalgrind>
    <executable path="" params="" />
