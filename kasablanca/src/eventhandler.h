@@ -89,6 +89,8 @@ public:
 		raw_failure,
 		put_success,
 		put_failure,
+		fxp_success,
+		fxp_failure,
 		transfer_success,
 		transfer_failure
 	};
@@ -119,6 +121,7 @@ signals:
 	void ftp_raw(bool success);
 	void ftp_put(bool success);
 	void ftp_transfer(bool success);
+	void ftp_fxp(bool success);
 	void ftp_connectionlost();
 };
 

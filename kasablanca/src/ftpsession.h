@@ -79,6 +79,8 @@ public:
 	QString WorkingDir();
  	void Transfer(KbTransferItem *item);
 	int CheckFile(KbTransferItem *item);
+	FtpThread* Ftp() { return mp_ftpthread; };
+	siteinfo* SiteInfo() { return mp_siteinfo; };
 private:
 	FtpThread *mp_ftpthread;
 	EventHandler *mp_eventhandler;
@@ -132,6 +134,7 @@ private:
 	void RmdirLocal(QString dir);
 	void GetFile(KbTransferItem *item, filecheck fc);
 	void PutFile(KbTransferItem *item, filecheck fc);
+	void FxpFile(KbTransferItem *item, filecheck fc);
 	void ChangeDirectory(QString path);
 	bool CheckLocalDirectory(QString path);
 	bool MakeLocalDirectory(QString path);
@@ -143,6 +146,7 @@ signals:
 	void gui_update();
 	void gui_queueitems(KbDirInfo* dir, FtpSession* src, FtpSession* dst, bool startqueue);
 	void gui_succeedtransfer(QListViewItem* item);
+	void gui_clearqueue(FtpSession* session);
 };
 
 #endif

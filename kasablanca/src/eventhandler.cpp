@@ -291,6 +291,16 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
 		emit ftp_put(false);
       return TRUE; 
    }
+	else if (type == fxp_success) 
+	{   
+		emit ftp_fxp(true);
+      return TRUE; 
+   }
+	else if (type == fxp_failure) 
+	{   
+		emit ftp_fxp(false);
+      return TRUE; 
+   }
 	else 
 	{
       return FALSE;

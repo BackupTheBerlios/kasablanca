@@ -73,6 +73,7 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_raw(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_get(bool)), SLOT(SLOT_Get(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_put(bool)), SLOT(SLOT_Misc(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_fxp(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_rm(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_misc(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_mkdir(bool)), SLOT(SLOT_Misc(bool)));
@@ -555,6 +556,7 @@ void FtpSession::Connect()
 	mp_connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_established",KIcon::Toolbar));
 	mp_statusline->setText(i18n("Occupied"));
 	m_connected = true;
+	emit gui_clearqueue(this);
 }
 
 void FtpSession::Disconnect()
@@ -564,6 +566,7 @@ void FtpSession::Disconnect()
 	mp_connectbutton->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
 	mp_statusline->setText(i18n("Disconnected"));
 	m_connected = false;
+	emit gui_clearqueue(this);
 }
 
 void FtpSession::Occupy()
@@ -921,6 +924,7 @@ void FtpSession::Transfer(KbTransferItem *item)
 			{
 				if (item->DstSession()->Connected())
 				{
+					item->SrcSession()->FxpFile(item, result);
 					// FXP Copy
 				}
 				else item->SrcSession()->GetFile(item, result);
@@ -948,14 +952,36 @@ void FtpSession::Transfer(KbTransferItem *item)
 	}
 }
 
+void FtpSession::FxpFile(KbTransferItem *item, filecheck fc)
+{
+	bool result;
+	int srctls, dsttls;
+	QString localfile, remotefile;
+	unsigned long offset;
+
+	remotefile = item->SrcFileInfo()->fileName();
+	localfile = mp_currenttransfer->DstSession()->WorkingDir() + '/' + item->DstFileInfo()->fileName();
+	srctls = mp_siteinfo->GetTls();
+	dsttls = item->DstSession()->SiteInfo()->GetTls();
+	FtpThread* dstftp = item->DstSession()->Ftp();
+	offset = item->DstFileInfo()->Size();
+	
+	if (fc == resume) result = mp_ftpthread->Transfer_Fxp(remotefile, localfile, dstftp, srctls, dsttls, offset );
+	else result = mp_ftpthread->Transfer_Fxp(remotefile, localfile, dstftp, srctls, dsttls);
+	
+	if (result) mp_ftpthread->start();
+	else qWarning("ERROR: thread error, thread was still busy.");
+}
+
 void FtpSession::GetFile(KbTransferItem *item, filecheck fc)
 {
-	bool tls, result;
+	bool result;
+	int tls;
 	QString localfile, remotefile;
 
 	remotefile = item->SrcFileInfo()->fileName();
 	localfile = mp_currenttransfer->DstSession()->WorkingDir() + '/' + item->DstFileInfo()->fileName();
-	tls = (mp_siteinfo->GetTls() > 1);
+	tls = mp_siteinfo->GetTls();
 	
 	if (fc == resume) result = mp_ftpthread->Transfer_Get(remotefile, localfile, tls, item->DstFileInfo()->Size());
 	else result = mp_ftpthread->Transfer_Get(remotefile, localfile, tls);
@@ -966,12 +992,13 @@ void FtpSession::GetFile(KbTransferItem *item, filecheck fc)
 
 void FtpSession::PutFile(KbTransferItem *item, filecheck fc)
 {
-	bool tls, result;
+	bool result;
+	int tls;
 	QString localfile, remotefile;
 
 	remotefile = item->SrcFileInfo()->fileName();
 	localfile = mp_currenttransfer->SrcSession()->WorkingDir() + '/' + item->DstFileInfo()->fileName();
-	tls = (mp_siteinfo->GetTls() > 1);
+	tls = mp_siteinfo->GetTls();
 	
 	if (fc == resume) result = mp_ftpthread->Transfer_Put(localfile, remotefile, tls, item->DstFileInfo()->Size());
 	else result = mp_ftpthread->Transfer_Put(localfile, remotefile, tls);

@@ -62,9 +62,6 @@ FtpThread::~FtpThread()
 
 void FtpThread::InitInternals()
 {
-	m_host = "";
-	m_user = "";
-	m_pass = "";
 	m_pwd = "";
 	m_dataencrypted = false;
 }
@@ -121,8 +118,8 @@ bool FtpThread::Connect(QString host)
 	if (running()) return false;
 	else
 	{	
+		m_stringlist.append(host);
 		m_tasklist.append(FtpThread::connect);
-		m_host = host;
 		return true;
 	}
 }
@@ -134,9 +131,9 @@ bool FtpThread::Login(QString user, QString pass)
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(user);
+		m_stringlist.append(pass);
 		m_tasklist.append(FtpThread::login);
-		m_user = user;
-		m_pass = pass;
 		return true;
 	}
 }
@@ -155,32 +152,50 @@ bool FtpThread::Quit()
 
 /* get file */
 
-bool FtpThread::Transfer_Get(QString src, QString dst, bool tls, unsigned long resume)
+bool FtpThread::Transfer_Get(QString src, QString dst, int tls, unsigned long resume)
 {
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(src);
+		m_stringlist.append(dst);
+		m_intlist.append(tls);
+		m_ulonglist.append(resume);
 		m_tasklist.append(FtpThread::transfer_get);
-		m_transfer_gettlslist.push_back(tls);
-		m_transfer_getsrclist.push_back(src);
-		m_transfer_getdstlist.push_back(dst);
-		m_transfer_getresumelist.push_back(resume);
+		return true;
+	}
+}
+
+/* fxp file */
+
+bool FtpThread::Transfer_Fxp(QString src, QString dst, FtpThread *dstftp, int srctls, int dsttls, unsigned long resume)
+{
+	if (running()) return false;
+	else
+	{
+		m_stringlist.append(src);
+		m_stringlist.append(dst);
+		m_ftplist.append(dstftp);
+		m_intlist.append(srctls);
+		m_intlist.append(dsttls);
+		m_ulonglist.append(resume);	
+		m_tasklist.append(FtpThread::transfer_fxp);
 		return true;
 	}
 }
 
 /* put file */
 
-bool FtpThread::Transfer_Put(QString src, QString dst, bool tls, unsigned long resume)
+bool FtpThread::Transfer_Put(QString src, QString dst, int tls, unsigned long resume)
 {
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(src);
+		m_stringlist.append(dst);
+		m_intlist.append(tls);
+		m_ulonglist.append(resume);
 		m_tasklist.append(FtpThread::transfer_put);
-		m_transfer_puttlslist.push_back(tls);
-		m_transfer_putsrclist.push_back(src);
-		m_transfer_putdstlist.push_back(dst);
-		m_transfer_putresumelist.push_back(resume);
 		return true;
 	}
 }
@@ -192,8 +207,8 @@ bool FtpThread::Transfer_Mkdir(QString dir)
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(dir);
 		m_tasklist.append(FtpThread::transfer_mkdir);
-		m_transfer_mkdirlist.push_back(dir);
 		return true;
 	}
 }
@@ -205,9 +220,9 @@ bool FtpThread::Rename(QString src, QString dst)
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(src);
+		m_stringlist.append(dst);
 		m_tasklist.append(FtpThread::rename);
-		m_renamesrclist.push_back(src);
-		m_renamedstlist.push_back(dst);
 		return true;
 	}
 }
@@ -231,7 +246,7 @@ bool FtpThread::EncryptData(bool flag)
 {
 	if (running()) return false;
 	else
-	{
+	{	
 		if (flag) m_tasklist.append(FtpThread::dataencon);
 		else m_tasklist.append(FtpThread::dataencoff);
 		return true;
@@ -257,21 +272,22 @@ bool FtpThread::Chdir(QString path)
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(path);
 		m_tasklist.append(FtpThread::chdir);
-		m_chdirlist.push_back(path);
 		return true;
 	}
 }
 
 /* change working dir to the given path, used by transfers */
 
-bool FtpThread::Transfer_Changedir(QString dir, bool tls)
+bool FtpThread::Transfer_Changedir(QString dir, int tls)
 {
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(dir);
+		m_intlist.append(tls);
 		m_tasklist.append(FtpThread::transfer_changedir);
-		m_transfer_changedirlist.append(make_pair(dir, tls));
 		return true;
 	}
 }
@@ -280,12 +296,11 @@ bool FtpThread::Transfer_Changedir(QString dir, bool tls)
 
 bool FtpThread::Mkdir(QString path)
 {
-	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(path);
 		m_tasklist.append(FtpThread::mkdir);
-		m_mkdirlist.push_back(path);
 		return true;
 	}
 }
@@ -294,7 +309,6 @@ bool FtpThread::Mkdir(QString path)
 
 bool FtpThread::Cdup()
 {
-	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -307,7 +321,6 @@ bool FtpThread::Cdup()
 
 bool FtpThread::Dir()
 {
-	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -320,7 +333,6 @@ bool FtpThread::Dir()
 
 bool FtpThread::Authtls()
 {
-	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
@@ -337,8 +349,8 @@ bool FtpThread::Rm(QString name)
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(name);
 		m_tasklist.append(FtpThread::rm);
-		m_rmlist.push_back(name);
 		return true;
 	}
 }
@@ -347,12 +359,11 @@ bool FtpThread::Rm(QString name)
 
 bool FtpThread::Rmdir(QString name)
 {
-	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(name);
 		m_tasklist.append(FtpThread::rmdir);
-		m_rmdirlist.push_back(name);
 		return true;
 	}
 }
@@ -361,12 +372,11 @@ bool FtpThread::Rmdir(QString name)
 
 bool FtpThread::Raw(QString cmd)
 {
-	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
+		m_stringlist.append(cmd);
 		m_tasklist.append(FtpThread::raw);
-		m_rawlist.push_back(cmd);
 		return true;
 	}
 }
@@ -375,12 +385,11 @@ bool FtpThread::Raw(QString cmd)
 
 bool FtpThread::Scandir(KbDirInfo* dir)
 {
-	wait(KB_THREAD_TIMEOUT);
 	if (running()) return false;
 	else
 	{
-		m_tasklist.append(FtpThread::scandir);
 		mp_scandir = dir;
+		m_tasklist.append(FtpThread::scandir);
 		return true;
 	}
 }
@@ -389,8 +398,10 @@ bool FtpThread::Scandir(KbDirInfo* dir)
 void FtpThread::Connect_thread()
 {
 	int result;
-	
-	result = mp_ftp->Connect(m_host.latin1());
+	QString host = m_stringlist.front();
+	m_stringlist.pop_front();
+
+	result = mp_ftp->Connect(host.latin1());
 
 	if (result) Event(EventHandler::connect_success);
 	else 
@@ -417,8 +428,12 @@ void FtpThread::Authtls_thread()
 void FtpThread::Login_thread()
 {
 	int result;
-	
-	result = mp_ftp->Login(m_user.latin1(), m_pass.latin1());
+	QString user = m_stringlist.front();
+	m_stringlist.pop_front();
+	QString pass = m_stringlist.front();
+	m_stringlist.pop_front();
+
+	result = mp_ftp->Login(user.latin1(), pass.latin1());
 	
 	if (result) Event(EventHandler::login_success);
 	else
@@ -468,17 +483,16 @@ void FtpThread::Transfer_Changedir_thread()
 {
 	int result;
 	char buffer[1024];
-	bool tls;
-	QString dirname, path;
-
-	dirname = QDir::homeDirPath() + 
+	
+	QString dirname = QDir::homeDirPath() + 
 		"/.kasablanca/" +
 		QString::number((int) time(NULL) & 0xffff) + 
 		".dir";
 				
-	path = m_transfer_changedirlist.front().first;
-	tls = m_transfer_changedirlist.front().second;
-	m_transfer_changedirlist.pop_front();
+	QString path = m_stringlist.front();
+	m_stringlist.pop_front();
+	int tls = m_intlist.front();
+	m_intlist.pop_front();
 	
 	if (path == m_pwd)
 	{
@@ -552,8 +566,8 @@ void FtpThread::Transfer_Changedir_thread()
 void FtpThread::Transfer_Mkdir_thread()
 {
 	int result;
-	QString dir = m_transfer_mkdirlist.front();
-	m_transfer_mkdirlist.pop_front();
+	QString dir = m_stringlist.front();
+	m_stringlist.pop_front();
 	
 	result = mp_ftp->Mkdir(dir.latin1());
 	if (result) Event(EventHandler::mkdir_success);
@@ -572,18 +586,19 @@ void FtpThread::Transfer_Get_thread()
 {
 	int result;
 	
-	QString src = m_transfer_getsrclist.front();
-	m_transfer_getsrclist.pop_front();
-	QString dst = m_transfer_getdstlist.front();
-	m_transfer_getdstlist.pop_front();
-	bool tls = m_transfer_gettlslist.front();
-	m_transfer_gettlslist.pop_front();
-	unsigned long resume = m_transfer_getresumelist.front();
-	m_transfer_getresumelist.pop_front();
-	
-	if (tls)
+	QString src = m_stringlist.front();
+	m_stringlist.pop_front();
+	QString dst = m_stringlist.front();
+	m_stringlist.pop_front();
+	int tls = m_intlist.front();
+	m_intlist.pop_front();
+	unsigned long resume = m_ulonglist.front();
+	m_ulonglist.pop_front();
+		
+	if (tls > 1)
 	{
-		result = mp_ftp->SetDataEncryption(ftplib::secure);
+		if (tls == 2) result = mp_ftp->SetDataEncryption(ftplib::unencrypted);
+		else result = mp_ftp->SetDataEncryption(ftplib::secure);
 		if (result) 
 		{
 			Event(EventHandler::encryptdataon_success);
@@ -617,18 +632,19 @@ void FtpThread::Transfer_Put_thread()
 {
 	int result;
 	
-	QString src = m_transfer_putsrclist.front();
-	m_transfer_putsrclist.pop_front();
-	QString dst = m_transfer_putdstlist.front();
-	m_transfer_putdstlist.pop_front();
-	bool tls = m_transfer_puttlslist.front();
-	m_transfer_puttlslist.pop_front();
-	unsigned long resume = m_transfer_putresumelist.front();
-	m_transfer_putresumelist.pop_front();
+	QString src = m_stringlist.front();
+	m_stringlist.pop_front();
+	QString dst = m_stringlist.front();
+	m_stringlist.pop_front();
+	int tls = m_intlist.front();
+	m_intlist.pop_front();
+	unsigned long resume = m_ulonglist.front();
+	m_ulonglist.pop_front();
 	
-	if (tls)
+	if (tls > 1)
 	{
-		result = mp_ftp->SetDataEncryption(ftplib::secure);
+		if (tls == 2) result = mp_ftp->SetDataEncryption(ftplib::unencrypted);
+		else result = mp_ftp->SetDataEncryption(ftplib::secure);
 		if (result) 
 		{
 			Event(EventHandler::encryptdataon_success);
@@ -672,6 +688,78 @@ void FtpThread::Quit_thread()
 	}
 }
 
+void FtpThread::Transfer_Fxp_thread()
+{
+	int result;
+	
+	QString src = m_stringlist.front();
+	m_stringlist.pop_front();
+	QString dst = m_stringlist.front();
+	m_stringlist.pop_front();
+	FtpThread* dstftp = m_ftplist.front();
+	m_ftplist.pop_front();
+	int srctls = m_intlist.front();
+	m_intlist.pop_front();
+	int dsttls = m_intlist.front();
+	m_intlist.pop_front();
+	unsigned long resume = m_ulonglist.front();
+	m_ulonglist.pop_front();
+	
+	if (srctls > 1)
+	{
+		if (!FxpDisableTls())
+		{
+			Event(EventHandler::transfer_failure);
+			return;
+		}
+	}
+	
+	if (dsttls > 1)
+	{
+		if (!dstftp->FxpDisableTls())
+		{
+			Event(EventHandler::transfer_failure);
+			return;
+		}
+	}
+	
+	if (resume) qWarning("WARNING: fxp resume isn't supported. overwriting file instead");
+	result == ftplib::Fxp(mp_ftp, dstftp->Ftp(), src, dst, ftplib::image, ftplib::defaultfxp);
+	
+	FxpReportResult(result);
+	dstftp->FxpReportResult(result);
+	
+	if (result) Event(EventHandler::transfer_success);
+	else Event(EventHandler::transfer_failure);
+}
+
+bool FtpThread::FxpDisableTls()
+{
+	bool result = mp_ftp->SetDataEncryption(ftplib::unencrypted);
+	if (result) 
+	{
+		Event(EventHandler::encryptdataon_success);
+		m_dataencrypted = false;
+	}
+	else 
+	{
+		if (ConnectionLost()) Event(EventHandler::connectionlost);
+		else Event(EventHandler::encryptdataon_failure);
+	}
+	
+	return result;
+}
+
+void FtpThread::FxpReportResult(bool result)
+{
+	if (result) Event(EventHandler::fxp_success);
+	else 
+	{
+		if (ConnectionLost()) Event(EventHandler::connectionlost);
+		else Event(EventHandler::fxp_failure);
+	}	
+}
+
 void FtpThread::Pwd_thread()
 {
 	char buffer[1024];
@@ -695,8 +783,8 @@ void FtpThread::Chdir_thread()
 {
 	int result;
 	
-	QString path = m_chdirlist.front();
-	m_chdirlist.pop_front();
+	QString path = m_stringlist.front();
+	m_stringlist.pop_front();
 	
 	result = mp_ftp->Chdir(path.latin1());
 
@@ -712,8 +800,8 @@ void FtpThread::Mkdir_thread()
 {
 	int result;
 	
-	QString path = m_mkdirlist.front();
-	m_mkdirlist.pop_front();
+	QString path = m_stringlist.front();
+	m_stringlist.pop_front();
 	
 	result = mp_ftp->Mkdir(path.latin1());
 
@@ -743,8 +831,8 @@ void FtpThread::Rm_thread()
 {
 	int result;
 	
-	QString name = m_rmlist.front();
-	m_rmlist.pop_front();
+	QString name = m_stringlist.front();
+	m_stringlist.pop_front();
 	
 	result = mp_ftp->Delete(name.latin1());
 
@@ -760,10 +848,10 @@ void FtpThread::Rename_thread()
 {
 	int result;
 	
-	QString src = m_renamesrclist.front();
-	m_renamesrclist.pop_front();
-	QString dst = m_renamedstlist.front();
-	m_renamedstlist.pop_front();
+	QString src = m_stringlist.front();
+	m_stringlist.pop_front();
+	QString dst = m_stringlist.front();
+	m_stringlist.pop_front();
 	
 	result = mp_ftp->Rename(src.latin1(),dst.latin1());
 
@@ -828,8 +916,8 @@ void FtpThread::Rmdir_thread()
 {
 	bool result;
 	
-	QString name = m_rmdirlist.front();
-	m_rmdirlist.pop_front();
+	QString name = m_stringlist.front();
+	m_stringlist.pop_front();
 	
 	result = Delete_recurse(name.latin1());
 
@@ -845,8 +933,8 @@ void FtpThread::Raw_thread()
 {
 	bool result;
 	
-	QString cmd = m_rawlist.front();
-	m_rawlist.pop_front();
+	QString cmd = m_stringlist.front();
+	m_stringlist.pop_front();
 	
 	result = mp_ftp->Raw(cmd.latin1());
 
@@ -866,7 +954,7 @@ void FtpThread::run()
 	{
 		task t = m_tasklist.front();
 		m_tasklist.pop_front();
-	
+		
 		switch (t)
 		{
 			case FtpThread::connect:
@@ -926,9 +1014,11 @@ void FtpThread::run()
 			case FtpThread::transfer_changedir:
 				Transfer_Changedir_thread();
 				break;
-			case transfer_mkdir:
+			case FtpThread::transfer_mkdir:
 				Transfer_Mkdir_thread();
 				break;
+			case FtpThread::transfer_fxp:
+				Transfer_Fxp_thread();
 			default:
 				Event(EventHandler::error);
 				break;

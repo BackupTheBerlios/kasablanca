@@ -179,6 +179,9 @@ Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new Kasablanc
 	 	SLOT(SLOT_QueueItems(KbDirInfo*, FtpSession*, FtpSession*, bool)));
 	connect(mp_session_a, SIGNAL(gui_succeedtransfer(QListViewItem*)), SLOT(SLOT_NextTransfer(QListViewItem*)));
 	connect(mp_session_b, SIGNAL(gui_succeedtransfer(QListViewItem*)), SLOT(SLOT_NextTransfer(QListViewItem*)));	
+	connect(mp_session_a, SIGNAL(gui_clearqueue(FtpSession*)), SLOT(SLOT_ClearQueue(FtpSession*)));
+	connect(mp_session_b, SIGNAL(gui_clearqueue(FtpSession*)), SLOT(SLOT_ClearQueue(FtpSession*)));
+	
 	
 	 mp_session_a->Disconnect();
 	 mp_session_b->Disconnect();
@@ -456,6 +459,11 @@ void Kasablanca::SLOT_EditBookmarks()
     {
         initBookmarks();
     }
+}
+
+void Kasablanca::SLOT_ClearQueue(FtpSession*)
+{
+	mp_view->TaskView->clear();
 }
 
 void Kasablanca::SLOT_ItemRightClickedT(QListViewItem *, const QPoint & point, int)

@@ -78,6 +78,7 @@ public slots:
 	 void SLOT_ProcessQueue();
 	 void SLOT_QueueItems(KbDirInfo *dir, FtpSession* src, FtpSession* dst, bool startqueue);
 	 void SLOT_NextTransfer(QListViewItem* item);
+	 void SLOT_ClearQueue(FtpSession* session);
 	 
 private slots:
     void optionsShowToolbar();

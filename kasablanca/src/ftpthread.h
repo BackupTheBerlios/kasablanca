@@ -37,7 +37,6 @@ class KbDirInfo;
 
 typedef list<KbFileInfo> filist;
 typedef pair<int, bool> xferpair;
-typedef pair<QString, bool> changedirpair;
 
 /**
 @author Magnus Kulke
@@ -66,15 +65,44 @@ public:
 	bool EncryptData(bool flag);
 	//bool Get(QString src, QString dst, unsigned long resume = 0);
 	//bool Put(QString src, QString dst, unsigned long resume = 0);
+	bool Transfer_Fxp(QString src, QString dst, FtpThread* dstftp, int srctls, int dsttls, unsigned long resume = 0);
 	bool Mkdir(QString path);
 	bool Rename(QString src, QString dst);
 	bool Raw(QString cmd);
-	bool Transfer_Get(QString src, QString dst, bool tls, unsigned long resume = 0);
-	bool Transfer_Put(QString src, QString dst, bool tls, unsigned long resume = 0);
-	bool Transfer_Changedir(QString dir, bool tls);
+	bool Transfer_Get(QString src, QString dst, int tls, unsigned long resume = 0);
+	bool Transfer_Put(QString src, QString dst, int tls, unsigned long resume = 0);
+	bool Transfer_Changedir(QString dir, int tls);
 	bool Transfer_Mkdir(QString dir);
 	void Event(EventHandler::EventType type, void *data = NULL);
+	ftplib* Ftp() { return mp_ftp; };
+	void FxpReportResult(bool result);
+	bool FxpDisableTls();
 private:
+	enum task
+	{
+		connect = 0,
+		negotiateencryption,
+		login,
+		quit,
+		pwd,
+		chdir,
+		cdup,
+		dir,
+		scandir,
+		rm,
+		rmdir,
+		authtls,
+		dataencoff,
+		dataencon,
+		mkdir,
+		rename,
+		raw,
+		transfer_changedir,
+		transfer_get,
+		transfer_mkdir,
+		transfer_put,
+		transfer_fxp
+	};	
 	void run();
 	bool FormatFilelist(const char *filename,
 		QString current,
@@ -103,67 +131,25 @@ private:
 	void Transfer_Changedir_thread();
 	void Transfer_Get_thread();
 	void Transfer_Put_thread();
+	void Transfer_Fxp_thread();
 	void Transfer_Mkdir_thread();
 	bool Scandir_recurse(KbDirInfo *dir, QString path);
 	bool Delete_recurse(QString name);
 	bool ConnectionLost();
 private:
-	enum task
-	{
-		connect = 0,
-		negotiateencryption,
-		login,
-		quit,
-		pwd,
-		chdir,
-		cdup,
-		dir,
-		scandir,
-		rm,
-		rmdir,
-		authtls,
-		dataencoff,
-		dataencon,
-		mkdir,
-		rename,
-		raw,
-		transfer_changedir,
-		transfer_get,
-		transfer_mkdir,
-		transfer_put
-	};
 	QMutex* mp_mutex;
 	QObject* mp_eventreceiver;
 	ftplib* mp_ftp;
-	QString m_host;
-	QString m_user;
-	QString m_pass;
 	QString m_pwd;
 	bool m_dataencrypted;
 	KbDirInfo* mp_scandir;
 	filist m_dirlist, m_filelist;
 	pair<filist, filist> m_dircontent;
-	QStringList m_chdirlist;
-	QStringList m_rmlist;
-	QStringList m_rmdirlist;
-	QStringList m_transfer_mkdirlist;
-	list<bool> m_transfer_gettlslist;
-	list<bool> m_transfer_puttlslist;
-	QStringList m_transfer_getsrclist;
-	QStringList m_transfer_getdstlist;
-	QStringList m_transfer_putsrclist;
-	QStringList m_transfer_putdstlist;
-	QValueList<changedirpair> m_transfer_changedirlist;
-	list<unsigned long> m_transfer_getresumelist;
-	list<unsigned long> m_transfer_putresumelist;
-	QStringList m_putsrclist;
-	QStringList m_putdstlist;
-	list<unsigned long> m_putresumelist;
-	QStringList m_mkdirlist;
-	QStringList m_renamesrclist;
-	QStringList m_renamedstlist;
-	QStringList m_rawlist;
 	QValueList<task> m_tasklist;
+	QStringList m_stringlist;
+	QValueList<int> m_intlist;
+	QValueList<unsigned long> m_ulonglist;
+	QValueList<FtpThread*> m_ftplist;
 public:
 	QString m_linebuffer;
 };
