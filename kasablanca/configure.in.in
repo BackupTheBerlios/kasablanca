@@ -3,4 +3,4 @@
 AM_INIT_AUTOMAKE(kasablanca, 0.4-pre2)
 AC_C_BIGENDIAN
 AC_CHECK_KDEMAXPATHLEN
-
+AC_CHECK_HEADER([openssl/ssl.h],[],[echo "ERROR: openssl headers not found"; exit;])
