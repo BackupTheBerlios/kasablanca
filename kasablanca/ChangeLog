@@ -1,5 +1,6 @@
 [v 0.4.0.1]
 
+-added: status tooltip for systray icon
 -fixed: correct-pasv bug
 -fixed: evil flaw in local delete method, added option to move 
  files into trash instead

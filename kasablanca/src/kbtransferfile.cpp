@@ -18,6 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
+#include <qtooltip.h>
+ 
+#include <ksystemtray.h> 
+ 
+#include "kbsiteinfo.h"
+
 #include "kbtransferfile.h"
 
 KbTransferFile::KbTransferFile(QListView *taskview, QListViewItem *after, FtpSession *srcsession, FtpSession *dstsession, KbFileInfo *src, KbFileInfo *dst) : KbTransferItem(taskview, after, srcsession, dstsession, src, dst)
@@ -52,27 +58,28 @@ void KbTransferFile::Info()
 	qWarning("INFO: mp_dst->dirPath() = %s", mp_dst->dirPath(true).latin1());
 }
 
-void KbTransferFile::ShowProgress()
+void KbTransferFile::ShowProgress(KSystemTray *systemtray)
 {
 	int time = m_time.elapsed();
 	int time_dif = time - m_time_old;
 	if (time_dif == 0) time_dif = 1;
 	off_t xfer_dif = m_xfered - m_xfered_old;
 
-	setText(1, 
-		"[" +
-		QString::number((m_xfered + mp_dst->Size()) >> 10) +
-		"kb of " +
-		QString::number(mp_src->Size() >> 10) +
-		"kb] [" +
-		QString::number(((m_xfered + mp_dst->Size())* 100 ) / (mp_src->Size() + 1)) + 
-		"%] [" +
-		QString::number(xfer_dif / time_dif) +
-		" kb/s]"
+	off_t currentsize = (m_xfered + mp_dst->Size()) >> 10;
+	off_t wholesize = mp_src->Size() >> 10;
+	int percentage = ((m_xfered + mp_dst->Size())* 100 ) / (mp_src->Size() + 1);
+	int speed = xfer_dif / time_dif;
+	
+	setText(1, "[" + QString::number(currentsize) + "kb of " 
+		+ QString::number(wholesize) + "kb] [" + QString::number(percentage) 
+		+ "%] [" + QString::number(speed) + " kb/s]"
 	);
 	
 	m_time_old = time;
 	m_xfered_old = m_xfered;
+	
+	QToolTip::add(systemtray, mp_src->fileName() 
+	+ "," + QString::number(percentage) + "%," + QString::number(speed) + "kb/s");
 }
 
 
