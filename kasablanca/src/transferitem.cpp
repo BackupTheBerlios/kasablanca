@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "transferitem.h"
 
-transferitem::transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
+/*transferitem::transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
  : QListViewItem(taskview, taskview->lastItem())
 {
 	m_type = type;
@@ -30,7 +30,7 @@ transferitem::transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInf
 	if (type == transferitem::download_b_to_a) setText(0, "download " + firemote.fileName() + " <<");
 	if (type == transferitem::upload_a_to_b) setText(0, "upload " + firemote.fileName() + " >>");
 	if (type == transferitem::upload_b_to_a) setText(0, "upload " + firemote.fileName() + " <<");
-}
+}*/
 
 transferitem::transferitem(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
  : QListViewItem(taskview, after)
@@ -39,10 +39,10 @@ transferitem::transferitem(QListView* taskview, QListViewItem* after, QFileInfo 
 	m_filocal = filocal;
 	m_firemote = firemote;
 
-	if (type == transferitem::download_a_to_b) setText(0, "download " + firemote.fileName() + " >>");
-	if (type == transferitem::download_b_to_a) setText(0, "download " + firemote.fileName() + " <<");
-	if (type == transferitem::upload_a_to_b) setText(0, "upload " + firemote.fileName() + " >>");
-	if (type == transferitem::upload_b_to_a) setText(0, "upload " + firemote.fileName() + " <<");
+	if (type == transferitem::download_a_to_b) setText(0, "[download] [" + firemote.fileName() + "] [->]");
+	if (type == transferitem::download_b_to_a) setText(0, "[download] [" + firemote.fileName() + "] [<-]");
+	if (type == transferitem::upload_a_to_b) setText(0, "[upload] [" + firemote.fileName() + "] [->]");
+	if (type == transferitem::upload_b_to_a) setText(0, "[upload] [" + firemote.fileName() + "] [<-]");
 }
 
 transferitem::transferitem(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type) : QListViewItem(taskview, after)
@@ -51,8 +51,8 @@ transferitem::transferitem(QListView* taskview, QListViewItem* after, RemoteFile
 	m_fifxpsrc = fifxpsrc;
 	m_fifxpdst = fifxpdst;
 
-	if (type == transferitem::fxp_a_to_b) setText(0, "fxp " + fifxpsrc.fileName() + " >>");
-	if (type == transferitem::fxp_b_to_a) setText(0, "fxp " + fifxpsrc.fileName() + " <<");
+	if (type == transferitem::fxp_a_to_b) setText(0, "[fxp] [" + fifxpsrc.fileName() + "] [->]");
+	if (type == transferitem::fxp_b_to_a) setText(0, "[fxp] [" + fifxpsrc.fileName() + "] [<-]");
 }
 
 

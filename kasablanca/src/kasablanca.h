@@ -66,7 +66,7 @@ public:
 		waitsrc,
 		abort
 	};
-	
+
 	enum QueueState
 	{
 		done = 0,
@@ -74,10 +74,9 @@ public:
 		proceed,
 		scanremote,
 		scanlocal,
-		scanfxpa,
-		scanfxpb
+		scanfxp
 	};
-	
+
 	enum State
 	{
 		disconnected = 0,
@@ -151,6 +150,7 @@ private:
 	int m_dcount;
 	int m_xferallsize;
 	int m_xferresumesize;
+	int m_xfered;
 	void Xfer();
 	void InsertMarkedItems(transferitem::transfertype t, QListViewItem* begin = NULL);
 	void UpdateLocalDisplay(Browser x);
@@ -161,6 +161,7 @@ private:
 	void ConnectCustom(Browser b);
 	void ConnectBookmark(int n, Browser b);
 	
+	void timerEvent(QTimerEvent* e);
 	void closeEvent(QCloseEvent * e);
 	
 	kbprocess m_proc_a, m_proc_b;
@@ -174,8 +175,8 @@ private:
 	siteinfo m_site_a, m_site_b;
 	QString m_log_a, m_log_b;
 	vector<siteinfo> m_bookmarks;
-	QTime m_timer;
-	QueueState m_qstate;
+	QTime m_time;
+	QueueState m_qstate_a, m_qstate_b;
 };
 
 #endif

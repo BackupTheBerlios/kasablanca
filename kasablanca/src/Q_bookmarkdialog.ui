@@ -126,8 +126,11 @@
             <property name="name">
                 <cstring>InfoEdit</cstring>
             </property>
+            <property name="inputMask">
+                <string></string>
+            </property>
             <property name="whatsThis" stdset="0">
-                <string>This information points to the the ftp server. IP can either be a standard ip adress like 192.168.2.1 or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".</string>
+                <string>This information points to the the ftp server. HOST can either be a standard ip adress like 192.168.2.1 or a domain name. PORT is the port number on which the ftp server listens. In most cases this is 21. Both are seperated by a ":" character. A legit input would be "ftp.kde.org:21".</string>
             </property>
         </widget>
         <widget class="QLabel" row="1" column="3">
@@ -135,7 +138,7 @@
                 <cstring>textLabel1_2</cstring>
             </property>
             <property name="text">
-                <string>&lt;p align="right"&gt;IP:Port&lt;/p&gt;</string>
+                <string>&lt;p align="right"&gt;Host:Port&lt;/p&gt;</string>
             </property>
         </widget>
         <widget class="QLineEdit" row="0" column="4" rowspan="1" colspan="2">

@@ -19,10 +19,10 @@
  ***************************************************************************/
 #include "transferfile.h"
 
-transferfile::transferfile(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
+/*transferfile::transferfile(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
  : transferitem(taskview, filocal, firemote, type)
 {
-}
+}*/
 
 transferfile::transferfile(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type) : transferitem(taskview, after, filocal, firemote, type)
 {

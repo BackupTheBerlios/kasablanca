@@ -48,8 +48,7 @@ int main(int argc, char **argv)
 		mainWin->m_tempdirname = QString::number((int) time(NULL) & 0xffff) + ".dir";
 		mainWin->m_version = version;
 		mainWin->setCaption("Kasablanca " + QString(version));
-		mainWin->LogWindow->append(version);
-
+		
 		mainWin->show();
 
       args->clear();

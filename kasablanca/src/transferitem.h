@@ -44,7 +44,7 @@ public:
 		  fxp_a_to_b,
 		  fxp_b_to_a
     };
-	transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
+	//transferitem(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
 	transferitem(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type);
 	transferitem(QListView* taskview, QListViewItem* after, RemoteFileInfo fifxpsrc, RemoteFileInfo fifxpdst, transfertype type);
    ~transferitem();

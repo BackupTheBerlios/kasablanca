@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>686</width>
-            <height>695</height>
+            <height>689</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -130,80 +130,6 @@
                 <number>1024</number>
             </property>
         </widget>
-        <widget class="QSplitter" row="3" column="0" rowspan="1" colspan="8">
-            <property name="name">
-                <cstring>splitter2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <widget class="QListView">
-                <column>
-                    <property name="text">
-                        <string>Task</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>false</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>Progress</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>false</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <property name="name">
-                    <cstring>TaskView</cstring>
-                </property>
-                <property name="selectionMode">
-                    <enum>Extended</enum>
-                </property>
-            </widget>
-            <widget class="QTextEdit">
-                <property name="name">
-                    <cstring>LogWindow</cstring>
-                </property>
-                <property name="paletteForegroundColor">
-                    <color>
-                        <red>255</red>
-                        <green>255</green>
-                        <blue>255</blue>
-                    </color>
-                </property>
-                <property name="paletteBackgroundColor">
-                    <color>
-                        <red>82</red>
-                        <green>194</green>
-                        <blue>255</blue>
-                    </color>
-                </property>
-                <property name="font">
-                    <font>
-                        <family>Dec Terminal</family>
-                    </font>
-                </property>
-                <property name="textFormat">
-                    <enum>PlainText</enum>
-                </property>
-                <property name="text">
-                    <string></string>
-                </property>
-                <property name="wrapPolicy">
-                    <enum>AtWordOrDocumentBoundary</enum>
-                </property>
-                <property name="readOnly">
-                    <bool>true</bool>
-                </property>
-            </widget>
-        </widget>
         <widget class="QLineEdit" row="2" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>CommandLineA</cstring>
@@ -317,6 +243,135 @@
             <property name="selectionMode">
                 <enum>Extended</enum>
             </property>
+        </widget>
+        <widget class="QSplitter" row="3" column="0" rowspan="1" colspan="8">
+            <property name="name">
+                <cstring>splitter12</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <widget class="QListView">
+                <column>
+                    <property name="text">
+                        <string>Task</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>false</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Progress</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>false</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <property name="name">
+                    <cstring>TaskView</cstring>
+                </property>
+                <property name="selectionMode">
+                    <enum>Extended</enum>
+                </property>
+            </widget>
+            <widget class="QLayoutWidget">
+                <property name="name">
+                    <cstring>layout4</cstring>
+                </property>
+                <hbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>0</number>
+                    </property>
+                    <widget class="QTextEdit">
+                        <property name="name">
+                            <cstring>LogWindowA</cstring>
+                        </property>
+                        <property name="paletteForegroundColor">
+                            <color>
+                                <red>255</red>
+                                <green>255</green>
+                                <blue>255</blue>
+                            </color>
+                        </property>
+                        <property name="paletteBackgroundColor">
+                            <color>
+                                <red>82</red>
+                                <green>194</green>
+                                <blue>255</blue>
+                            </color>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <family>Dec Terminal</family>
+                            </font>
+                        </property>
+                        <property name="hScrollBarMode">
+                            <enum>AlwaysOff</enum>
+                        </property>
+                        <property name="textFormat">
+                            <enum>PlainText</enum>
+                        </property>
+                        <property name="text">
+                            <string></string>
+                        </property>
+                        <property name="wrapPolicy">
+                            <enum>AtWordOrDocumentBoundary</enum>
+                        </property>
+                        <property name="readOnly">
+                            <bool>true</bool>
+                        </property>
+                    </widget>
+                    <widget class="QTextEdit">
+                        <property name="name">
+                            <cstring>LogWindowB</cstring>
+                        </property>
+                        <property name="paletteForegroundColor">
+                            <color>
+                                <red>255</red>
+                                <green>255</green>
+                                <blue>255</blue>
+                            </color>
+                        </property>
+                        <property name="paletteBackgroundColor">
+                            <color>
+                                <red>82</red>
+                                <green>194</green>
+                                <blue>255</blue>
+                            </color>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <family>Dec Terminal</family>
+                            </font>
+                        </property>
+                        <property name="hScrollBarMode">
+                            <enum>AlwaysOff</enum>
+                        </property>
+                        <property name="textFormat">
+                            <enum>PlainText</enum>
+                        </property>
+                        <property name="text">
+                            <string></string>
+                        </property>
+                        <property name="wrapPolicy">
+                            <enum>AtWordOrDocumentBoundary</enum>
+                        </property>
+                        <property name="readOnly">
+                            <bool>true</bool>
+                        </property>
+                    </widget>
+                </hbox>
+            </widget>
         </widget>
     </grid>
 </widget>
@@ -477,7 +532,7 @@
     <tabstop>CommandLineA</tabstop>
     <tabstop>CommandLineB</tabstop>
     <tabstop>TaskView</tabstop>
-    <tabstop>LogWindow</tabstop>
+    <tabstop>LogWindowA</tabstop>
 </tabstops>
 <slots>
     <slot>SLOT_EnterCommandA()</slot>

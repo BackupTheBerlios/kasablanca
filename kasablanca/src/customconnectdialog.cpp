@@ -35,7 +35,7 @@ CustomConnectDialog::~CustomConnectDialog(){
 void CustomConnectDialog::accept()
 {
     mp_site->SetName("Custom Site");
-    mp_site->SetInfo(HostLineEdit->text()+":"+PortLineEdit->text());
+    mp_site->SetInfo(InfoEdit->text());
     if (AnonymousCheckBox->isOn())
 	 {
 		mp_site->SetUser("anonymous");

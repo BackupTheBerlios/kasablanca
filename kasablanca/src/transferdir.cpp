@@ -19,10 +19,10 @@
  ***************************************************************************/
 #include "transferdir.h"
 
-transferdir::transferdir(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
+/*transferdir::transferdir(QListView* taskview, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
  : transferitem(taskview, filocal, firemote, type)
 {
-}
+}*/
 
 transferdir::transferdir(QListView* taskview, QListViewItem* after, QFileInfo filocal, RemoteFileInfo firemote, transfertype type)
  : transferitem(taskview, after, filocal, firemote, type)

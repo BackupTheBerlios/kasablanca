@@ -74,13 +74,15 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 
 	setWFlags(WDestructiveClose);
 		
-	QPopupMenu* m = new QPopupMenu();
+	QPopupMenu* bookmarks = new QPopupMenu();
+	QPopupMenu* actions = new QPopupMenu();
 	
 	/* both bookmarkmenus are inserted into a Connect entry */
 	
-	menubar->insertItem("Connect",  m, 1001, 2);
-	m->insertItem("Left Window",  &m_bookmarksmenu_a, 1001);
-	m->insertItem("Right Window", &m_bookmarksmenu_b, 1002);
+	menubar->insertItem("Connect",  bookmarks, 1001, 2);
+	menubar->insertItem("Action",  actions, 1002, 3);
+	bookmarks->insertItem("Left Window",  &m_bookmarksmenu_a, 1001);
+	bookmarks->insertItem("Right Window", &m_bookmarksmenu_b, 1002);
 	
 	/* if parsebookmarks returns false, an error box appears */
 	
@@ -91,7 +93,7 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 
 	m_proc_a.addArgument("kbftp/kbftp");
 	m_proc_b.addArgument("kbftp/kbftp");
-	
+
 	/*if (locate("exe", "kbftp") == QString::null) KMessageBox::error(0,"kbftp binary is not in kde binary path.");
 	else 
 	{
@@ -105,7 +107,7 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 
 	mp_header_a = BrowserA->header();
 	mp_header_b = BrowserB->header();
-	
+
 	TransferButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("forward",KIcon::Toolbar));
    TransferButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("back",KIcon::Toolbar));
 	RefreshButtonA->setIconSet(KGlobal::iconLoader()->loadIconSet("reload",KIcon::Toolbar));
@@ -114,25 +116,29 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
    ConnectButtonB->setIconSet(KGlobal::iconLoader()->loadIconSet("connect_no",KIcon::Toolbar));
 	
    m_rclickmenu_a.insertItem("Transfer", Transfer);
-   m_rclickmenu_a.insertItem("Queue", Queue);
+   m_rclickmenu_a.insertItem("Put in Queue", Queue);
    m_rclickmenu_a.insertSeparator();
    m_rclickmenu_a.insertItem("Delete", Delete);
    m_rclickmenu_a.insertItem("Rename", Rename);
 	m_rclickmenu_a.insertSeparator();
 	m_rclickmenu_a.insertItem("Mkdir", Mkdir);
-
+	
    m_rclickmenu_b.insertItem("Transfer", Transfer);
-   m_rclickmenu_b.insertItem("Queue", Queue);
+   m_rclickmenu_b.insertItem("Put in Queue", Queue);
    m_rclickmenu_b.insertSeparator();
    m_rclickmenu_b.insertItem("Delete", Delete);
    m_rclickmenu_b.insertItem("Rename", Rename);
 	m_rclickmenu_b.insertSeparator();
 	m_rclickmenu_b.insertItem("Mkdir", Mkdir);
 
-   m_rclickmenu_t.insertItem("Start", Start);
+	m_rclickmenu_t.insertItem("Start Queue", Start);
    m_rclickmenu_t.insertSeparator();
-   m_rclickmenu_t.insertItem("Skip", Skip);
-
+   m_rclickmenu_t.insertItem("Skip Item(s)", Skip);
+	
+	actions->insertItem("Left Window", &m_rclickmenu_a, 1001);
+	actions->insertItem("Right Window", &m_rclickmenu_b, 1002);
+	actions->insertItem("Queues", &m_rclickmenu_t, 1003);
+	
    connect( &m_bookmarksmenu_a, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectA(int) ) );
 	connect( &m_bookmarksmenu_b, SIGNAL( activated(int) ), this, SLOT( SLOT_ConnectB(int) ) );
 	
@@ -185,7 +191,7 @@ Kasablanca::Kasablanca(QWidget *parent, const char *name) : KasablancaMainWindow
 	m_rclickmenu_t.setItemEnabled(Skip, false);
 	
 	m_dcount = 0;
-	m_qstate = done;
+	m_qstate_a = done; m_qstate_b = done;
 	m_fxpstate = stopped;
 	m_fxpportinfo = "";
 	
@@ -243,12 +249,15 @@ void Kasablanca::ConnectCustom(Browser b)
 			return;
 		}
 
-		if (site->GetPasv() == 1) proc->writeStdin("setconnmode pasv");
-		else proc->writeStdin("setconnmode port");
+		if (site->GetPasv() == 1) proc->writeStdin("setpasv");
+		else proc->writeStdin("setport");
 
-		proc->writeStdin("connect " + QString(site->GetInfo()));
+		proc->writeStdin("connect");
+		proc->writeStdin(QString(site->GetInfo()));
 		if (site->GetTls() > 0) proc->writeStdin("negotiateencryption");
-		proc->writeStdin("login " + QString(site->GetUser()) + " " + QString(site->GetPass()));
+		proc->writeStdin("login");
+		proc->writeStdin(QString(site->GetUser()));
+		proc->writeStdin(QString(site->GetPass()));
 
 		UpdateRemote(b);
 	}
@@ -289,7 +298,9 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 	QToolButton* transferbutton, *connectbutton, *connectbutton_other, *refreshbutton;
 	QLineEdit* commandline, *cwdline;
 	QPopupMenu* bookmarksmenu, *rclickmenu;
-
+	
+	statusBar()->clear();
+	
 	if (b == A)
 	{
 		m_status_a = s;
@@ -322,7 +333,6 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
    	case connected:
 
 			browser->setEnabled(true);
-			LogWindow->setColor(white);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
 			connectbutton_other->setEnabled(true);
@@ -334,13 +344,12 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 			rclickmenu->setEnabled(true);
 			m_rclickmenu_t.setItemEnabled(Start, true);
 			m_rclickmenu_t.setItemEnabled(Skip, true);
-			rclickmenu->setItemEnabled(Mkdir, true);	
+			rclickmenu->setItemEnabled(Mkdir, true);
 			break;
 			
 		case disconnected:
 
 			browser->setEnabled(true);
-			LogWindow->setColor(white);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
 			connectbutton_other->setEnabled(true);
@@ -358,7 +367,6 @@ void Kasablanca::SetGuiStatus(State s, Browser b)
 		case occupied:
 		
 			browser->setEnabled(false);
-			LogWindow->setColor(white);
 			transferbutton->setEnabled(false);
 			connectbutton->setEnabled(true);
 			connectbutton_other->setEnabled(false);
@@ -418,13 +426,16 @@ void Kasablanca::ConnectBookmark(int n, Browser b)
 		return;
 	}
 
-	if (site->GetPasv() == 1) proc->writeStdin("setconnmode pasv");
-	else proc->writeStdin("setconnmode port");
+	if (site->GetPasv() == 1) proc->writeStdin("setpasv");
+	else proc->writeStdin("setport");
 
-	proc->writeStdin("connect " + QString(site->GetInfo()));
+	proc->writeStdin("connect");
+	proc->writeStdin(QString(site->GetInfo()));
 	if (site->GetTls() > 0) proc->writeStdin("negotiateencryption");
-	proc->writeStdin("login " + QString(site->GetUser()) + " " + QString(site->GetPass()));
-	
+	proc->writeStdin("login");
+	proc->writeStdin(QString(site->GetUser()));
+	proc->writeStdin(QString(site->GetPass()));
+
 	UpdateRemote(b);
 }
 
@@ -432,7 +443,8 @@ void Kasablanca::SLOT_EnterCommandA()
 {
 	if (m_status_a == connected)
 	{
-		m_proc_a.writeStdin("raw " + CommandLineA->text());
+		m_proc_a.writeStdin("raw");
+		m_proc_a.writeStdin(CommandLineA->text());
 		CommandLineA->setText("");
 	}
 	else if (m_status_a == disconnected)
@@ -449,7 +461,8 @@ void Kasablanca::SLOT_EnterCwdA()
 {
 	if (m_status_a == connected)
 	{
-		m_proc_a.writeStdin("chdir " + CwdLineA->text());;
+		m_proc_a.writeStdin("chdir");
+		m_proc_a.writeStdin(CwdLineA->text());
 		UpdateRemote(A);
 	}
 	else if (m_status_a == disconnected)
@@ -473,8 +486,8 @@ void Kasablanca::SLOT_ConnectButtonA()
 		while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
 		UpdateLocalDisplay(A);
 		SetGuiStatus(disconnected, A);
-		LogWindow->setColor(red);
-		LogWindow->append("killed ftp connection");
+		LogWindowA->setColor(red);
+		LogWindowA->append("killed ftp connection");
 	}
 	else m_proc_a.writeStdin("quit");
 }
@@ -503,8 +516,8 @@ void Kasablanca::SLOT_ConnectButtonB()
 		UpdateLocalDisplay(B);
 				
 		SetGuiStatus(disconnected, B);
-		LogWindow->setColor(red);
-		LogWindow->append("killed ftp connection");
+		LogWindowB->setColor(red);
+		LogWindowB->append("killed ftp connection");
 	}
 	else m_proc_b.writeStdin("quit");
 }
@@ -608,7 +621,11 @@ void Kasablanca::SLOT_ItemClickedB(QListViewItem * item)
 	if (m_status_b == connected)
 	{
 		if (item->text(0) == "..") m_proc_b.writeStdin("cdup");
-		else m_proc_b.writeStdin("chdir " + item->text(0));
+		else
+		{
+			m_proc_b.writeStdin("chdir");
+			m_proc_b.writeStdin(item->text(0));
+		}
 		UpdateRemote(B);
 	}
 	else if (m_status_b == disconnected)
@@ -621,7 +638,7 @@ void Kasablanca::SLOT_ItemClickedB(QListViewItem * item)
    	{
       	if (m_currentlocaldir_b.cd(item->text(0)) == TRUE) UpdateLocalDisplay(B);
 		}
-	}		
+	}
 }
 
 void Kasablanca::SLOT_ItemClickedA(QListViewItem * item)
@@ -633,7 +650,11 @@ void Kasablanca::SLOT_ItemClickedA(QListViewItem * item)
 	if (m_status_a == connected)
 	{
 		if (item->text(0) == "..") m_proc_a.writeStdin("cdup");
-		else m_proc_a.writeStdin("chdir " + item->text(0));
+		else
+		{
+			m_proc_a.writeStdin("chdir");
+			m_proc_a.writeStdin(item->text(0));
+		}
 		UpdateRemote(A);
 	}
 	else if (m_status_a == disconnected)
@@ -653,7 +674,8 @@ void Kasablanca::SLOT_EnterCommandB()
 {
 	if (m_status_b == connected)
 	{
-		m_proc_b.writeStdin("raw " + CommandLineB->text());
+		m_proc_b.writeStdin("raw");
+		m_proc_b.writeStdin(CommandLineB->text());
 		CommandLineB->setText("");
 	}
 	else if (m_status_b == disconnected)
@@ -799,11 +821,13 @@ void Kasablanca::SLOT_DeleteB()
 	
 				if (item->rtti() == 1001)
 				{
-					m_proc_b.writeStdin("rmdir " + static_cast<diritem*>(item)->m_file);
+					m_proc_b.writeStdin("rmdir");
+					m_proc_b.writeStdin(static_cast<diritem*>(item)->m_file);
 				}
 				else if (item->rtti() == 1002)
 				{
-					m_proc_b.writeStdin("delete " + static_cast<fileitem*>(item)->m_file);
+					m_proc_b.writeStdin("delete");
+					m_proc_b.writeStdin(static_cast<fileitem*>(item)->m_file);
 				}
 			}
 			it++;
@@ -818,7 +842,7 @@ void Kasablanca::SLOT_DeleteB()
 			if (it.current()->isSelected())
 			{
 				QListViewItem* item = it.current();
-	
+
 				if (item->rtti() == 1001)
 				{
 					m_currentlocaldir_b.rmdir(static_cast<diritem*>(item)->m_file);
@@ -844,14 +868,16 @@ void Kasablanca::SLOT_DeleteA()
 			if (it.current()->isSelected())
 			{
 				QListViewItem* item = it.current();
-	
+
 				if (item->rtti() == 1001)
 				{
-					m_proc_a.writeStdin("rmdir " + static_cast<diritem*>(item)->m_file);
+					m_proc_a.writeStdin("rmdir");
+					m_proc_a.writeStdin(static_cast<diritem*>(item)->m_file);
 				}
 				else if (item->rtti() == 1002)
 				{
-					m_proc_a.writeStdin("delete " + static_cast<fileitem*>(item)->m_file);
+					m_proc_a.writeStdin("delete");
+					m_proc_a.writeStdin(static_cast<fileitem*>(item)->m_file);
 				}
 			}
 			it++;
@@ -1101,43 +1127,45 @@ void Kasablanca::Xfer()
 	Browser remotebrowser, localbrowser, browser_fxpsrc, browser_fxpdst;
 	siteinfo* site, *site_fxpsrc, *site_fxpdst;
 	QListView* remoteview, *view_fxpsrc, *view_fxpdst;
+	QueueState* qstate, *qstate_fxpsrc, *qstate_fxpdst;
 
 	if (TaskView->childCount() == 0)
 	{
-		qWarning("boogie");
 		SLOT_RefreshBrowserA();
 		SLOT_RefreshBrowserB();
 		return;
 	}
-	else 
+	else
 	{
 		TaskView->firstChild()->setSelected(false);
 		TaskView->firstChild()->setSelectable(false);
 	}
 
 	transferitem* item = static_cast<transferitem*>(TaskView->firstChild());
-			
+
 	qWarning("item: %s", item->text(0).latin1());
-	
+
 	if ((item->type() == transferitem::download_a_to_b) || (item->type() == transferitem::upload_b_to_a))
 	{
 		site = &m_site_a;
 		proc = &m_proc_a;
 		remotebrowser = A;
-		localbrowser = B;	
+		localbrowser = B;
 		remoteview = BrowserA;
 		remotedir = m_currentremotedir_a;
 		localdir = &m_currentlocaldir_b;
+		qstate = &m_qstate_a;
 	}
 	else if ((item->type() == transferitem::download_b_to_a) || (item->type() == transferitem::upload_a_to_b))
 	{
 		site = &m_site_b;
 		proc = &m_proc_b;
 		remotebrowser = B;
-		localbrowser = A;	
+		localbrowser = A;
 		remoteview = BrowserB;
 		remotedir = m_currentremotedir_b;
 		localdir = &m_currentlocaldir_a;
+		qstate = &m_qstate_b;
 	}
 	else if (item->type() == transferitem::fxp_a_to_b)
 	{
@@ -1151,6 +1179,8 @@ void Kasablanca::Xfer()
 		view_fxpdst = BrowserB;
 		dir_fxpsrc = m_currentremotedir_a;
 		dir_fxpdst = m_currentremotedir_b;
+		qstate_fxpsrc = &m_qstate_a;
+		qstate_fxpdst = &m_qstate_b;
 	}
 	else if (item->type() == transferitem::fxp_b_to_a)
 	{
@@ -1164,31 +1194,35 @@ void Kasablanca::Xfer()
 		view_fxpdst = BrowserA;
 		dir_fxpsrc = m_currentremotedir_b;
 		dir_fxpdst = m_currentremotedir_a;
+		qstate_fxpsrc = &m_qstate_b;
+		qstate_fxpdst = &m_qstate_a;
 	}
 	else return; /* should not happen! */
-	
+
 	/* process first queue item */
-	
-	/* check if it's fxp and if we're in the correct directory 
+
+	/* check if it's fxp and if we're in the correct directory
 	yet. if not issue a change to the transfer directory. */
-		
+
 	if ((item->type() == transferitem::fxp_a_to_b) || (item->type() == transferitem::fxp_b_to_a))
 	{
 		if (item->m_fifxpsrc.dirPath() != dir_fxpsrc)
 		{
-			qWarning("in the wrong path");
-			m_qstate = changedir;
+			qWarning("in the wrong path, change to %s", item->m_fifxpsrc.dirPath().latin1());
+			*qstate_fxpsrc = changedir;
 
-			proc_fxpsrc->writeStdin("chdir " + item->m_fifxpsrc.dirPath());
+			proc_fxpsrc->writeStdin("chdir");
+			proc_fxpsrc->writeStdin(item->m_fifxpsrc.dirPath());
 			UpdateRemote(browser_fxpsrc);
 			return;
 		}
 		else if (item->m_fifxpdst.dirPath() != dir_fxpdst)
 		{
-			qWarning("in the wrong path");
-			m_qstate = changedir;
+			qWarning("in the wrong path, change to %s", item->m_fifxpdst.dirPath().latin1());
+			*qstate_fxpdst = changedir;
 
-			proc_fxpdst->writeStdin("chdir " + item->m_fifxpdst.dirPath());
+			proc_fxpdst->writeStdin("chdir");
+			proc_fxpdst->writeStdin(item->m_fifxpdst.dirPath());
 			UpdateRemote(browser_fxpdst);
 			return;
 		}
@@ -1200,46 +1234,48 @@ void Kasablanca::Xfer()
 
 		if (item->m_firemote.dirPath() != remotedir)
 		{
-			qWarning("in the wrong path");
-			m_qstate = changedir;
+			qWarning("in the wrong path, change to %s", item->m_firemote.dirPath().latin1());
+			*qstate = changedir;
 
-			proc->writeStdin("chdir " + item->m_firemote.dirPath());
+			proc->writeStdin("chdir");
+			proc->writeStdin(item->m_firemote.dirPath());
 			UpdateRemote(remotebrowser);
-		
 			return;
 		}
-					
+
 		localdir->cd(item->m_filocal.dirPath());
 		UpdateLocalDisplay(localbrowser);
 	}
-	
-	// handle items	
-	
+
+	// handle items
+
 	if (item->rtti() == transferitem::dir)
 	{
 		qWarning("...is a dir");
 		transferdir* dir = static_cast<transferdir*>(TaskView->firstChild());
-					 	
+
 		/*-------------upload/download---------------*/
-		
+
 		if ((dir->type() == transferitem::upload_a_to_b) || (dir->type() == transferitem::upload_b_to_a))
 		{
 			/* the scanlocal flag is set */
 
-			m_qstate = scanlocal;
+			*qstate = scanlocal;
 
 			/* create dir on remote */
 
-			proc->writeStdin("mkdir " + dir->m_firemote.fileName());
+			proc->writeStdin("mkdir");
+			proc->writeStdin(dir->m_firemote.fileName());
 
 			/* change to remote dir */
 
-			proc->writeStdin("chdir " + dir->m_firemote.fileName());
+			proc->writeStdin("chdir");
+			proc->writeStdin(dir->m_firemote.fileName());
 
 			/* enter dir on local */
 
 			localdir->cd(dir->m_filocal.fileName());
-			
+
 			UpdateLocalDisplay(localbrowser);
 			UpdateRemote(remotebrowser);
 		}
@@ -1247,11 +1283,12 @@ void Kasablanca::Xfer()
 		{
 			/* the scan dir flag is set */
 
-			m_qstate = scanremote;
+			*qstate = scanremote;
 
 			/* cwd to new dir on remote.  */
 
-			proc->writeStdin("chdir " + dir->m_firemote.fileName());
+			proc->writeStdin("chdir");
+			proc->writeStdin(dir->m_firemote.fileName());
 
 			/* create dir on local */
 
@@ -1260,7 +1297,7 @@ void Kasablanca::Xfer()
 			/* enter dir on local */
 
 			localdir->cd(dir->m_filocal.fileName());
-			
+
 			UpdateLocalDisplay(localbrowser);
 			UpdateRemote(remotebrowser);
 		}
@@ -1268,26 +1305,28 @@ void Kasablanca::Xfer()
 		{
 			/* the scan dir flag is set */
 
-			if (dir->type() == transferitem::fxp_a_to_b) m_qstate = scanfxpa;
-			else m_qstate = scanfxpb; 
-
+			*qstate_fxpsrc = scanfxp;
+		
 			/* cwd to new dir on src.  */
-			
-			proc_fxpsrc->writeStdin("chdir " + dir->m_fifxpsrc.fileName());
+
+			proc_fxpsrc->writeStdin("chdir");
+			proc_fxpsrc->writeStdin(dir->m_fifxpsrc.fileName());
 
 			/* create dir on dst*/
 
-			proc_fxpdst->writeStdin("mkdir " + dir->m_fifxpdst.fileName());
-			
+			proc_fxpdst->writeStdin("mkdir");
+			proc_fxpdst->writeStdin(dir->m_fifxpdst.fileName());
+
 			/* enter dir on dst */
 
-			proc_fxpdst->writeStdin("chdir " + dir->m_fifxpdst.fileName());
+			proc_fxpdst->writeStdin("chdir");
+			proc_fxpdst->writeStdin(dir->m_fifxpdst.fileName());
 			
-			/*if (dir->type() == transferitem::fxp_a_to_b) UpdateRemote(A);
-			else UpdateRemote(B);*/
+			/* update remotes */
+			
 			UpdateRemote(A);
 			UpdateRemote(B);
-		}		
+		}
 	}
 	else if (item->rtti() == transferitem::file)
 	{
@@ -1304,38 +1343,26 @@ void Kasablanca::Xfer()
 		bool filepresent = false;
 
 		if ((file->type() == transferitem::fxp_a_to_b) || (file->type() == transferitem::fxp_b_to_a))
-		{					
-			if (m_fxpstate == stopped)
-			{
-				proc_fxpdst->writeStdin("fxpinit pasv");
-			}
+		{			
+			if (m_fxpstate == stopped) proc_fxpdst->writeStdin("fxpinitpasv");
 			else if (m_fxpstate == initpasv)
 			{
-				proc_fxpsrc->writeStdin("fxpinit port " + m_fxpportinfo);
+				proc_fxpsrc->writeStdin("fxpinitport");
+				proc_fxpsrc->writeStdin(m_fxpportinfo);
 			}
 			else if (m_fxpstate == initport)
 			{
-				proc_fxpsrc->writeStdin("fxpget " + file->m_fifxpsrc.fileName());
+				proc_fxpsrc->writeStdin("fxpget");
+				proc_fxpsrc->writeStdin(file->m_fifxpsrc.fileName());
 			}
 			else if (m_fxpstate == get)
 			{
-				proc_fxpdst->writeStdin("fxpput " + file->m_fifxpdst.fileName());
+				proc_fxpdst->writeStdin("fxpput");
+				proc_fxpdst->writeStdin(file->m_fifxpdst.fileName());
 			}
-			else if (m_fxpstate == put)
-			{		
-				proc_fxpsrc->writeStdin("fxpxferfinished");
-			}
-			else if (m_fxpstate == waitsrc)
-			{		
-				proc_fxpdst->writeStdin("fxpxferfinished");
-			}
-			else if (m_fxpstate == abort)
-			{
-				proc_fxpsrc->writeStdin("abor");
-				//m_fxpstate = stopped;
-				//delete file;
-				//Xfer();	
-			}
+			else if (m_fxpstate == put) proc_fxpsrc->writeStdin("fxpxferfinished");
+			else if (m_fxpstate == waitsrc) proc_fxpdst->writeStdin("fxpxferfinished");
+			else if (m_fxpstate == abort) proc_fxpsrc->writeStdin("abor");
 		}
 		else if ((file->type() == transferitem::upload_a_to_b) || (file->type() == transferitem::upload_b_to_a))
 		{
@@ -1406,22 +1433,39 @@ void Kasablanca::Xfer()
 			}
 			if (skip)
 			{
-				delete TaskView->firstChild();
+				delete file;
 				Xfer();
 			}
 			else
 			{
 				/* if tls level is 2 then disable data encryption, on level 3 enable it */
 
-				if (site->GetTls() == 2) proc->writeStdin("setdataencryption off");
-				else if (site->GetTls() == 3) proc->writeStdin("setdataencryption on");
+				if (site->GetTls() == 2)
+				{
+					proc->writeStdin("setdataencryption");
+				 	proc->writeStdin("off");
+				}
+				else if (site->GetTls() == 3)
+				{
+					proc->writeStdin("setdataencryption");
+					proc->writeStdin("on");
+				}
 
 				/* resume the file if resume is set */
 
-				if (resume) proc->writeStdin("putresume " + file->m_filocal.filePath() + " "
-					+ remotename + " " + QString::number(offset));
-				else proc->writeStdin("put " + file->m_filocal.filePath() + " "
-					+ remotename);
+				if (resume)
+				{
+					proc->writeStdin("putresume");
+					proc->writeStdin(file->m_filocal.filePath());
+					proc->writeStdin(remotename);
+					proc->writeStdin(QString::number(offset));
+				}
+				else
+				{
+					proc->writeStdin("put");
+					proc->writeStdin(file->m_filocal.filePath());
+					proc->writeStdin(remotename);
+				}
 			}
 		}
 		else if ((file->type() == transferitem::download_a_to_b) || (file->type() == transferitem::download_b_to_a))
@@ -1483,22 +1527,38 @@ void Kasablanca::Xfer()
 
 			if (skip)
 			{
-				delete TaskView->firstChild();
+				delete file;
 				Xfer();
 			}
 			else
 			{
 				/* if tls level is 2 then disable data encryption, on level 3 enable it */
 
-				if (site->GetTls() == 2) proc->writeStdin("setdataencryption off");
-				else if (site->GetTls() == 3) proc->writeStdin("setdataencryption on");
-
+				if (site->GetTls() == 2)
+				{
+					proc->writeStdin("setdataencryption");
+					proc->writeStdin("off");
+				}
+				else if (site->GetTls() == 3)
+				{
+					proc->writeStdin("setdataencryption");
+					proc->writeStdin("on");
+				}
 				/* resume the file if resume is set */
 
-				if (resume) proc->writeStdin("getresume " + file->m_filocal.dirPath() + "/" + localname + " "
-					+ remotename + " " + QString::number(offset));
-				else proc->writeStdin("get " + file->m_filocal.dirPath() + "/" + localname + " "
-					+ remotename);
+				if (resume) 
+				{
+					proc->writeStdin("getresume");
+					proc->writeStdin(file->m_filocal.dirPath() + "/" + localname);
+					proc->writeStdin(remotename);
+					proc->writeStdin(QString::number(offset));
+				}
+				else
+				{
+					proc->writeStdin("get");
+				 	proc->writeStdin(file->m_filocal.dirPath() + "/" + localname);
+					proc->writeStdin(remotename);
+				}
 			}
 		}
 	}
@@ -1637,7 +1697,8 @@ void Kasablanca::SLOT_EnterCwdB()
 {
 	if (m_status_b == connected)
 	{
-		m_proc_b.writeStdin("chdir " + CwdLineB->text());;
+		m_proc_b.writeStdin("chdir");
+		m_proc_b.writeStdin(CwdLineB->text());;
 		UpdateRemote(B);
 	}
 	else if (m_status_b == disconnected)
@@ -1651,22 +1712,26 @@ void Kasablanca::UpdateRemote(Browser b)
 {
 	kbprocess* proc;
 	siteinfo* site;
-	
-	if (b == A) 
+
+	if (b == A)
 	{
 		proc = &m_proc_a;
 		site = &m_site_a;
 	}
-	else 
+	else
 	{
 		proc = &m_proc_b;
 		site = &m_site_b;
 	}
-		
+
 	proc->writeStdin("pwd");
-	if (site->GetTls() >= 2) proc->writeStdin("setdataencryption on");
-	proc->writeStdin("dir " + QDir::homeDirPath() + "/.kasablanca/" + m_tempdirname + "." + QString::number(m_dcount++));
-	qWarning("create dirfile");
+	if (site->GetTls() >= 2)
+	{
+		proc->writeStdin("setdataencryption");
+		proc->writeStdin("on");
+	}
+	proc->writeStdin("dir");
+	proc->writeStdin(QDir::homeDirPath() + "/.kasablanca/" + m_tempdirname + "." + QString::number(m_dcount++));
 }
 
 void Kasablanca::SLOT_HeaderBClicked(int section)
@@ -1707,13 +1772,14 @@ void Kasablanca::SLOT_MkdirA()
 	#if KDE_IS_VERSION(3,2,0)
 	name = KInputDialog::getText("Enter Directory Name:", "Enter Directory Name:", "", &b, this);
 	#else
-	name = KLineEditDlg::getText("Enter Directory Name:", "", &b, this);	
+	name = KLineEditDlg::getText("Enter Directory Name:", "", &b, this);
 	#endif
-		
+
 	if (m_status_a == connected)
-	{		
+	{
 		if (!b) return;
-		m_proc_a.writeStdin("mkdir " + name);
+		m_proc_a.writeStdin("mkdir");
+		m_proc_a.writeStdin(name);
 		UpdateRemote(A);
 	}
 	if (m_status_a == disconnected)
@@ -1732,13 +1798,14 @@ void Kasablanca::SLOT_MkdirB()
 	#if KDE_IS_VERSION(3,2,0)
 	name = KInputDialog::getText("Enter Directory Name:", "Enter Directory Name:", "", &b, this);
 	#else
-	name = KLineEditDlg::getText("Enter Directory Name:", "", &b, this);	
+	name = KLineEditDlg::getText("Enter Directory Name:", "", &b, this);
 	#endif
 
 	if (m_status_b == connected)
 	{
 		if (!b) return;
-		m_proc_b.writeStdin("mkdir " + name);
+		m_proc_b.writeStdin("mkdir");
+		m_proc_b.writeStdin(name);
 		UpdateRemote(B);
 	}
 	if (m_status_b == disconnected)
@@ -1979,22 +2046,28 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 	Browser b;
 	QString *remotedir;
 	QListView *browser, *otherbrowser;
+	QueueState* qstate;
+	QTextEdit* logwindow;
 
 	if (p == &m_proc_a)
 	{
+		logwindow = LogWindowA;
 		log = &m_log_a;
 		b = A;
 		browser = BrowserA;
 		otherbrowser = BrowserB;
 		remotedir = &m_currentremotedir_a;
+		qstate = &m_qstate_a;
 	}
 	else
 	{
+		logwindow = LogWindowB;
 		log = &m_log_b;
 		b = B;
 		browser = BrowserB;
 		otherbrowser = BrowserA;
 		remotedir = &m_currentremotedir_b;
+		qstate = &m_qstate_b;
 	}
 	
 	while (p->canReadLineStdout())
@@ -2006,75 +2079,81 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 			{
 				qWarning("kb.success");
 				SetGuiStatus(connected, b);
-				LogWindow->setColor(green);
-				LogWindow->append(*log);
+				logwindow->setColor(green);
+				logwindow->append(*log);
 				*log = "";
 			}
 			else if (s.left(9) == "kb.issue.")
 			{
 				qWarning("%s", s.latin1());
-
+				
+				/* kill the process timer */
+	
+				killTimers();
+				
 				if (s == "kb.issue.get")
 				{
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
 					m_xferresumesize = 0;
-					m_timer.start();
+					m_xfered = 0;
+					m_time.start();
+					startTimer(200);
 				}
 				else if (s == "kb.issue.getresume")
 				{
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
 					m_xferresumesize = static_cast<transferitem*>(TaskView->firstChild())->m_filocal.size();
-					m_timer.start();
+					m_xfered = 0;
+					m_time.start();
+					startTimer(200);
 				}
 				else if (s == "kb.issue.put")
 				{
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_filocal.size();
 					m_xferresumesize = 0;
-					m_timer.start();
+					m_xfered = 0;
+					m_time.start();
+					startTimer(200);
 				}
 				else if (s == "kb.issue.putresume")
 				{
 					m_xferallsize = static_cast<transferitem*>(TaskView->firstChild())->m_filocal.size();
 					m_xferresumesize = static_cast<transferitem*>(TaskView->firstChild())->m_firemote.size();
-					m_timer.start();
+					m_xfered = 0;
+					m_time.start();
+					startTimer(200);
 				}
 				else if (s.left(12) == "kb.issue.fxp")
 				{
 					SetGuiStatus(occupied, A);
 					SetGuiStatus(occupied, B);
 				}
-
+				
 				SetGuiStatus(occupied, b);
-				LogWindow->setColor(white);
-				LogWindow->append(s.remove(0, 9));
+				logwindow->setColor(white);
+				logwindow->append(s.remove(0, 9));
 			}
 			else if (s.left(10) == "kb.failure")
 			{
 				qWarning("kb.failure");
-				LogWindow->setColor(red);
-				LogWindow->append(*log);
+				logwindow->setColor(red);
+				logwindow->append(*log);
 				*log = "";
 								
 				if (s.left(16) == "kb.failure.fatal")
-				{
-					/* on connection changes the task view has to be cleared */
-					while (QListViewItem* tmpviewitem = TaskView->firstChild()) delete tmpviewitem;
-				
-					UpdateLocalDisplay(b);
-					SetGuiStatus(disconnected, b);
+				{				
+					if (p == &m_proc_a) SLOT_ConnectButtonA();
+					else SLOT_ConnectButtonB();
 				}
 				else if (s.left(14) == "kb.failure.fxp")
-				{		
-					//SetGuiStatus(connected, A);
-					//SetGuiStatus(connected, B);	
-					
-					if (s == "kb.failure.fxp.put") m_fxpstate = abort;
-					else 
+				{							
+					if (s == "kb.failure.fxp.put")  m_fxpstate = abort;
+					else  
 					{
 						m_fxpstate = stopped;
 						delete TaskView->firstChild();
 					}
-					Xfer();			
+					Xfer();	
 				}
 				else
 				{
@@ -2099,78 +2178,64 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 
 					/* when the queue flag is on all items in dir are
 					selected and Xfer() is called */
-
-					if (m_qstate > done)
+					
+					if (*qstate > changedir)
 					{
-						if (m_qstate > changedir)
+						qWarning("delete item: %s", TaskView->firstChild()->text(0).latin1());
+						delete TaskView->firstChild();
+					}
+					
+					if (*qstate == scanremote)
+					{
+						QListViewItemIterator it(browser);
+						while ( it.current() )
 						{
-							qWarning("delete item: %s", TaskView->firstChild()->text(0).latin1());
-							delete TaskView->firstChild();
-
-							if (m_qstate > proceed)
-							{
-								if (m_qstate == scanremote)
-								{
-									QListViewItemIterator it(browser);
-									while ( it.current() )
-									{
-										it.current()->setSelected(true);
-										++it;
-									}
-									if (p == &m_proc_a) InsertMarkedItems(transferitem::download_a_to_b);
-									else InsertMarkedItems(transferitem::download_b_to_a);
-								}
-								else if (m_qstate == scanlocal)
-								{
-									QListViewItemIterator it(otherbrowser);
-									while ( it.current() )
-									{
-										it.current()->setSelected(true);
-										++it;
-									}
-									if (p == &m_proc_a) InsertMarkedItems(transferitem::upload_b_to_a);
-									else InsertMarkedItems(transferitem::upload_a_to_b);
-								}
-								/*else if (m_qstate == scanfxp)
-								{								
-									QListViewItemIterator it(browser);
-									while ( it.current() )
-									{
-										it.current()->setSelected(true);
-										++it;
-									}
-									if (p == &m_proc_a) InsertMarkedItems(transferitem::fxp_a_to_b);
-									else InsertMarkedItems(transferitem::fxp_b_to_a);
-								}*/
-								else if (m_qstate == scanfxpb)
-								{								
-									QListViewItemIterator it(BrowserB);
-									while ( it.current() )
-									{
-										it.current()->setSelected(true);
-										++it;
-									}
-									InsertMarkedItems(transferitem::fxp_b_to_a);
-								}
-								else if (m_qstate == scanfxpa)
-								{								
-									QListViewItemIterator it(BrowserA);
-									while ( it.current() )
-									{
-										it.current()->setSelected(true);
-										++it;
-									}
-									InsertMarkedItems(transferitem::fxp_a_to_b);
-								}
-							}
+							it.current()->setSelected(true);
+							++it;
 						}
-						m_qstate = done;
+						if (p == &m_proc_a) InsertMarkedItems(transferitem::download_a_to_b);
+						else InsertMarkedItems(transferitem::download_b_to_a);
+					}
+					else if (*qstate == scanlocal)
+					{
+						QListViewItemIterator it(otherbrowser);
+						while ( it.current() )
+						{
+							it.current()->setSelected(true);
+							++it;
+						}
+						if (p == &m_proc_a) InsertMarkedItems(transferitem::upload_b_to_a);
+						else InsertMarkedItems(transferitem::upload_a_to_b);
+					}
+					else if (*qstate == scanfxp)
+					{
+						QListViewItemIterator it(browser);
+						while ( it.current() )
+						{
+							it.current()->setSelected(true);
+							++it;
+						}
+						if (p == &m_proc_a)
+						{
+							InsertMarkedItems(transferitem::fxp_a_to_b);
+							UpdateRemote(B);
+						}
+						else
+						{
+							InsertMarkedItems(transferitem::fxp_b_to_a);
+							UpdateRemote(A);
+						}
+					}
+					
+					if (*qstate > done)
+					{
+						*qstate = done;
 						Xfer();
 					}
 				}
 				else
 				{
-					statusBar()->message(s.remove(0, 7) + "kb received");
+					statusBar()->message("dir: " + s.remove(0, 7) + "kb");
 				}
 			}
 			else if (s.left(7) == "kb.xfer")
@@ -2184,12 +2249,7 @@ void Kasablanca::SLOT_KbftpReadReady(kbprocess* p)
 				}
 				else
 				{
-					int xfered = s.remove(0, 8).toInt();
-					
-					TaskView->firstChild()->setText(1, QString::number(xfered >> 10)
-						+ " of " + QString::number(m_xferallsize >> 10) + " kb transfered"
-						+ "(" + QString::number(xfered / m_timer.elapsed()) + " kb/s) "
-						+ "(" + QString::number(((xfered + m_xferresumesize)* 100 ) / m_xferallsize) + "%) ");
+					m_xfered = s.remove(0, 8).toInt();
 				}
 			}
 			else if (s.left(15) == "kb.fxpinit.pasv")
@@ -2257,7 +2317,8 @@ void Kasablanca::SLOT_About()
 	
 	d.setLogo(p);
 	d.setVersion(m_version);
-	d.setAuthor("", "sikor_sxe@radicalapproach.de", "http://kasablanca.berlios.de", "");  		
+	d.setAuthor("Magnus Kulke", "sikor_sxe@radicalapproach.de", "http://kasablanca.berlios.de", ""); 
+	d.addContributor("mr x", "mrx@hotmail.com", "http://mrx.space.org", ""); 		
 	d.exec();	
 }
 
@@ -2290,7 +2351,9 @@ void Kasablanca::SLOT_RenameA()
 	
 	if (m_status_a == connected)
 	{
-		m_proc_a.writeStdin("rename " + item->text(0) + " " + name);
+		m_proc_a.writeStdin("rename");
+		m_proc_a.writeStdin(item->text(0));
+		m_proc_a.writeStdin(name);
 		UpdateRemote(A);
 	}
 	else if (m_status_a == disconnected)
@@ -2329,7 +2392,9 @@ void Kasablanca::SLOT_RenameB()
 	
 	if (m_status_b == connected)
 	{
-		m_proc_b.writeStdin("rename " + item->text(0) + " " + name);
+		m_proc_b.writeStdin("rename");
+		m_proc_b.writeStdin(item->text(0));
+		m_proc_b.writeStdin(name);
 		UpdateRemote(B);
 	}
 	else if (m_status_b == disconnected)
@@ -2337,5 +2402,20 @@ void Kasablanca::SLOT_RenameB()
 		m_currentlocaldir_b.rename(item->text(0), name);
 		UpdateLocalDisplay(B);
 	}
+}
 
+void Kasablanca::timerEvent(QTimerEvent*)
+{
+	if (!TaskView->firstChild()) return;
+	else TaskView->firstChild()->setText(1, 
+		"[" +
+		QString::number((m_xfered + m_xferresumesize) >> 10) +
+		"kb of " +
+		QString::number(m_xferallsize >> 10) +
+		"kb] [" +
+		QString::number(((m_xfered + m_xferresumesize)* 100 ) / m_xferallsize) + 
+		"%] [" +
+		QString::number(m_xfered / m_time.elapsed()) +
+		" kb/s]"
+	);
 }
