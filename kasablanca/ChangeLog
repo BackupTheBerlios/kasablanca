@@ -14,7 +14,7 @@
 -added: auto-completion in the lineedits
 -changed: items are queued at the end of the queue list now
 -changed: remember sorting preference when changing directories
--changed:report when ftp servers do not support encryption
+-changed: report when ftp servers do not support encryption
 -fixed: crash when trying to remove active item from queue
 -fixed: compilation with gcc 2.95
 
