@@ -23,14 +23,18 @@
  
 #include "customconnectdialog.h"
 
-CustomConnectDialog::CustomConnectDialog(QWidget *parent, const char *name ) : KasablancaCustomConnectDialog(parent,name){}
+CustomConnectDialog::CustomConnectDialog(QWidget *parent, const char *name ) : KasablancaCustomConnectDialog(parent,name)
+{
+
+}
+
 CustomConnectDialog::~CustomConnectDialog(){
 }
 
 void CustomConnectDialog::accept()
 {
     mp_site->SetName("Custom Site");
-    mp_site->SetInfo(InfoLineEdit->text().latin1());
+    mp_site->SetInfo(HostLineEdit->text()+":"+PortLineEdit->text());
     mp_site->SetUser(UserLineEdit->text().latin1());
     mp_site->SetPass(PassLineEdit->text().latin1());
     mp_site->SetTls(EncryptionComboBox->currentItem());
