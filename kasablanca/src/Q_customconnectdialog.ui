@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>KasablancaCustomConnectDialog</class>
 <widget class="QDialog">
     <property name="name">
@@ -148,7 +148,7 @@
                 <string>Port</string>
             </property>
             <property name="alignment">
-                <set>AlignVCenter|AlignLeft</set>
+                <set>AlignVCenter|AlignRight</set>
             </property>
         </widget>
         <widget class="QLineEdit" row="0" column="3" rowspan="1" colspan="2">
