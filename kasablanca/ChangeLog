@@ -1,14 +1,20 @@
-[3.23.2003] 
+[4.13.2004]
+-added fxp support
+-fixed spaces-in-filenames bug
+-reduced cpu usage
+-tons of minor and major fixes
 
--gui changes
--small bugfixes
+[3.27.2004]
 
-[3.26.2003]
-
--big user interface changes. both browser windows can be switched on or offline
-
-[3.27.2003]
-
+-added tooltip help in dialogs
 -fixed xfer/rename bug
 -fixed tab order on dialogs
 
+[3.26.2004]
+
+-big user interface changes. both browser windows can be switched on or offline
+
+[3.23.2004] 
+
+-gui changes
+-small bugfixes

@@ -1,10 +1,5 @@
 v 0.3.1
 
--add fxp overwrite and resume.
--change colouring for left and right
--repair spaces xfer bug, changes in kbftp probably, local files are sent to the client using the path to the file. if there are spaces in it it will fail.
--slow down update cycle, transfer info should only be refreshed every 100msec or something.
-
 v 0.4
 
 -recursive delete
