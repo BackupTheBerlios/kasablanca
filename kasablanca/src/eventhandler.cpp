@@ -79,6 +79,13 @@ bool EventHandler::eventFilter(QObject*, QEvent *e )
 		delete line;
       return TRUE; 
    }
+	else if (type == xfered) 
+	{   
+		xferpair* xp = static_cast<xferpair*>(static_cast<QCustomEvent*>(e)->data());
+		emit ftp_xfered(xp->first, xp->second);
+		delete xp;
+      return TRUE; 
+   }
 	else if (type == finished) 
 	{   
 		emit ftp_finished();

@@ -51,6 +51,7 @@ public:
 		error = 1001,
 		outlog,
 		inlog,
+		xfered,
 		finished,
 		connectionlost,
 		misc_success,
@@ -99,6 +100,7 @@ private:
 signals:
 	void ftp_error(QString error);
 	void ftp_log(QString log, bool out);
+	void ftp_xfered(int xfered, bool encrypted);
 	void ftp_misc(bool success);
 	void ftp_finished();
 	void ftp_connect(bool success);

@@ -87,6 +87,7 @@ private:
 	
 public slots:
 	void SLOT_Log(QString log, bool out);
+	void SLOT_Xfered(int xfered, bool encrypted);
 	void SLOT_ActionMenu(int i);
 	void SLOT_ConnectMenu(int i);
 	void SLOT_HeaderClicked(int section);
@@ -95,9 +96,7 @@ public slots:
 	void SLOT_ItemRClicked(QListViewItem * item, const QPoint & point, int col);
 	void SLOT_Connect(bool success);
 	void SLOT_Login(bool success);
-	void SLOT_Quit(bool success);
 	void SLOT_Pwd(bool success, QString pwd);
-	void SLOT_Chdir(bool success);
 	void SLOT_Misc(bool success);
 	void SLOT_EncryptData(bool success, bool enabled);
 	void SLOT_Dir(bool success, list<RemoteFileInfo> dirlist, list<RemoteFileInfo> filelist);

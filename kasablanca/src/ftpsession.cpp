@@ -56,8 +56,9 @@ FtpSession::FtpSession(QObject *parent, const char *name)
 	connect(mp_eventhandler, SIGNAL(ftp_log(QString, bool)), SLOT(SLOT_Log(QString, bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_connect(bool)), SLOT(SLOT_Connect(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_login(bool)), SLOT(SLOT_Login(bool)));
-	connect(mp_eventhandler, SIGNAL(ftp_quit(bool)), SLOT(SLOT_Quit(bool)));
-	connect(mp_eventhandler, SIGNAL(ftp_chdir(bool)), SLOT(SLOT_Chdir(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_xfered(int, bool)), SLOT(SLOT_Xfered(int, bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_quit(bool)), SLOT(SLOT_Misc(bool)));
+	connect(mp_eventhandler, SIGNAL(ftp_chdir(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_raw(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_misc(bool)), SLOT(SLOT_Misc(bool)));
 	connect(mp_eventhandler, SIGNAL(ftp_mkdir(bool)), SLOT(SLOT_Misc(bool)));
@@ -78,6 +79,13 @@ void FtpSession::SLOT_Log(QString log, bool out)
 { 
 	if (out) m_loglist.push_back(make_pair(log, true));
 	else m_loglist.push_back(make_pair(log, false));
+}
+
+void FtpSession::SLOT_Xfered(int xfered, bool encrypted)
+{
+	if (encrypted) mp_encryptionicon->setPixmap(m_iconencrypted);
+	else mp_encryptionicon->setPixmap(m_iconunencrypted);	
+	qWarning("INFO: %d bytes transfered", xfered);
 }
 
 void FtpSession::SLOT_HeaderClicked(int section)
@@ -291,8 +299,8 @@ void FtpSession::SLOT_ConnectButton()
 
 	if (Occupied()) 
 	{
-		m_loglist.push_back(make_pair(i18n("aborted ftp operation"), false));
-		SLOT_Quit(false);
+		mp_logwindow->setColor(yellow);
+		mp_logwindow->append(i18n("Aborted ftp operation"));
 		SLOT_Finish();
 		Disconnect();
 		mp_ftpthread->terminate();
@@ -363,11 +371,6 @@ void FtpSession::SLOT_EncryptData(bool success, bool)
 	PrintLog(success);	
 }
 	
-void FtpSession::SLOT_Chdir(bool success)
-{
-	PrintLog(success);
-}	
-
 void FtpSession::SLOT_Misc(bool success)
 {
 	PrintLog(success);
@@ -377,11 +380,6 @@ void FtpSession::SLOT_Login(bool success)
 {
 	PrintLog(success);	
 	if (!success) Disconnect();
-}
-
-void FtpSession::SLOT_Quit(bool success)
-{
-	PrintLog(success);	
 }
 
 void FtpSession::SLOT_ConnectionLost()

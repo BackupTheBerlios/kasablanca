@@ -32,6 +32,7 @@ class QObject;
 class kbdirectory;
 
 typedef list<RemoteFileInfo> rfilist;
+typedef pair<int, bool> xferpair;
 
 /**
 @author Magnus Kulke
@@ -42,6 +43,7 @@ public:
    FtpThread();
    ~FtpThread();
 	static void CallbackLog(char *log, void *arg, bool out);
+	static int CallbackXfer(int xfered, void *arg);
 	void SetEventReceiver(QObject* eventreceiver);
 	void ClearQueue();
 	bool Connect(QString host);

@@ -49,6 +49,8 @@ FtpThread::FtpThread() : QThread()
 	
 	mp_ftp->SetCallbackArg(this);
 	mp_ftp->SetCallbackLogFunction(FtpThread::CallbackLog);
+	mp_ftp->SetCallbackBytes(1024);
+	mp_ftp->SetCallbackXferFunction(FtpThread::CallbackXfer);
 }
 
 FtpThread::~FtpThread()
@@ -65,6 +67,16 @@ void FtpThread::InitInternals()
 	m_pass = "";
 	m_pwd = "";
 	m_dataencrypted = false;
+}
+
+/* callback function for the transfer */
+
+int FtpThread::CallbackXfer(int xfered, void *arg)
+{
+	FtpThread* ftp = static_cast<FtpThread*>(arg);
+		
+	ftp->Event(EventHandler::xfered, new xferpair(xfered, ftp->m_dataencrypted));
+	return 1;
 }
 
 /* callback function for the logs */
