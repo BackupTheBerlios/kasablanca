@@ -733,6 +733,8 @@ void FtpThread::Transfer_Fxp_thread()
 	if (resume) qWarning("WARNING: fxp resume isn't supported. overwriting file instead");
 	result == ftplib::Fxp(mp_ftp, dstftp->Ftp(), src, dst, ftplib::image, ftplib::defaultfxp);
 	
+	if (result == -1) qWarning("evil result!");
+	
 	FxpReportResult(result);
 	dstftp->FxpReportResult(result);
 	
@@ -771,7 +773,7 @@ void FtpThread::Pwd_thread()
 {
 	char buffer[1024];
 	int result;
-
+	
 	result = mp_ftp->Pwd(buffer, 1024);
 	
 	if (result) 

@@ -212,7 +212,7 @@ int ftplib::readline(char *buf,int max,netbuf *ctl)
 
 		if (!socket_wait(ctl)) return retval;
 
-			if (ctl->tlsdata) x = SSL_read(ctl->ssl, ctl->cput, ctl->cleft);
+		if (ctl->tlsdata) x = SSL_read(ctl->ssl, ctl->cput, ctl->cleft);
 		else
 		{
 			if (ctl->tlsctrl) x = SSL_read(ctl->ssl, ctl->cput, ctl->cleft);
@@ -315,13 +315,13 @@ int ftplib::writeline(char *buf, int len, netbuf *nData)
 int ftplib::readresp(char c, netbuf *nControl)
 {
 	char match[5];
-
+	
 	if (readline(nControl->response,256,nControl) == -1)
 	{
 		perror("Control socket read failed");
 		return 0;
 	}
-
+	
 	if (nControl->response[3] == '-')
 	{
 		strncpy(match,nControl->response,3);
@@ -1328,101 +1328,7 @@ int ftplib::Quit()
 		return 1;
 	}
 }
-
-/*
- * FtpFxp - transfer from server to server
- *
- * return 1 if successful, 0 otherwise
- */
  
-int ftplib::FxpInitPasv(unsigned int* v)
-{
-	char *cp;
-
-	if (!FtpSendCmd("PASV",'2',mp_netbuf)) return 0;
-	cp= strchr(mp_netbuf->response,'(');
-	if (cp == NULL) return 0;
-	cp++;
-	sscanf(cp,"%u,%u,%u,%u,%u,%u",&v[0],&v[1],&v[2],&v[3],&v[4],&v[5]);
-		
-	return 1;
-}
-
-int ftplib::FxpInitPort(unsigned int* v)
-{
-	char buf[256];
-			
-	sprintf(buf, "PORT %d,%d,%d,%d,%d,%d", v[0],v[1],v[2],v[3],v[4],v[5]);
-	if (!FtpSendCmd(buf,'2',mp_netbuf)) return 0;
-	
-	return 1;
-}
-
-int ftplib::FxpGet(const char *path)
-{	
-	char buf[256];
-
-	if (mp_netbuf->tlsdata)
-	{ 
-		if (!FtpSendCmd("PBSZ 0",'2',mp_netbuf)) return 0;
-		if (!FtpSendCmd("PROT C",'2',mp_netbuf)) return 0;
-	}
-	
-	sprintf(buf, "TYPE %c", ftplib::image);
-	if (!FtpSendCmd(buf,'2',mp_netbuf)) return 0;
-	
-	strcpy(buf,"RETR");
-	if (path != NULL)
-	{
-		int i = strlen(buf);
-		buf[i++] = ' ';
-		if ((strlen(path) + i) >= sizeof(buf)) return 0;
-		strcpy(&buf[i],path);
-	}
-	else return 0;
-	
-	if (!FtpSendCmd(buf, '1', mp_netbuf)) return 0;
-	return 1;
-} 
-
-int ftplib::FxpPut(const char *path)
-{	
-	char buf[256];
-	
-	if (mp_netbuf->tlsdata)
-	{ 
-		if (!FtpSendCmd("PBSZ 0",'2',mp_netbuf)) return 0;
-		if (!FtpSendCmd("PROT C",'2',mp_netbuf)) return 0;
-	}
-
-	sprintf(buf, "TYPE %c", ftplib::image);
-	if (!FtpSendCmd(buf,'2',mp_netbuf)) return 0;
-	
-	strcpy(buf,"STOR");
-	if (path != NULL)
-	{
-		int i = strlen(buf);
-		buf[i++] = ' ';
-		if ((strlen(path) + i) >= sizeof(buf)) return 0;
-		strcpy(&buf[i],path);
-	}
-	else return 0;
-	if (!FtpSendCmd(buf, '1', mp_netbuf)) return 0;
-	
-	return 1;
-} 
-
-int ftplib::Abor()
-{
-	if ((!FtpSendCmd("ABOR",'2',mp_netbuf)) || (!readresp('2', mp_netbuf))) return 0;
-	else return 1;	
-}
-
-int ftplib::FxpXferFinished()
-{
-	return readresp('2', mp_netbuf);
-}
-
 int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method)
 {
 	char *cp;
@@ -1473,14 +1379,21 @@ int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathD
 		}
 		if (!dst->FtpSendCmd(buf, '1', dst->mp_netbuf))
 		{
-			if ((!src->FtpSendCmd("ABOR",'2',src->mp_netbuf)) || (!src->readresp('2', src->mp_netbuf))) return -1;
+			/* this closes the data connection, to abort the RETR on
+			the source ftp. all hail pftp, it took me several
+			hours and i was absolutely clueless, playing around with
+			ABOR and whatever, when i desperately checked the pftp
+			source which gave me this final hint. thanks dude(s). */
+		
+			dst->FtpSendCmd("PASV", '2', dst->mp_netbuf);
+			src->readresp('4', src->mp_netbuf);
 			return 0;
 		}
 
 		retval = (src->readresp('2', src->mp_netbuf)) & (dst->readresp('2', dst->mp_netbuf));
 
 	}
-	else
+	else 
 	{
 		// PASV src
 
@@ -1519,7 +1432,8 @@ int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathD
 		}
 		if (!src->FtpSendCmd(buf, '1', src->mp_netbuf))
 		{
-			if ((!dst->FtpSendCmd("ABOR",'2',dst->mp_netbuf)) || (!dst->readresp('2', dst->mp_netbuf))) return -1;
+			src->FtpSendCmd("PASV", '2', src->mp_netbuf);
+			dst->readresp('4', dst->mp_netbuf);
 			return 0;
 		}
 

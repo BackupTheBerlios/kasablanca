@@ -262,6 +262,7 @@ void FtpSession::SLOT_ConnectMenu(int i)
 	}
 	Connect();
 	Occupy();
+	m_loglist.clear();
 	mp_ftpthread->Connect(mp_siteinfo->GetInfo());
 	if (mp_siteinfo->GetTls() > 0) mp_ftpthread->Authtls();
 	if (mp_siteinfo->GetPasv() > 0) mp_ftpthread->Pasv(true);

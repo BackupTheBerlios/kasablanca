@@ -55,6 +55,9 @@ void KbTransferFile::Info()
 void KbTransferFile::ShowProgress()
 {
 	int time = m_time.elapsed();
+	int time_dif = time - m_time_old;
+	if (time_dif == 0) time_dif = 1;
+	int xfer_dif = m_xfered - m_xfered_old;
 
 	setText(1, 
 		"[" +
@@ -64,7 +67,7 @@ void KbTransferFile::ShowProgress()
 		"kb] [" +
 		QString::number(((m_xfered + mp_dst->Size())* 100 ) / (mp_src->Size() + 1)) + 
 		"%] [" +
-		QString::number((m_xfered - m_xfered_old) / (time - m_time_old)) +
+		QString::number(xfer_dif / time_dif) +
 		" kb/s]"
 	);
 	
