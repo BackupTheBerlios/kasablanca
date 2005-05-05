@@ -74,6 +74,10 @@ typedef int (*FtpCallbackXfer)(off64_t xfered, void *arg);
 typedef int (*FtpCallbackIdle)(void *arg);
 typedef void (*FtpCallbackLog)(char *str, void* arg, bool out);
 
+#ifndef NOSSL
+typedef bool (*FtpCallbackCert)(void *arg, X509 *cert);
+#endif
+
 struct ftphandle {
 	char *cput,*cget;
 	int handle;
@@ -97,6 +101,7 @@ struct ftphandle {
 	BIO* sbio;
 	int tlsctrl;
 	int tlsdata;
+	FtpCallbackCert certcb;
 #endif
 	off64_t offset;
 	bool correctpasv;
@@ -167,6 +172,7 @@ public:
 #ifndef NOSSL    
 	int SetDataEncryption(dataencryption enc);
     int NegotiateEncryption();
+	void SetCallbackCertFunction(FtpCallbackCert pointer);
 #endif
     int Quit();
     void SetCallbackIdleFunction(FtpCallbackIdle pointer);
@@ -186,6 +192,8 @@ public:
 
 private:
 	
+	static const int CLOCKS_PER_MSEC = CLOCKS_PER_SEC * 1000; 
+
 	ftphandle* mp_ftphandle;
 
     int FtpXfer(const char *localfile, const char *path, ftphandle *nControl, accesstype type, transfermode mode);

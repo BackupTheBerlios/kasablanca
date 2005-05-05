@@ -101,27 +101,22 @@ using namespace std;
 /* win32 dll initializer */
 
 #if defined(_WIN32)
-BOOL APIENTRY DllMain (HINSTANCE hInst     /* Library instance handle. */ ,
-                       DWORD reason        /* Reason this function is being called. */ ,
-                       LPVOID reserved     /* Not used. */ )
+BOOL APIENTRY DllMain (HINSTANCE hInst, DWORD reason, LPVOID reserved)
 {
-    switch (reason)
-    {
-      case DLL_PROCESS_ATTACH:
-        break;
+	switch (reason)
+	{
+		case DLL_PROCESS_ATTACH:
+			break;
+		case DLL_PROCESS_DETACH:
+			break;
+		case DLL_THREAD_ATTACH:
+			break;
+		case DLL_THREAD_DETACH:
+			break;
+	}
 
-      case DLL_PROCESS_DETACH:
-        break;
-
-      case DLL_THREAD_ATTACH:
-        break;
-
-      case DLL_THREAD_DETACH:
-        break;
-    }
-
-    /* Returns TRUE on success, FALSE on failure */
-    return TRUE;
+	/* Returns TRUE on success, FALSE on failure */
+	return TRUE;
 }
 #endif
 
@@ -152,7 +147,7 @@ ftplib::ftplib()
 		free(mp_ftphandle);
 	}
 	#ifndef NOSSL
-	mp_ftphandle->ctx = SSL_CTX_new(SSLv23_method());
+	mp_ftphandle->ctx = SSL_CTX_new(SSLv3_method());
 	SSL_CTX_set_verify(mp_ftphandle->ctx, SSL_VERIFY_NONE, NULL);
 	mp_ftphandle->ssl = SSL_new(mp_ftphandle->ctx);
 	#endif
@@ -479,9 +474,12 @@ int ftplib::Connect(const char *host)
 		}
 	}
 	
+#if defined(_WIN32)
 	if ((sin.sin_addr.s_addr = inet_addr(lhost)) == -1)
-	//ret = inet_aton(lhost, &sin.sin_addr);
-	//if (ret == 0)
+#else
+	ret = inet_aton(lhost, &sin.sin_addr);
+	if (ret == 0)
+#endif
 	{
 		if ((phe = gethostbyname(lhost)) == NULL)
 		{
@@ -1580,7 +1578,13 @@ int ftplib::NegotiateEncryption()
 
 	ret = SSL_connect(mp_ftphandle->ssl);
 	if (ret == 1) mp_ftphandle->tlsctrl = 1;
-
+	
+	if (mp_ftphandle->certcb != NULL)
+	{
+		X509 *cert = SSL_get_peer_certificate(mp_ftphandle->ssl);
+		if (!mp_ftphandle->certcb(mp_ftphandle->cbarg, cert)) return 0;
+	}
+	
 	if (ret < 1) return 0;
 
 	return 1;
@@ -1600,6 +1604,11 @@ void ftplib::SetCallbackXferFunction(FtpCallbackXfer pointer)
 void ftplib::SetCallbackLogFunction(FtpCallbackLog pointer)
 {
 	mp_ftphandle->logcb = pointer;
+}
+
+void ftplib::SetCallbackCertFunction(FtpCallbackCert pointer)
+{
+	mp_ftphandle->certcb = pointer;
 }
 
 void ftplib::SetCallbackArg(void *arg)
@@ -1637,6 +1646,7 @@ void ftplib::ClearHandle()
 #ifndef NOSSL	
 	mp_ftphandle->tlsctrl = 0;
 	mp_ftphandle->tlsdata = 0;
+	mp_ftphandle->certcb = NULL;
 #endif
 	mp_ftphandle->offset = 0;
 	mp_ftphandle->handle = 0;
