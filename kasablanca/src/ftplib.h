@@ -53,7 +53,6 @@
 
 #endif
 
-#include <sys/time.h>
 #include <unistd.h>
 
 #ifdef NOLFS
@@ -191,10 +190,7 @@ public:
 	int RawRead(void* buf, int max, ftphandle* handle); 
 
 private:
-	
-	static const int CLOCKS_PER_MSEC = CLOCKS_PER_SEC * 1000; 
-
-	ftphandle* mp_ftphandle;
+    ftphandle* mp_ftphandle;
 
     int FtpXfer(const char *localfile, const char *path, ftphandle *nControl, accesstype type, transfermode mode);
     int FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mode, int dir, char *cmd);
