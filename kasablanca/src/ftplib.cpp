@@ -1068,8 +1068,6 @@ int ftplib::FtpWrite(void *buf, int len, ftphandle *nData)
 		else i = net_write(nData->handle, buf, len);
 #else
 		i = net_write(nData->handle, buf, len);
-		
-		i = net_write(nData->handle, buf, len);
 #endif
 	}
 	if (i == -1) return 0;
@@ -1589,6 +1587,12 @@ int ftplib::NegotiateEncryption()
 
 	return 1;
 }
+
+void ftplib::SetCallbackCertFunction(FtpCallbackCert pointer)
+{
+	mp_ftphandle->certcb = pointer;
+}
+
 #endif
 
 void ftplib::SetCallbackIdleFunction(FtpCallbackIdle pointer)
@@ -1604,11 +1608,6 @@ void ftplib::SetCallbackXferFunction(FtpCallbackXfer pointer)
 void ftplib::SetCallbackLogFunction(FtpCallbackLog pointer)
 {
 	mp_ftphandle->logcb = pointer;
-}
-
-void ftplib::SetCallbackCertFunction(FtpCallbackCert pointer)
-{
-	mp_ftphandle->certcb = pointer;
 }
 
 void ftplib::SetCallbackArg(void *arg)
