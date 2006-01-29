@@ -325,7 +325,9 @@ void Kasablanca::setupMenu()
 		menu->insertItem(i18n("Session B"), &m_rclickmenu_b);
 		menu->insertItem(i18n("Queue"), &m_rclickmenu_t);
 	}
-
+	
+	m_rclickmenu_a.insertItem(i18n("Compare"), Compare);
+	m_rclickmenu_a.insertSeparator();
 	m_rclickmenu_a.insertItem(i18n("Transfer"), Transfer);
 	m_rclickmenu_a.insertItem(i18n("Put in queue"), Queue);
 	m_rclickmenu_a.insertSeparator();
@@ -335,6 +337,8 @@ void Kasablanca::setupMenu()
 	m_rclickmenu_a.insertSeparator();
 	m_rclickmenu_a.insertItem(i18n("Bookmark site"), Bookmark);
 
+	m_rclickmenu_b.insertItem(i18n("Compare"), Compare);
+	m_rclickmenu_b.insertSeparator();
 	m_rclickmenu_b.insertItem(i18n("Transfer"), Transfer);
 	m_rclickmenu_b.insertItem(i18n("Put in queue"), Queue);
 	m_rclickmenu_b.insertSeparator();
@@ -629,4 +633,3 @@ void Kasablanca::ProcessQueue(KbTransferItem* item)
 	FtpSession *srcsession = item->SrcSession();
 	srcsession->Transfer(item);
 }
-

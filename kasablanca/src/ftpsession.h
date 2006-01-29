@@ -81,6 +81,7 @@ public:
 	void Abort();
 	FtpThread* Ftp() { return mp_ftpthread; };
 	KbSiteInfo* SiteInfo() { return mp_siteinfo; };
+	QListView* Browser() { return mp_browser; };
 	void SetColors(QColor local, QColor success, QColor failure, QColor background);
 	void SetFont(QFont font);
 	void SetOnFileExistsDefault(filecheck onfileexistsdefault) {m_onfileexistsdefault = onfileexistsdefault; };

@@ -1,5 +1,6 @@
 [v 0.4.0.3]
 
+-added compare functionality
 -fixed 64bit support [g. guidi]
 
 [v 0.4.0.2]

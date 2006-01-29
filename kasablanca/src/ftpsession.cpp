@@ -155,7 +155,30 @@ void FtpSession::SLOT_ActionMenu(int i)
 		qWarning("ERROR: triggered action while occupied");
 		return;
 	}
-	if (i == Kasablanca::Mkdir)
+	if (i == Kasablanca::Compare)
+	{
+		
+		FtpSession* other;
+		list<FtpSession*>::iterator end_session = mp_sessionlist->end();
+		for (list<FtpSession*>::iterator i = mp_sessionlist->begin(); i != end_session; i++) if (*i != this) other = *i;
+		
+		QListViewItemIterator iit(mp_browser->lastItem());//, QListViewItemIterator::Selected);
+		while (iit.current())
+		{
+			QListViewItem *item = iit.current();
+			mp_browser->setSelected(item, true);
+			
+			QListViewItemIterator iito(other->Browser()->lastItem());//, QListViewItemIterator::Selected);
+			while (iito.current())
+			{
+				QListViewItem *otheritem = iito.current();
+				if (item->text(0) == otheritem->text(0)) mp_browser->setSelected(item, false);
+				iito--;
+			}	
+			iit--;
+		}		
+	}	
+	else if (i == Kasablanca::Mkdir)
 	{
 		bool b;
 		QString name = KInputDialog::getText(i18n("Enter directory name"), i18n("Enter directory name:"), "", &b);

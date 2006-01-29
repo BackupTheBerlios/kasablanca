@@ -39,7 +39,7 @@ class KbStatusTip;
 #include <kprocess.h>
 
 #include <qdir.h>
-#include <qlistview.h>
+#include <qlistview.h>http://www.spiegel.de/
 #include <qmenubar.h>
 #include <qregexp.h>
 
@@ -59,7 +59,8 @@ class Kasablanca : public KMainWindow
 public:
 	enum RightClickMenu
 	{
-		Transfer = 1001,
+		Compare = 1001,
+		Transfer,
 		Queue,
 		Delete,
 		Rename,
