@@ -79,6 +79,8 @@ public:
 	KSystemTray* systemTray() const { return mp_systemtray; }
 	KbStatusTip* statusTip() const { return mp_statustip; }
 	void InitBookmarks();
+	void SetOverwriteAll(bool b) { m_overwriteall = b; }; 
+	bool GetOverwriteAll() { return m_overwriteall; }; 
 
 public slots:
 	void SLOT_EditBookmarks();
@@ -122,7 +124,7 @@ private:
 	KToggleAction *m_statusbarAction;
 	FtpSession *mp_session_a, *mp_session_b;
 	list<FtpSession*> *mp_sessionlist;
-	bool m_skiplistenabled, m_onqueuefinishedenabled;
+	bool m_skiplistenabled, m_onqueuefinishedenabled, m_overwriteall;
 	QString m_onqueuefinished;
 	KSystemTray* mp_systemtray;
 	KbStatusTip *mp_statustip;

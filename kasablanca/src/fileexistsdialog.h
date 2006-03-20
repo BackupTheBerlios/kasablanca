@@ -35,11 +35,13 @@ public:
 		skip = 0,
 		resume,
 		rename,
-		overwrite
+		overwrite,
+		overwriteall
 	};
 public slots:
     void Resume();
     void Overwrite();
+	 void OverwriteAll();
     void Skip();
 	 void Rename();
 };

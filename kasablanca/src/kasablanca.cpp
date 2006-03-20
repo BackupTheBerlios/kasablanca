@@ -158,6 +158,8 @@ Kasablanca::Kasablanca() : KMainWindow( 0, "Kasablanca" ), mp_view(new Kasablanc
 	mp_session_a->Disconnect();
 	mp_session_b->Disconnect();
 
+	m_overwriteall = false;
+
 	applyConfig();
 }
 
@@ -512,6 +514,7 @@ void Kasablanca::SLOT_ImportBookmarks()
 
 void Kasablanca::SLOT_ClearQueue(FtpSession*)
 {
+	SetOverwriteAll(false);
 	mp_view->TaskView->clear();
 }
 
@@ -585,6 +588,8 @@ void Kasablanca::SLOT_NextTransfer(QListViewItem* item)
 
 void Kasablanca::QueueFinished()
 {
+	SetOverwriteAll(false);
+
 	if (m_onqueuefinishedenabled)
 	{
 		KProcess* p = new KProcess();

@@ -28,6 +28,11 @@ void FileExistsDialog::Overwrite()
     done(overwrite);
 }
 
+void FileExistsDialog::OverwriteAll()
+{
+    done(overwriteall);
+}
+
 void FileExistsDialog::Resume()
 {
     done(resume);

@@ -994,14 +994,26 @@ int FtpSession::CheckFile(KbTransferItem *item)
 			
 			kbi = static_cast<KbItem*>(it.current());
 			item->DstFileInfo()->SetSize(kbi->Size());
+			
+			// when the item is a dir, turn off resume and overwrite & overwrite all buttons
+
 			if (kbi->rtti() == KbItem::dir)
 			{
 				dlg.ResumeButton->setEnabled(false);
 				dlg.OverwriteButton->setEnabled(false);
-			}
+				dlg.OverwriteAllButton->setEnabled(false);
+			} 
+
+			// turn off the resume button when the destination file is bigger than the source file
+
 			else if (kbi->rtti() == KbItem::file)
 			{
 				if (item->DstFileInfo()->Size() >= item->SrcFileInfo()->Size()) dlg.ResumeButton->setEnabled(false);
+				if (static_cast<Kasablanca*>(parent())->GetOverwriteAll()) {
+				
+					item->DstFileInfo()->SetSize(0);
+				 	return clear;
+				}
 			}
 			
 			if (m_onfileexistsdefault != off)
@@ -1018,6 +1030,11 @@ int FtpSession::CheckFile(KbTransferItem *item)
 			{
 				case FileExistsDialog::overwrite:
 					item->DstFileInfo()->SetSize(0);
+					return clear;
+					break;
+				case FileExistsDialog::overwriteall:
+					item->DstFileInfo()->SetSize(0);
+					static_cast<Kasablanca*>(parent())->SetOverwriteAll(true);
 					return clear;
 					break;
 				case FileExistsDialog::resume:
